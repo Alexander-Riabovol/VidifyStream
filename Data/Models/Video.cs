@@ -3,8 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Models
 {
-    // Video -> User: Many-to-One
-    // Video -> Comment: One-to-Many
+    /// <summary>
+    /// Represents a set of information about a piece of a film.
+    /// The raw data itself is contained at <see href="SourceUrl"/>.
+    /// </summary>
+    // Navigation Properties Relationships:
+    // Video -> User     | Many-to-One
+    // Video -> Comment  | One-to-Many
+    // Video -> ViewData | One-to-Many
     public record Video
     {
         public int VideoId { get; set; }

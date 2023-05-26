@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace Data.Models
 {
+    /// <summary>
+    /// Is used to categorize videos based on a specific theme.
+    /// </summary>
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum Category
     {

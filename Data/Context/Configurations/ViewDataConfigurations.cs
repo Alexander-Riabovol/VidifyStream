@@ -8,6 +8,8 @@ namespace Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<ViewData> builder)
         {
+            // The ViewData entity represents Many-to-Many relationships between
+            // User and Video, so the key is a unique combination of UserId and VideoId.
             builder.HasKey(vd => new { vd.UserId, vd.VideoId });
 
             builder.HasOne(vd => vd.User)

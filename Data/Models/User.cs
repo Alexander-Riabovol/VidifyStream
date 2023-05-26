@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Data.Models
+﻿namespace Data.Models
 {
-    // User -> Video: One-to-Many
-    // User -> Comments: One-to-Many
-    // User -> Playlist: Many-to-Many
+    /// <summary>
+    /// User data. Be careful to avoid leaking personal info.
+    /// </summary>
+    // Navigation Properties Relationships:
+    // User -> Video    | One-to-Many
+    // User -> Comments | One-to-Many
+    // User -> Playlist | Many-to-Many
+    // User -> ViewData | One-to-Many
     public record User
     {
         public int UserId { get; set; }

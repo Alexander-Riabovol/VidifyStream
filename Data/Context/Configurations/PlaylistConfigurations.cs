@@ -13,7 +13,7 @@ namespace Data.Context.Configurations
             builder.Property(p => p.Name)
                    .IsRequired();
 
-            // One-to-many relationships between User and Playlist.
+            // One-to-Many relationships between User and Playlist.
             // The context is that a Playlist can be created by only one User,
             // while a User can create multiply Playlists.
             builder.HasOne(p => p.User)
@@ -22,7 +22,7 @@ namespace Data.Context.Configurations
                    .IsRequired()
                    .OnDelete(DeleteBehavior.NoAction);
 
-            // Many-to-many relationships between User and Playlist.
+            // Many-to-Many relationships between User and Playlist.
             // They are chosen because Users can save multiply playlists,
             // as well as Playlists can be saved by multiply users.
             builder.HasMany(p => p.SavedByUsers)
@@ -38,7 +38,7 @@ namespace Data.Context.Configurations
                             j.HasOne(typeof(User)).WithMany().HasForeignKey("SavedByUsersUserId").OnDelete(DeleteBehavior.NoAction);
                        });
 
-            // Many-to-many relationships between Playlist and Video.
+            // Many-to-Many relationships between Playlist and Video.
             // They are chosen because one Playlist can contain multiply Videos,
             // and one Video can be shared into multiply Playlists.
             builder.HasMany(p => p.Videos)

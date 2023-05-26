@@ -25,17 +25,22 @@ namespace Data.Context.Configurations
                    .IsRequired();
 
 
+            // One-to-Many relationships between User and Video.
+            // Represents videos published by a user.
             builder.HasMany(u => u.Videos)
                    .WithOne(v => v.User)
                    .HasForeignKey(v => v.UserId)
                    .IsRequired();
-            
+
+            // One-to-Many relationships between User and Comment.
+            // A comment can be created only by a one user.
             builder.HasMany(u => u.Comments)
                    .WithOne(c => c.User)
                    .HasForeignKey(c => c.UserId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Restrict);
 
+            // To contain a List<string> variable in one table cell we use Join and Split methods.
             builder.Property(u => u.ProfilePictureUrls)
                 .HasConversion(
                 v => v == null ? null : string.Join(',', v),

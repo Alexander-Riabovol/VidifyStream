@@ -2,6 +2,10 @@
 
 namespace Data.Models
 {
+    /// <summary>
+    /// Represents a status of a user, which dictates restrictions
+    /// and rights to use certain api requests for logged customers.
+    /// </summary>
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum Status
     {

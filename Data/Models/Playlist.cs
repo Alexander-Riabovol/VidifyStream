@@ -1,8 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Data.Models
+﻿namespace Data.Models
 {
+    /// <summary>
+    /// A playlist represents an unordered collection of <see cref="Data.Models.Video"/>s.
+    /// Only one <see cref="Data.Models.User"/> can modify a playlist.
+    /// </summary>
+    // Navigation Properties Relationships:
+    // Playlist -> Video | Many-to-Many
+    // Playlist -> User  | Many-to-One
+    // Playlist -> User  | Many-to-Many (SavedByUsers)
     public record Playlist
     {
         public int PlaylistId { get; set; }

@@ -1,8 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Data.Models
+﻿namespace Data.Models
 {
+    /// <summary>
+    /// A comment beneath a <see cref="Data.Models.Video"/>!
+    /// </summary>
+    // Navigation Properties Relationships:
+    // Comment -> User    | Many-to-One
+    // Comment -> Video   | Many-to-One
+    // Comment -> Comment | One-to-Many & Many-to-One (Replies & RepliesTo)
+    // Comment -> User    | Many-to-Many (Likes)
     public record Comment
     {
         public int CommentId { get; set; }
