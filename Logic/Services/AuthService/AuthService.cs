@@ -5,19 +5,14 @@ namespace Logic.Services.AuthService
 {
     public class AuthService : IAuthService
     {
-        private readonly IDataProtectionProvider _dataProtectionProvider;
-        private readonly IHttpContextAccessor _accessor;
-
-        public AuthService(IDataProtectionProvider dpp, IHttpContextAccessor accessor)
+        public AuthService()
         { 
-            _dataProtectionProvider = dpp;
-            _accessor = accessor;
+            
         }
 
-        public void SignIn()
+        public async Task SignIn()
         {
-            var protector = _dataProtectionProvider.CreateProtector("auth-cookie");
-            _accessor.HttpContext!.Response.Headers.SetCookie = $"auth={protector.Protect("usr:test")}";
+            
         }
     }
 }
