@@ -5,13 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 
-const string AuthScheme = "cookie";
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Authentication
-builder.Services.AddAuthentication(AuthScheme)
-                .AddCookie(AuthScheme);
+builder.Services.AddAuthentication(IAuthService.AuthScheme)
+                .AddCookie(IAuthService.AuthScheme);
+
+// Add HttpContextAccessor to access HttpContext from outer services.
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
 
@@ -49,20 +50,7 @@ app.UseAuthentication();
 // debug
 app.MapGet("/username", (HttpContext ctx) =>
 {
-    return ctx.User.FindFirst("usr")?.Value;
-});
-
-app.MapGet("/login", async (HttpContext ctx) =>
-{
-    var claims = new List<Claim>
-    {
-        new Claim("usr", "test")
-    };
-    var identity = new ClaimsIdentity(claims, AuthScheme);
-    var user = new ClaimsPrincipal(identity);
-
-    await ctx.SignInAsync(AuthScheme, user);
-    return "ok";
+    return $"{ctx.User.FindFirst("id")?.Value} {ctx.User.FindFirst("status")?.Value}";
 });
 
 app.Run();

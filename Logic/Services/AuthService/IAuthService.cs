@@ -1,7 +1,10 @@
-﻿namespace Logic.Services.AuthService
+﻿using Data.Dtos.User;
+
+namespace Logic.Services.AuthService
 {
     public interface IAuthService
     {
-        Task SignIn();
+        const string AuthScheme = "cookie";
+        Task SignIn(UserLoginDTO loginData);
     }
 }
