@@ -5,6 +5,7 @@ namespace Logic.Services.AuthService
     public interface IAuthService
     {
         const string AuthScheme = "cookie";
-        Task SignIn(UserLoginDTO loginData);
+        Task LogIn(UserLoginDTO loginData);
+        Task LogOut();
     }
 }

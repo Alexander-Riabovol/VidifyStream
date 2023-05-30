@@ -1,7 +1,6 @@
 ﻿using Data.Context;
 using Data.Dtos.User;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
@@ -18,7 +17,7 @@ namespace Logic.Services.AuthService
             _accessor = accessor;
         }
 
-        public async Task SignIn(UserLoginDTO loginData)
+        public async Task LogIn(UserLoginDTO loginData)
         {
             var user = _dataContext.Users.FirstOrDefault(u => u.Email == loginData.Email);
 
@@ -37,6 +36,11 @@ namespace Logic.Services.AuthService
             var principal = new ClaimsPrincipal(identity);
 
             await _accessor.HttpContext!.SignInAsync(IAuthService.AuthScheme, principal);
+        }
+
+        public async Task LogOut()
+        {
+            await _accessor.HttpContext!.SignOutAsync();
         }
     }
 }

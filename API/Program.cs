@@ -10,6 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add Authentication
 builder.Services.AddAuthentication(IAuthService.AuthScheme)
                 .AddCookie(IAuthService.AuthScheme);
+// Add Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("admin-only", policy => 
+    {
+        policy.RequireAuthenticatedUser()
+              .AddAuthenticationSchemes(IAuthService.AuthScheme)
+              .RequireClaim("status", "Admin");
+    });
+});
 
 // Add HttpContextAccessor to access HttpContext from outer services.
 builder.Services.AddHttpContextAccessor();
@@ -50,6 +60,18 @@ app.UseAuthentication();
 // debug
 app.MapGet("/username", (HttpContext ctx) =>
 {
+    if (!ctx.User.Identities.Any(x => x.AuthenticationType == IAuthService.AuthScheme))
+    {
+        ctx.Response.StatusCode = 401;
+        return "Not Authorized";
+    }
+
+    if(!ctx.User.HasClaim("status", "Admin"))
+    {
+        ctx.Response.StatusCode = 403;
+        return "Only admins can access this endpoint";
+    }
+
     return $"{ctx.User.FindFirst("id")?.Value} {ctx.User.FindFirst("status")?.Value}";
 });
 
