@@ -1,11 +1,26 @@
+using API.Middleware;
 using Data.Context;
 using Logic.Services.AuthService;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add HttpContextAccessor to access HttpContext from outer services.
+builder.Services.AddHttpContextAccessor();
+
+// Add services to the container.
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
+    // Set Data project as source for migrations
+    assembly => assembly.MigrationsAssembly(typeof(DataContext).Assembly.FullName));
+});
 
 // Add Authentication
 builder.Services.AddAuthentication(IAuthService.AuthScheme)
@@ -17,23 +32,12 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser()
               .AddAuthenticationSchemes(IAuthService.AuthScheme)
-              .RequireClaim("status", "Admin");
+              .AddRequirements(new StatusRequirement());
+              //.RequireClaim("status", "Admin");
     });
 });
 
-// Add HttpContextAccessor to access HttpContext from outer services.
-builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddControllers();
-
-// Add services to the container.
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
-    // Set Data project as source for migrations
-    assembly => assembly.MigrationsAssembly(typeof(DataContext).Assembly.FullName));
-});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -29,8 +29,7 @@ namespace Logic.Services.AuthService
 
             var claims = new List<Claim>
             {
-                new Claim("id", user.UserId.ToString()),
-                new Claim("status", user.Status.ToString())
+                new Claim("id", user.UserId.ToString())
             };
             var identity = new ClaimsIdentity(claims, IAuthService.AuthScheme);
             var principal = new ClaimsPrincipal(identity);
