@@ -1,11 +1,9 @@
 using API.Middleware;
 using Data.Context;
+using Data.Models;
 using Logic.Services.AuthService;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +30,7 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser()
               .AddAuthenticationSchemes(IAuthService.AuthScheme)
-              .AddRequirements(new StatusRequirement());
-              //.RequireClaim("status", "Admin");
+              .AddRequirements(new StatusRequirement(Status.Admin));
     });
 });
 
