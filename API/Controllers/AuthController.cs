@@ -21,16 +21,16 @@ namespace API.Controllers
         [Route("api/login")]
         public async Task<IActionResult> Login(UserLoginDTO loginDTO)
         {
-            await _authService.LogIn(loginDTO);
-            return Ok();
+            var result = await _authService.LogIn(loginDTO);
+            return StatusCode(result.StatusCode, result.Message);
         }
 
         [HttpGet]
         [Route("api/logout")]
         public async Task<IActionResult> Logout()
         {
-            await _authService.LogOut();
-            return Ok();
+            var result = await _authService.LogOut();
+            return StatusCode(result.StatusCode, result.Message);
         }
 
         [HttpGet]

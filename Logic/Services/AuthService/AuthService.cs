@@ -1,7 +1,9 @@
 ﻿using Data.Context;
+using Data.Dtos;
 using Data.Dtos.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Logic.Services.AuthService
@@ -17,15 +19,19 @@ namespace Logic.Services.AuthService
             _accessor = accessor;
         }
 
-        public async Task LogIn(UserLoginDTO loginData)
+        public async Task<ServiceResponse> LogIn(UserLoginDTO loginData)
         {
-            var user = _dataContext.Users.FirstOrDefault(u => u.Email == loginData.Email);
+            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == loginData.Email);
 
-            //Add Not Found
-            if(user == null) { return; }
 
-            //Add Forbid Access
-            if (user.Password != loginData.Password) { return; }
+            if(user == null) 
+            {
+                return new ServiceResponse(404, "No user with provided email has been found in the database.");
+            }
+            if (user.Password != loginData.Password) 
+            {
+                return new ServiceResponse(401, "The password is not correct.");
+            }
 
             var claims = new List<Claim>
             {
@@ -35,11 +41,13 @@ namespace Logic.Services.AuthService
             var principal = new ClaimsPrincipal(identity);
 
             await _accessor.HttpContext!.SignInAsync(IAuthService.AuthScheme, principal);
+            return ServiceResponse.OK;
         }
 
-        public async Task LogOut()
+        public async Task<ServiceResponse> LogOut()
         {
             await _accessor.HttpContext!.SignOutAsync();
+            return ServiceResponse.OK;
         }
     }
 }
