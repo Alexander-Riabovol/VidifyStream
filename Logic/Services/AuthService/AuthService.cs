@@ -1,6 +1,7 @@
 ﻿using Data.Context;
 using Data.Dtos;
 using Data.Dtos.User;
+using Logic.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ namespace Logic.Services.AuthService
             {
                 return new ServiceResponse(401, "The password is not correct.");
             }
+
+            //var ip = _accessor.HttpContext!.DeriveIp();
 
             var claims = new List<Claim>
             {
