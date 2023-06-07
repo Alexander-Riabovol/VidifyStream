@@ -1,22 +1,24 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Logic.Services.AuthService;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Hubs
 {
     public class NotificationsHub : Hub
     {
         private static int pingCount { get; set; }
-        public async override Task OnConnectedAsync()
+        public override Task OnConnectedAsync()
         {
             var ctx = Context.GetHttpContext();
-            var authCookie = ctx?.Request.Headers["Cookie"][0];
-            
-            // if there is no auth cookie, close the connection
-            if(authCookie == null || authCookie == "")
+            var identity = ctx?.User.Identity;
+
+            // if not authenticated, close the connection
+            if (identity == null || !identity.IsAuthenticated 
+                || identity.AuthenticationType != IAuthService.AuthScheme)
             {
-                ctx?.Connection.RequestClose();
+                ctx?.Abort();
             }
 
-            await base.OnConnectedAsync();
+            return base.OnConnectedAsync();
         }
         public async Task Ping()
         {
