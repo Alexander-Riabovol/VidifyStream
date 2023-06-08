@@ -1,5 +1,6 @@
 ﻿using Logic;
 using Logic.Services.AuthService;
+using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Hubs
@@ -7,11 +8,13 @@ namespace API.Hubs
     public class NotificationsHub : Hub
     {
         private readonly AppData _data;
+        private readonly INotificationService _notificationService;
         private static int pingCount { get; set; }
 
-        public NotificationsHub(AppData data) : base()
+        public NotificationsHub(AppData data, INotificationService notificationService) : base()
         {
             _data = data;
+            _notificationService = notificationService;
         }
 
         public async override Task OnConnectedAsync()
@@ -32,7 +35,12 @@ namespace API.Hubs
             // check if there are any other connected users in the group
             if (!_data.ActiveNotificationUsers.ContainsKey(userId))
             {
-                // add sending unread notifications here
+                var response = await _notificationService.GetAll(int.Parse(userId));
+                var incomingNotifications = response.Content;
+                if(!response.IsError && incomingNotifications != null)
+                {
+                    await Clients.Caller.SendAsync("broadcast-notifications", incomingNotifications);
+                }
                 _data.ActiveNotificationUsers.Add(userId, 0);
             }
             _data.ActiveNotificationUsers[userId]++;
