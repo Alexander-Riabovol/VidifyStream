@@ -4,6 +4,7 @@ using Data.Context;
 using Data.Models;
 using Logic;
 using Logic.Services.AuthService;
+using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
@@ -16,7 +17,10 @@ builder.Services.AddHttpContextAccessor();
 // Add services to the container.
 builder.Services.AddSingleton<AppData>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
+
+// Add DB context
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
