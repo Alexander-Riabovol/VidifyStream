@@ -17,7 +17,7 @@ namespace Data.Context.Configurations
                    .IsRequired();
 
             builder.HasOne(n => n.User)
-                   .WithMany()
+                   .WithMany(u => u.Notifications)
                    .HasForeignKey(n => n.UserId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Cascade);

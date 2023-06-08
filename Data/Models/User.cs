@@ -23,6 +23,7 @@
         public List<Comment>? Comments { get; set; }
         public List<ViewData>? ViewData { get; set; }
         public List<Playlist>? SavedPlaylists { get; set; }
+        public List<Notification>? Notifications { get; set; }
         public string? BanMessage { get; set; }
         public User() { }
     }
