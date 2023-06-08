@@ -30,7 +30,7 @@ namespace API.Hubs
             // add user to the group
             await Groups.AddToGroupAsync(Context.ConnectionId, $"push-{userId}");
             // check if there are any other connected users in the group
-            if (!_data.ActiveNotificationUsers.ContainsKey(userId) || _data.ActiveNotificationUsers[userId] <= 0)
+            if (!_data.ActiveNotificationUsers.ContainsKey(userId))
             {
                 // add sending unread notifications here
                 _data.ActiveNotificationUsers.Add(userId, 0);
@@ -41,8 +41,15 @@ namespace API.Hubs
         public override Task OnDisconnectedAsync(Exception? exception)
         {
             // add to the logic connectionId in the future
+
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
+
             _data.ActiveNotificationUsers[userId]--;
+            if(_data.ActiveNotificationUsers[userId] == 0)
+            {
+                _data.ActiveNotificationUsers.Remove(userId);
+            }
+
             return base.OnDisconnectedAsync(exception);
         }
 
