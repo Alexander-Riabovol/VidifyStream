@@ -16,6 +16,9 @@ namespace Data.Context.Configurations
             builder.Property(n => n.IsRead)
                    .IsRequired();
 
+            builder.Property(n => n.Date)
+                   .IsRequired();
+
             builder.HasOne(n => n.User)
                    .WithMany(u => u.Notifications)
                    .HasForeignKey(n => n.UserId)
