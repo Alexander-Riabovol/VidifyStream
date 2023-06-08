@@ -1,29 +1,56 @@
-﻿using Logic.Services.AuthService;
+﻿using Logic;
+using Logic.Services.AuthService;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Hubs
 {
     public class NotificationsHub : Hub
     {
+        private readonly AppData _data;
         private static int pingCount { get; set; }
-        public override Task OnConnectedAsync()
+
+        public NotificationsHub(AppData data) : base()
         {
-            var ctx = Context.GetHttpContext();
-            var identity = ctx?.User.Identity;
+            _data = data;
+        }
+
+        public async override Task OnConnectedAsync()
+        {
+            var identity = Context.User?.Identity;
 
             // if not authenticated, close the connection
             if (identity == null || !identity.IsAuthenticated 
                 || identity.AuthenticationType != IAuthService.AuthScheme)
             {
-                ctx?.Abort();
+                Context.Abort();
+                return;
             }
-
-            return base.OnConnectedAsync();
+            // retrive the id from the claims. It can't be null because user is authenticated already.
+            string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
+            // add user to the group
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"push-{userId}");
+            // check if there are any other connected users in the group
+            if (!_data.ActiveNotificationUsers.ContainsKey(userId) || _data.ActiveNotificationUsers[userId] <= 0)
+            {
+                // add sending unread notifications here
+                _data.ActiveNotificationUsers.Add(userId, 0);
+            }
+            _data.ActiveNotificationUsers[userId]++;
         }
+
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            // add to the logic connectionId in the future
+            string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
+            _data.ActiveNotificationUsers[userId]--;
+            return base.OnDisconnectedAsync(exception);
+        }
+
         public async Task Ping()
         {
             pingCount++;
-            await Clients.All.SendAsync("pingc", pingCount);
+            var id = Context.User!.Claims.First().Value;
+            await Clients.Group($"push-{id}").SendAsync("groupPing", id, _data.ActiveNotificationUsers[id], pingCount);
         }
     }
 }

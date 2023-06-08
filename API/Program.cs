@@ -2,6 +2,7 @@ using API.Hubs;
 using API.Middleware;
 using Data.Context;
 using Data.Models;
+using Logic;
 using Logic.Services.AuthService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
+builder.Services.AddSingleton<AppData>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 builder.Services.AddDbContext<DataContext>(options =>
