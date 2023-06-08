@@ -18,7 +18,7 @@
             Message = ""
         };
     }
-    public record ServiceResponse<T> : ServiceResponse where T : class, new()
+    public record ServiceResponse<T> : ServiceResponse
     {
         public T? Content { get; init; }
         public ServiceResponse() {}
@@ -27,10 +27,15 @@
         { 
             Content = content;
         }
-        private static readonly ServiceResponse<T> _OK = (ServiceResponse<T>)ServiceResponse.OK;
-        public new ServiceResponse<T> OK(T content)
+        public new static ServiceResponse<T> OK(T? content)
         {
-            return _OK with { Content = content };
+            return new ServiceResponse<T>()
+            {
+                IsError = false,
+                StatusCode = 200,
+                Message = "",
+                Content = content
+            };
         }
     }
 }
