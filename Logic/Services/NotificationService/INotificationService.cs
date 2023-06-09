@@ -5,8 +5,18 @@ namespace Logic.Services.NotificationService
 {
     public interface INotificationService
     {
-        Task<ServiceResponse> ToggleTrueIsRead(int notificationId);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId">If set to -1, there will be no security check.</param>
+        /// <returns></returns>
+        Task<ServiceResponse> ToggleTrueIsRead(int notificationId, int userId = -1);
         Task<ServiceResponse<IEnumerable<NotificationGetDTO>?>> GetAll(int userId, bool onlyUnread = true);
-        Task<ServiceResponse> Delete(int notificationId);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId">If set to -1, there will be no security check.</param>
+        /// <returns></returns>
+        Task<ServiceResponse> Delete(int notificationId, int userId = -1);
     }
 }

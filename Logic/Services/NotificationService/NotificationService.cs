@@ -15,9 +15,23 @@ namespace Logic.Services.NotificationService
             _dataContext = dataContext;
         }
 
-        public async Task<ServiceResponse> Delete(int notificationId)
+        public async Task<ServiceResponse> Delete(int notificationId, int userId)
         {
-            throw new NotImplementedException();
+            var notification = await _dataContext.Notifications.FindAsync(notificationId);
+            // If the notification does not exists, return 404
+            if (notification == null)
+            {
+                return new ServiceResponse(404, $"Notification with {notificationId} id does not exist.");
+            }
+            // If userIds do not match, return 403
+            if (userId != -1 && notification.UserId != userId)
+            {
+                return new ServiceResponse(403, "Forbidden");
+            }
+            _dataContext.Remove(notification);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
         }
 
         public async Task<ServiceResponse<IEnumerable<NotificationGetDTO>?>> GetAll(int userId, bool onlyUnread)
@@ -28,7 +42,7 @@ namespace Logic.Services.NotificationService
 
             if (user == null) 
             {
-                return new ServiceResponse<IEnumerable<NotificationGetDTO>?>(404, "User not found");
+                return new ServiceResponse<IEnumerable<NotificationGetDTO>?>(404, "User has not been found.");
             }
 
             if(onlyUnread)
@@ -50,13 +64,18 @@ namespace Logic.Services.NotificationService
             return ServiceResponse<IEnumerable<NotificationGetDTO>?>.OK(notificationsDtos);
         }
 
-        public async Task<ServiceResponse> ToggleTrueIsRead(int notificationId)
+        public async Task<ServiceResponse> ToggleTrueIsRead(int notificationId, int userId)
         {
             var notification = await _dataContext.Notifications.FindAsync(notificationId);
             // If the notification does not exists, return 404
             if(notification == null)
             {
-                return new ServiceResponse(404, $"Notification with {notificationId} id is not found");
+                return new ServiceResponse(404, $"Notification with {notificationId} id does not exist.");
+            }
+            // If userIds do not match, return 403
+            if (userId != -1 && notification.UserId != userId)
+            {
+                return new ServiceResponse(403, "Forbidden");
             }
             // If the notification has already been read, return 304
             if(notification.IsRead) 

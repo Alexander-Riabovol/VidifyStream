@@ -67,11 +67,26 @@ namespace API.Hubs
         public async Task Read(int notificationId)
         {
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            var response = await _notificationService.ToggleTrueIsRead(notificationId);
+            var response = await _notificationService.ToggleTrueIsRead(notificationId, int.Parse(userId));
             if(!response.IsError)
             {
                 // If ToggleTrueIsRead method is succesful, inform other users that the notification has been read
                 await Clients.Group($"push-{userId}").SendAsync("read-notification", notificationId);
+            }
+            else
+            {   // If not, inform only the caller that an error occured.
+                await Clients.Caller.SendAsync("error", response.StatusCode, response.Message);
+            }
+        }
+
+        public async Task Delete(int notificationId)
+        {
+            string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
+            var response = await _notificationService.Delete(notificationId, int.Parse(userId));
+            if (!response.IsError)
+            {
+                // If ToggleTrueIsRead method is succesful, inform other users that the notification has been read
+                await Clients.Group($"push-{userId}").SendAsync("delete-notification", notificationId);
             }
             else
             {   // If not, inform only the caller that an error occured.
