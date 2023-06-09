@@ -7,5 +7,6 @@ namespace Logic.Services.NotificationService
     {
         Task<ServiceResponse> ToggleTrueIsRead(int notificationId);
         Task<ServiceResponse<IEnumerable<NotificationGetDTO>?>> GetAll(int userId, bool onlyUnread = true);
+        Task<ServiceResponse> Delete(int notificationId);
     }
 }

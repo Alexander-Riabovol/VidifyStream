@@ -17,6 +17,12 @@
             StatusCode = 200,
             Message = ""
         };
+        public static readonly ServiceResponse NotModified = new ServiceResponse()
+        {
+            IsError = true,
+            StatusCode = 304,
+            Message = "Not Modified"
+        };
     }
     public record ServiceResponse<T> : ServiceResponse
     {

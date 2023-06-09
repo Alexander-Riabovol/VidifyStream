@@ -1,6 +1,7 @@
 ﻿using Data.Context;
 using Data.Dtos;
 using Data.Dtos.Notification;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Services.NotificationService
@@ -12,6 +13,11 @@ namespace Logic.Services.NotificationService
         public NotificationService(DataContext dataContext) 
         { 
             _dataContext = dataContext;
+        }
+
+        public async Task<ServiceResponse> Delete(int notificationId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<ServiceResponse<IEnumerable<NotificationGetDTO>?>> GetAll(int userId, bool onlyUnread)
@@ -44,9 +50,23 @@ namespace Logic.Services.NotificationService
             return ServiceResponse<IEnumerable<NotificationGetDTO>?>.OK(notificationsDtos);
         }
 
-        public Task<ServiceResponse> ToggleTrueIsRead(int notificationId)
+        public async Task<ServiceResponse> ToggleTrueIsRead(int notificationId)
         {
-            throw new NotImplementedException();
+            var notification = await _dataContext.Notifications.FindAsync(notificationId);
+            // If the notification does not exists, return 404
+            if(notification == null)
+            {
+                return new ServiceResponse(404, $"Notification with {notificationId} id is not found");
+            }
+            // If the notification has already been read, return 304
+            if(notification.IsRead) 
+            {
+                return ServiceResponse.NotModified;
+            }
+            // Update the entity since it is already tracked via FindAsync()
+            notification.IsRead = true;
+            await _dataContext.SaveChangesAsync();
+            return ServiceResponse.OK;
         }
     }
 }
