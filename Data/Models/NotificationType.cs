@@ -5,6 +5,7 @@ namespace Data.Models
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum NotificationType
     {
+        Blank = -1,
         SubscribersGoal = 0,
         Reply = 1,
         AuthorLikedComment = 2,

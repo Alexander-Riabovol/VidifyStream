@@ -67,7 +67,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Register SignalR hubs
-app.MapHub<NotificationsHub>("/notifications");
+app.MapHub<NotificationsHub>("/wss/notifications");
 
 // debug
 app.MapGet("/username", (HttpContext ctx) =>

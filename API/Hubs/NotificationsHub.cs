@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace API.Hubs
 {
+    // Client commands:
+    // {"protocol":"json","version":1} - start communication
+    // {"arguments":[],"target":"ping","type":1} - ping test function
+    // {"arguments":[{id}],"target":"read","type":1} - read a notification by id
+    // {"arguments":[{id}],"target":"delete","type":1} - delete a notification by id
     public class NotificationsHub : Hub
     {
         private readonly AppData _data;
