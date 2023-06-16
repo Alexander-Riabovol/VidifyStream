@@ -1,8 +1,8 @@
-using API.Hubs;
 using API.Middleware;
 using Data.Context;
 using Data.Models;
 using Logic;
+using Logic.Hubs;
 using Logic.Services.AuthService;
 using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.Authorization;

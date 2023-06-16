@@ -3,7 +3,7 @@ using Logic.Services.AuthService;
 using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.SignalR;
 
-namespace API.Hubs
+namespace Logic.Hubs
 {
     // Client commands:
     // {"protocol":"json","version":1} - start communication
