@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Logic.Hubs
 {
+    // Hub events:
+    // 
     // Client commands:
     // {"protocol":"json","version":1} - start communication
     // {"arguments":[],"target":"ping","type":1} - ping test function
@@ -46,7 +48,7 @@ namespace Logic.Hubs
                 // If there is any, send notifications to the user
                 if(!response.IsError && incomingNotifications != null)
                 {
-                    await Clients.Caller.SendAsync("broadcast-notifications", incomingNotifications);
+                    await Clients.Caller.SendAsync("push-notifications", incomingNotifications);
                 }
                 // Add the user into the active users dictionary
                 _data.ActiveNotificationUsers.Add(userId, 0);
@@ -90,11 +92,26 @@ namespace Logic.Hubs
             var response = await _notificationService.Delete(notificationId, int.Parse(userId));
             if (!response.IsError)
             {
-                // If ToggleTrueIsRead method is succesful, inform other users that the notification has been read
+                // If Delete method is succesful, inform other users that the notification has been deleted
                 await Clients.Group($"push-{userId}").SendAsync("delete-notification", notificationId);
             }
             else
             {   // If not, inform only the caller that an error occured.
+                await Clients.Caller.SendAsync("error", response.StatusCode, response.Message);
+            }
+        }
+
+        public async Task GetAll()
+        {
+            string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
+            var response = await _notificationService.GetAll(int.Parse(userId), false);
+            // In any case we give a response only to the caller
+            if (!response.IsError)
+            {
+                await Clients.Caller.SendAsync("broadcast-notifications", response.Content);
+            }
+            else
+            {
                 await Clients.Caller.SendAsync("error", response.StatusCode, response.Message);
             }
         }
