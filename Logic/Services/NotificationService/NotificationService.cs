@@ -1,7 +1,9 @@
-﻿using Data.Context;
+﻿using Logic.Hubs;
+using Data.Context;
 using Data.Dtos;
 using Data.Dtos.Notification;
 using Data.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Services.NotificationService
@@ -9,30 +11,49 @@ namespace Logic.Services.NotificationService
     public class NotificationService : INotificationService
     {
         private readonly DataContext _dataContext;
+        private readonly IHubContext<NotificationsHub> _notificationsHub;
 
-        public NotificationService(DataContext dataContext) 
+        public NotificationService(DataContext dataContext, IHubContext<NotificationsHub> notificationsHub) 
         { 
             _dataContext = dataContext;
+            _notificationsHub = notificationsHub;
         }
 
-        public async Task<ServiceResponse> CreateAndSend(NotificationCreateDTO notificationDto)
+        public async Task<ServiceResponse> CreateAndSend(NotificationCreateDTO notificationCreateDto)
         {
             // return 404 if user to whom addressed a notification doesn't exist
-            var user = await _dataContext.Users.FindAsync(notificationDto.UserId);
+            var user = await _dataContext.Users.FindAsync(notificationCreateDto.UserId);
             if(user == null) { return new ServiceResponse(404, "User Not Found");}
-            
+
             // add validation here
 
-            await _dataContext.AddAsync(new Notification()
+            // move the mapping
+            var notificaition = new Notification()
             {
-                Message = notificationDto.Message,
+                Message = notificationCreateDto.Message,
                 Date = DateTime.Now,
                 IsRead = false,
-                UserId = notificationDto.UserId,
-                Type = notificationDto.Type,
-                CommentId = notificationDto.CommentId,
-                VideoId = notificationDto.VideoId,
-            });
+                UserId = notificationCreateDto.UserId,
+                Type = notificationCreateDto.Type,
+                CommentId = notificationCreateDto.CommentId,
+                VideoId = notificationCreateDto.VideoId,
+            };
+
+            await _dataContext.AddAsync(notificaition);
+            await _dataContext.SaveChangesAsync();
+
+            // move the mapping
+            var notificationGetDto = new NotificationGetDTO()
+            {
+                // Id is present because we saved the changes into the database beforehand
+                Id = notificaition.Id,
+                Message = notificaition.Message,
+                Date = notificaition.Date,
+                IsRead = notificaition.IsRead
+            };
+            // broadcast the new notification to a user group to whom it addressed
+            await _notificationsHub.Clients.Group($"push-{notificaition.UserId}")
+                .SendAsync("push-notifications", new List<NotificationGetDTO> { notificationGetDto });
 
             return ServiceResponse.OK;
         }

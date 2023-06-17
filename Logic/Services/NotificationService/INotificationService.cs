@@ -20,6 +20,6 @@ namespace Logic.Services.NotificationService
         /// <param name="callerId">If set to -1, there will be no security check.</param>
         /// <returns></returns>
         Task<ServiceResponse> Delete(int notificationId, int callerId = -1);
-        Task<ServiceResponse> CreateAndSend(NotificationCreateDTO notificationDto);
+        Task<ServiceResponse> CreateAndSend(NotificationCreateDTO notificationCreateDto);
     }
 }
