@@ -25,5 +25,6 @@ namespace Data.Context
         public DbSet<Comment> Comments => Set<Comment>();
         public DbSet<Playlist> Playlists => Set<Playlist>();
         public DbSet<ViewData> ViewData => Set<ViewData>();
+        public DbSet<Notification> Notifications => Set<Notification>();
     }
 }

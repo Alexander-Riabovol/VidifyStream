@@ -1,9 +1,13 @@
 using API.Middleware;
 using Data.Context;
 using Data.Models;
+using Logic;
+using Logic.Hubs;
 using Logic.Services.AuthService;
+using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +15,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
+builder.Services.AddSingleton<AppData>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
+
+// Add DB context
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
@@ -35,6 +43,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -51,29 +60,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
 
 // Register the middleware
 app.UseAuthentication();
+app.UseAuthorization();
+
+// Register SignalR hubs
+app.MapHub<NotificationsHub>("/wss/notifications");
 
 // debug
 app.MapGet("/username", (HttpContext ctx) =>
 {
-    if (!ctx.User.Identities.Any(x => x.AuthenticationType == IAuthService.AuthScheme))
-    {
-        ctx.Response.StatusCode = 401;
-        return "Not Authorized";
-    }
-
-    if(!ctx.User.HasClaim("status", "Admin"))
-    {
-        ctx.Response.StatusCode = 403;
-        return "Only admins can access this endpoint";
-    }
-
-    return $"{ctx.User.FindFirst("id")?.Value} {ctx.User.FindFirst("status")?.Value}";
-});
+    return $"{ctx.User.FindFirst("id")?.Value}";
+}).RequireAuthorization("admin-only");
 
 app.Run();
