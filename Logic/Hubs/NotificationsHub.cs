@@ -1,11 +1,10 @@
-﻿using Logic;
-using Logic.Services.AuthService;
+﻿using Logic.Services.AuthService;
 using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logic.Hubs
 {
-    // Hub events:
+    // Hub sent events:
     // 
     // Client commands:
     // {"protocol":"json","version":1} - start communication
@@ -58,8 +57,6 @@ namespace Logic.Hubs
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            // add to the logic connectionId in the future
-            // there can be an exception here if user logs out before closing wss connection
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
 
             _data.ActiveNotificationUsers[userId]--;
