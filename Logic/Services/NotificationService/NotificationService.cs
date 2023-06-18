@@ -5,6 +5,7 @@ using Data.Dtos.Notification;
 using Data.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using MapsterMapper;
 
 namespace Logic.Services.NotificationService
 {
@@ -12,11 +13,15 @@ namespace Logic.Services.NotificationService
     {
         private readonly DataContext _dataContext;
         private readonly IHubContext<NotificationsHub> _notificationsHub;
+        private readonly IMapper _mapper;
 
-        public NotificationService(DataContext dataContext, IHubContext<NotificationsHub> notificationsHub) 
-        { 
+        public NotificationService(DataContext dataContext,
+                                   IHubContext<NotificationsHub> notificationsHub,
+                                   IMapper mapper) 
+        {
             _dataContext = dataContext;
             _notificationsHub = notificationsHub;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResponse> CreateAndSend(NotificationCreateDTO notificationCreateDto)
@@ -27,8 +32,8 @@ namespace Logic.Services.NotificationService
 
             // add validation here
 
-            // move the mapping
-            var notificaition = new Notification()
+            var notification = _mapper.Map<Notification>(notificationCreateDto);
+            /*var notification = new Notification()
             {
                 Message = notificationCreateDto.Message,
                 Date = DateTime.Now,
@@ -37,22 +42,22 @@ namespace Logic.Services.NotificationService
                 Type = notificationCreateDto.Type,
                 CommentId = notificationCreateDto.CommentId,
                 VideoId = notificationCreateDto.VideoId,
-            };
+            };*/
 
-            await _dataContext.AddAsync(notificaition);
+            await _dataContext.AddAsync(notification);
             await _dataContext.SaveChangesAsync();
 
-            // move the mapping
-            var notificationGetDto = new NotificationGetDTO()
+            var notificationGetDto = _mapper.Map<NotificationGetDTO>(notification);
+            /*var notificationGetDto = new NotificationGetDTO()
             {
                 // Id is present because we saved the changes into the database beforehand
-                Id = notificaition.Id,
-                Message = notificaition.Message,
-                Date = notificaition.Date,
-                IsRead = notificaition.IsRead
-            };
+                Id = notification.Id,
+                Message = notification.Message,
+                Date = notification.Date,
+                IsRead = notification.IsRead
+            };*/
             // broadcast the new notification to a user group to whom it addressed
-            await _notificationsHub.Clients.Group($"push-{notificaition.UserId}")
+            await _notificationsHub.Clients.Group($"push-{notification.UserId}")
                 .SendAsync("push-notifications", new List<NotificationGetDTO> { notificationGetDto });
 
             return ServiceResponse.OK;
@@ -86,7 +91,8 @@ namespace Logic.Services.NotificationService
                 return new ServiceResponse<NotificationAdminGetDTO>(404, "Notification has not been found.");
             }
 
-            var notificationDto = new NotificationAdminGetDTO()
+            var notificationDto = _mapper.Map<NotificationAdminGetDTO>(notification);
+            /*var notificationDto = new NotificationAdminGetDTO()
             {
                 Id = notification.Id,
                 Message = notification.Message,
@@ -96,7 +102,7 @@ namespace Logic.Services.NotificationService
                 Type = notification.Type,
                 CommentId = notification.CommentId,
                 VideoId = notification.VideoId,
-            };
+            };*/
             return ServiceResponse<NotificationAdminGetDTO>.OK(notificationDto);
         }
 
@@ -117,15 +123,15 @@ namespace Logic.Services.NotificationService
             }
 
             var notificationsDtos = user.Notifications?.Select(n => 
-            // move mapping into a class
-            new NotificationGetDTO()
+            _mapper.Map<NotificationGetDTO>(n)
+            /*new NotificationGetDTO()
             {
                 Id = n.Id,
                 Message = n.Message,
                 Date = n.Date,
                 IsRead = n.IsRead,
                 // rest of the mapping with includes according to the message type here
-            });
+            }*/);
 
             return ServiceResponse<IEnumerable<NotificationGetDTO>>.OK(notificationsDtos);
         }
@@ -142,8 +148,8 @@ namespace Logic.Services.NotificationService
             }
 
            var notificationsDtos = user.Notifications?.Select(n =>
-           // move mapping into a class
-           new NotificationAdminGetDTO()
+           _mapper.Map<NotificationAdminGetDTO>(n)
+           /*new NotificationAdminGetDTO()
            {
                Id = n.Id,
                Message = n.Message,
@@ -153,7 +159,7 @@ namespace Logic.Services.NotificationService
                Type = n.Type,
                VideoId = n.VideoId,
                CommentId = n.CommentId,
-           });
+           }*/);
 
            return ServiceResponse<IEnumerable<NotificationAdminGetDTO>>.OK(notificationsDtos);
         }

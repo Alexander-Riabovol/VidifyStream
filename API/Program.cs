@@ -1,5 +1,6 @@
 using API.Middleware;
 using Data.Context;
+using Data.Mapping;
 using Data.Models;
 using Logic;
 using Logic.Hubs;
@@ -41,6 +42,9 @@ builder.Services.AddAuthorization(options =>
               .AddRequirements(new StatusRequirement(Status.Admin));
     });
 });
+
+// Add Mapster configurations
+builder.Services.AddMappings();
 
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
