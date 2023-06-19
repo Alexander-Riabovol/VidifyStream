@@ -7,7 +7,7 @@
         public DateTime Date { get; set; }
         public bool IsRead { get; set; }
         public string ActionLink { get; set; } = null!;
-        public string UserIconLink { get; set; } = null!;
-        public string VideoThumbnailLink { get; set; } = null!;
+        public string UserProfilePictureUrl { get; set; } = null!;
+        public string VideoThumbnailUrl { get; set; } = null!;
     }
 }

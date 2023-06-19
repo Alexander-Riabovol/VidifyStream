@@ -6,6 +6,7 @@ using Data.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MapsterMapper;
+using Mapster;
 
 namespace Logic.Services.NotificationService
 {
@@ -33,29 +34,11 @@ namespace Logic.Services.NotificationService
             // add validation here
 
             var notification = _mapper.Map<Notification>(notificationCreateDto);
-            /*var notification = new Notification()
-            {
-                Message = notificationCreateDto.Message,
-                Date = DateTime.Now,
-                IsRead = false,
-                UserId = notificationCreateDto.UserId,
-                Type = notificationCreateDto.Type,
-                CommentId = notificationCreateDto.CommentId,
-                VideoId = notificationCreateDto.VideoId,
-            };*/
 
             await _dataContext.AddAsync(notification);
             await _dataContext.SaveChangesAsync();
 
             var notificationGetDto = _mapper.Map<NotificationGetDTO>(notification);
-            /*var notificationGetDto = new NotificationGetDTO()
-            {
-                // Id is present because we saved the changes into the database beforehand
-                Id = notification.Id,
-                Message = notification.Message,
-                Date = notification.Date,
-                IsRead = notification.IsRead
-            };*/
             // broadcast the new notification to a user group to whom it addressed
             await _notificationsHub.Clients.Group($"push-{notification.UserId}")
                 .SendAsync("push-notifications", new List<NotificationGetDTO> { notificationGetDto });
@@ -92,17 +75,6 @@ namespace Logic.Services.NotificationService
             }
 
             var notificationDto = _mapper.Map<NotificationAdminGetDTO>(notification);
-            /*var notificationDto = new NotificationAdminGetDTO()
-            {
-                Id = notification.Id,
-                Message = notification.Message,
-                Date = notification.Date,
-                IsRead = notification.IsRead,
-                UserId = notification.UserId,
-                Type = notification.Type,
-                CommentId = notification.CommentId,
-                VideoId = notification.VideoId,
-            };*/
             return ServiceResponse<NotificationAdminGetDTO>.OK(notificationDto);
         }
 
@@ -122,18 +94,19 @@ namespace Logic.Services.NotificationService
                 user.Notifications = user.Notifications?.Where(n => !n.IsRead).ToList();
             }
 
-            var notificationsDtos = user.Notifications?.Select(n => 
-            _mapper.Map<NotificationGetDTO>(n)
-            /*new NotificationGetDTO()
-            {
-                Id = n.Id,
-                Message = n.Message,
-                Date = n.Date,
-                IsRead = n.IsRead,
-                // rest of the mapping with includes according to the message type here
-            }*/);
+            //var result = user.Notifications?.Select(n => _mapper.Map<NotificationGetDTO>(n));
 
-            return ServiceResponse<IEnumerable<NotificationGetDTO>>.OK(notificationsDtos);
+            
+            var mappingToDtosTasks = user.Notifications?.Select(
+                async n => await _mapper.From(n).AdaptToTypeAsync<NotificationGetDTO>());
+
+            if(mappingToDtosTasks == null)
+            {
+                return ServiceResponse<IEnumerable<NotificationGetDTO>>.OK(null);
+            }
+            var result = await Task.WhenAll(mappingToDtosTasks);
+            
+            return ServiceResponse<IEnumerable<NotificationGetDTO>>.OK(result);
         }
 
         public async Task<ServiceResponse<IEnumerable<NotificationAdminGetDTO>>> GetAllAdmin(int userId)
@@ -147,19 +120,7 @@ namespace Logic.Services.NotificationService
                 return new ServiceResponse<IEnumerable<NotificationAdminGetDTO>>(404, "User has not been found.");
             }
 
-           var notificationsDtos = user.Notifications?.Select(n =>
-           _mapper.Map<NotificationAdminGetDTO>(n)
-           /*new NotificationAdminGetDTO()
-           {
-               Id = n.Id,
-               Message = n.Message,
-               Date = n.Date,
-               IsRead = n.IsRead,
-               UserId = n.UserId,
-               Type = n.Type,
-               VideoId = n.VideoId,
-               CommentId = n.CommentId,
-           }*/);
+           var notificationsDtos = user.Notifications?.Select(n => _mapper.Map<NotificationAdminGetDTO>(n));
 
            return ServiceResponse<IEnumerable<NotificationAdminGetDTO>>.OK(notificationsDtos);
         }

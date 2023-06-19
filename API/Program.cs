@@ -1,6 +1,6 @@
 using API.Middleware;
 using Data.Context;
-using Data.Mapping;
+using Logic.Mapping;
 using Data.Models;
 using Logic;
 using Logic.Hubs;
