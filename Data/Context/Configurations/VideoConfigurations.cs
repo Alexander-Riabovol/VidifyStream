@@ -30,7 +30,7 @@ namespace Data.Context.Configurations
             builder.HasMany(v => v.Comments)
                    .WithOne(c => c.Video)
                    .HasForeignKey(c => c.VideoId)
-                   .IsRequired()
+                   .IsRequired(false)
                    .OnDelete(DeleteBehavior.NoAction);
         }
     }

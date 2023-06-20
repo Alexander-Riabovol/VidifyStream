@@ -2,7 +2,7 @@
 {
     public record Notification
     {
-        public int Id { get; set; }
+        public int NotificationId { get; set; }
         public string Message { get; set; } = null!;
         public DateTime Date { get; set; }
         public bool IsRead { get; set; } = false;

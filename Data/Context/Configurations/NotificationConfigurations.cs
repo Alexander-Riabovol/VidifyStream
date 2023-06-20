@@ -8,7 +8,7 @@ namespace Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<Notification> builder)
         {
-            builder.HasKey(n => n.Id);
+            builder.HasKey(n => n.NotificationId);
 
             builder.Property(n => n.Message)
                    .IsRequired();

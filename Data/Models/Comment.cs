@@ -14,7 +14,7 @@
         public string Text { get; set; } = null!;
         public int UserId { get; set; }
         public User? User { get; set; }
-        public int VideoId { get; set; }
+        public int? VideoId { get; set; }
         public Video? Video { get; set; }
         public int? RepliedToId { get; set; }
         public Comment? RepliedTo { get; set; }

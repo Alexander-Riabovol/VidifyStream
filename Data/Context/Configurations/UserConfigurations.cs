@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Context.Configurations
 {
-    // SavedPlaylists navigation property is configured in PlaylistConfigurations
     // ViewData navigation property is configured in ViewDataConfigurations
     public class UserConfigurations : IEntityTypeConfiguration<User>
     {
