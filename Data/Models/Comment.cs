@@ -21,6 +21,7 @@
         public List<Comment>? Replies { get; set; }
         public List<User>? Likes { get; set; }
         public bool IsAuthorLiked { get; set; }
+        public bool Edited { get; set; }
         public Comment() { }
     }
 }
