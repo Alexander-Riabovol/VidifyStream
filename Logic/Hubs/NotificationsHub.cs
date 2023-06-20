@@ -58,7 +58,7 @@ namespace Logic.Hubs
         public override Task OnDisconnectedAsync(Exception? exception)
         {
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-
+            
             _data.ActiveNotificationUsers[userId]--;
             if(_data.ActiveNotificationUsers[userId] == 0)
             {

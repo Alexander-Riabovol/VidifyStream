@@ -8,7 +8,7 @@ using Logic.Services.AuthService;
 using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Net.WebSockets;
+using Logic.Services.CommentService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +17,11 @@ builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
 builder.Services.AddSingleton<AppData>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 
 // Add DB context

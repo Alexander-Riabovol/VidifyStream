@@ -52,7 +52,7 @@ namespace Logic.Services.NotificationService
             // If the notification does not exists, return 404
             if (notification == null)
             {
-                return new ServiceResponse(404, $"Notification with {notificationId} id does not exist.");
+                return new ServiceResponse(404, $"Notification with ID {notificationId} does not exist.");
             }
             // If userIds do not match, return 403
             if (callerId != -1 && notification.UserId != callerId)
@@ -131,7 +131,7 @@ namespace Logic.Services.NotificationService
             // If the notification does not exists, return 404
             if(notification == null)
             {
-                return new ServiceResponse(404, $"Notification with {notificationId} id does not exist.");
+                return new ServiceResponse(404, $"Notification with ID {notificationId} does not exist.");
             }
             // If userIds do not match, return 403
             if (userId != -1 && notification.UserId != userId)
