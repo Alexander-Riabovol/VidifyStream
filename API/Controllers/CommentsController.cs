@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/comments")]
     [ApiController]
     public class CommentsController : ControllerBase
     {
@@ -29,10 +29,27 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("/replies/{commentId}")]
-        public async Task<ActionResult<List<CommentGetDTO>>> GetReplies(int commentId)
+        [Route("replies/{commentId}")]
+        public async Task<ActionResult<List<CommentReplyGetDTO>>> GetReplies(int commentId)
         {
-            return Ok();
+            var response = await _commentService.GetReplies(commentId);
+            if (response.IsError)
+            {
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            return Ok(response.Content);
+        }
+
+        [HttpGet]
+        [Route("video/{videoId}")]
+        public async Task<ActionResult<List<CommentGetDTO>>> GetCommentsByVideoId(int videoId)
+        {
+            var response = await _commentService.GetCommentsByVideoId(videoId);
+            if (response.IsError)
+            {
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            return Ok(response.Content);
         }
     }
 }

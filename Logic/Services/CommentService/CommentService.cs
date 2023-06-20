@@ -1,8 +1,8 @@
 ﻿using Data.Context;
 using Data.Dtos;
 using Data.Dtos.Comment;
-using Data.Models;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Services.CommentService
 {
@@ -30,27 +30,40 @@ namespace Logic.Services.CommentService
             return ServiceResponse<CommentGetDTO>.OK(commentDto);
         }
 
-        public Task<ServiceResponse<IEnumerable<CommentGetDTO>>> GetCommentsByVideoId(int videoId)
+        public async Task<ServiceResponse<IEnumerable<CommentGetDTO>>> GetCommentsByVideoId(int videoId)
         {
-            throw new NotImplementedException();
+            var video = await _dataContext.Videos.Include(v => v.Comments)
+                                                 .FirstOrDefaultAsync(v => v.VideoId == videoId);
+
+            if (video == null)
+            {
+                return new ServiceResponse<IEnumerable<CommentGetDTO>>(
+                    404, $"Video with ID {videoId} does not exist.");
+            }
+
+            var commentsDtos = video.Comments?.Select(_mapper.Map<CommentGetDTO>);
+            return ServiceResponse<IEnumerable<CommentGetDTO>>.OK(commentsDtos);
         }
 
-        public async Task<ServiceResponse<IEnumerable<CommentGetDTO>>> GetReplies(int commentId)
+        public async Task<ServiceResponse<IEnumerable<CommentReplyGetDTO>>> GetReplies(int commentId)
         {
             var comment = await _dataContext.Comments.FindAsync(commentId);
 
             if (comment == null)
             {
-                return new ServiceResponse<IEnumerable<CommentGetDTO>>(
+                return new ServiceResponse<IEnumerable<CommentReplyGetDTO>>(
                     404, $"Comment with ID {commentId} does not exist.");
             }
             if (comment.RepliedToId != null)
             {
-                return new ServiceResponse<IEnumerable<CommentGetDTO>>(
-                    400, $"A comment with ID {commentId}  that you have provided is is not directly posted beneath the video.");
+                return new ServiceResponse<IEnumerable<CommentReplyGetDTO>>(
+                    400, $"A comment with ID {commentId} that you have provided is is not directly posted beneath the video.");
             }
 
-            throw new NotImplementedException();
+            var replies = await _dataContext.Comments.Where(c => c.RepliedToId == commentId).ToListAsync();
+            var repliesDtos = replies.Select(_mapper.Map<CommentReplyGetDTO>);
+
+            return ServiceResponse<IEnumerable<CommentReplyGetDTO>>.OK(repliesDtos);
         }
     }
 }
