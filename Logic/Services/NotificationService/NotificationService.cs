@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MapsterMapper;
 using Mapster;
+using System.Linq.Expressions;
 
 namespace Logic.Services.NotificationService
 {
@@ -38,7 +39,7 @@ namespace Logic.Services.NotificationService
             await _dataContext.AddAsync(notification);
             await _dataContext.SaveChangesAsync();
 
-            var notificationGetDto = _mapper.Map<NotificationGetDTO>(notification);
+            var notificationGetDto = await _mapper.From(notification).AdaptToTypeAsync<NotificationGetDTO>();
             // broadcast the new notification to a user group to whom it addressed
             await _notificationsHub.Clients.Group($"push-{notification.UserId}")
                 .SendAsync("push-notifications", new List<NotificationGetDTO> { notificationGetDto });
@@ -93,19 +94,19 @@ namespace Logic.Services.NotificationService
             {
                 user.Notifications = user.Notifications?.Where(n => !n.IsRead).ToList();
             }
-
-            //var result = user.Notifications?.Select(n => _mapper.Map<NotificationGetDTO>(n));
-
             
-            var mappingToDtosTasks = user.Notifications?.Select(
-                async n => await _mapper.From(n).AdaptToTypeAsync<NotificationGetDTO>());
-
-            if(mappingToDtosTasks == null)
+            if(user.Notifications == null)
             {
                 return ServiceResponse<IEnumerable<NotificationGetDTO>>.OK(null);
             }
-            var result = await Task.WhenAll(mappingToDtosTasks);
+
+            var result = new List<NotificationGetDTO>();
             
+            foreach(var notification in user.Notifications)
+            {
+                result.Add(await _mapper.From(notification).AdaptToTypeAsync<NotificationGetDTO>());
+            }
+
             return ServiceResponse<IEnumerable<NotificationGetDTO>>.OK(result);
         }
 

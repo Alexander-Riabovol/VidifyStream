@@ -67,10 +67,14 @@ namespace Logic.Mapping
                 // Set the notification video thumbnail to that of the video under which the comment is left, and
                 // Set the notification user's profile picture to the one that whoever left the comment has.
                 case NotificationType.Reply:
-                case NotificationType.LeftComment:
-                    var reply = await _dataContext.Comments.Include(c => c.Video).Include(c => c.User).FirstOrDefaultAsync(c => c.CommentId == src.CommentId);
-                    dest.VideoThumbnailUrl = reply?.Video?.ThumbnailUrl!;
+                    var reply = await _dataContext.Comments.Include(c => c.User).FirstOrDefaultAsync(c => c.CommentId == src.CommentId);
+                    dest.VideoThumbnailUrl = (await _dataContext.Videos.FindAsync(src.VideoId))?.ThumbnailUrl!;
                     dest.UserProfilePictureUrl = reply?.User?.ProfilePictureUrls?.FirstOrDefault()!;
+                    break;
+                case NotificationType.LeftComment:
+                    var leftcomment = await _dataContext.Comments.Include(c => c.Video).Include(c => c.User).FirstOrDefaultAsync(c => c.CommentId == src.CommentId);
+                    dest.VideoThumbnailUrl = leftcomment?.Video?.ThumbnailUrl!;
+                    dest.UserProfilePictureUrl = leftcomment?.User?.ProfilePictureUrls?.FirstOrDefault()!;
                     break;
                 // If it is a notification about an author leaving a like under a comment:
                 // Set the notification video thumbnail to that of the video under which the comment is left, and

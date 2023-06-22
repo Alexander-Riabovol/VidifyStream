@@ -44,6 +44,12 @@ builder.Services.AddAuthorization(options =>
               .AddAuthenticationSchemes(IAuthService.AuthScheme)
               .AddRequirements(new StatusRequirement(Status.Admin));
     });
+    options.AddPolicy("user+", policy =>
+    {
+        policy.RequireAuthenticatedUser()
+              .AddAuthenticationSchemes(IAuthService.AuthScheme)
+              .AddRequirements(new StatusRequirement(Status.User, Status.Janitor, Status.Admin));
+    });
 });
 
 // Add Mapster configurations
