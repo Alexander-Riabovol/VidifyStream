@@ -32,13 +32,5 @@ namespace API.Controllers
             var result = await _authService.LogOut();
             return StatusCode(result.StatusCode, result.Message);
         }
-
-        [HttpGet]
-        [Route("api/test")]
-        [Authorize(Policy = "admin-only")]
-        public IActionResult TestAdmin()
-        {
-            return Ok("you're admin");
-        }
     }
 }

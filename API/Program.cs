@@ -27,9 +27,13 @@ builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 // Add DB context
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Docker"),
     // Set Data project as source for migrations
-    assembly => assembly.MigrationsAssembly(typeof(DataContext).Assembly.FullName));
+    assembly =>
+    {
+        assembly.MigrationsAssembly(typeof(DataContext).Assembly.FullName);
+        assembly.EnableRetryOnFailure();
+    });
 });
 
 // Add Authentication
@@ -54,6 +58,9 @@ builder.Services.AddAuthorization(options =>
 
 // Add Mapster configurations
 builder.Services.AddMappings();
+
+// Add Health Checks
+builder.Services.AddHealthChecks();
 
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
@@ -82,10 +89,17 @@ app.UseAuthorization();
 // Register SignalR hubs
 app.MapHub<NotificationsHub>("/wss/notifications");
 
-// debug
+// Map the testing endpoints
 app.MapGet("/username", (HttpContext ctx) =>
 {
     return $"{ctx.User.FindFirst("id")?.Value}";
-}).RequireAuthorization("admin-only");
+}).RequireAuthorization("user+");
+
+app.MapGet("/test", () =>
+{
+    return "Succesfull!";
+}).AllowAnonymous();
+
+app.MapHealthChecks("/health");
 
 app.Run();
