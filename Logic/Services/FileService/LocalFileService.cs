@@ -1,5 +1,6 @@
 ﻿using Data.Dtos;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using System.Text;
 
 namespace Logic.Services.FileService
@@ -35,21 +36,41 @@ namespace Logic.Services.FileService
             var extension = fileNameParts.Length == 1 ? "" : '.' + fileNameParts.Last();
             // make up a new name for the file
             var newFileName = GenerateFileName(extension);
-            while (File.Exists(newFileName))
+            while (File.Exists(LocalBlobStoragePath + newFileName))
             {
                 newFileName = GenerateFileName(extension);
             }
 
-            await using var stream = File.OpenWrite(newFileName);
+            await using var stream = File.OpenWrite(LocalBlobStoragePath + newFileName);
             await file.CopyToAsync(stream);
 
             return ServiceResponse<string>.OK(newFileName);
         }
 
+        public async Task<ServiceResponse<(byte[], string)>> Download(string fileName)
+        {
+            if(!File.Exists(LocalBlobStoragePath + fileName))
+            {
+                return new ServiceResponse<(byte[], string)>(404, $"The File {fileName} does not exist");
+            }
+            await using var stream = File.OpenRead(LocalBlobStoragePath + fileName);
+            byte[] result = new byte[stream.Length];
+            
+            await stream.ReadAsync(result, 0, result.Length);
+
+            var provider = new FileExtensionContentTypeProvider();
+            if(!provider.TryGetContentType(stream.Name, out var contentType))
+            {
+                contentType = "application/octec-stream";
+            }
+
+            return ServiceResponse<(byte[], string)>.OK((result, contentType));
+        }
+
         private string GenerateFileName(string extension)
         {
             var random = new Random();
-            var sb = new StringBuilder(LocalBlobStoragePath);
+            var sb = new StringBuilder();
             int count = random.Next(7, 12);
             for (; count > 0; count--)
             {
