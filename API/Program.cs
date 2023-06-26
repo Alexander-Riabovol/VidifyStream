@@ -9,6 +9,8 @@ using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Logic.Services.CommentService;
+using Logic.Services.UserService;
+using Logic.Services.FileService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,15 +21,18 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<AppData>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IFileService, LocalFileService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 
 // Add DB context
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Docker"),
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
     // Set Data project as source for migrations
     assembly =>
     {
