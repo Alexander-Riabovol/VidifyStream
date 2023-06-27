@@ -11,6 +11,10 @@ using Microsoft.EntityFrameworkCore;
 using Logic.Services.CommentService;
 using Logic.Services.UserService;
 using Logic.Services.FileService;
+using FluentValidation;
+using Data;
+using FluentValidation.AspNetCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +40,7 @@ builder.Services.AddDbContext<DataContext>(options =>
     // Set Data project as source for migrations
     assembly =>
     {
-        assembly.MigrationsAssembly(typeof(DataContext).Assembly.FullName);
+        assembly.MigrationsAssembly(typeof(IDataAssemblyMarker).Assembly.FullName);
         assembly.EnableRetryOnFailure();
     });
 });
@@ -63,6 +67,10 @@ builder.Services.AddAuthorization(options =>
 
 // Add Mapster configurations
 builder.Services.AddMappings();
+
+// Add Validation
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<ILogicAssemblyMarker>();
 
 // Add Health Checks
 builder.Services.AddHealthChecks();
