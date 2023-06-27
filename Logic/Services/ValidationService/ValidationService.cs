@@ -1,7 +1,9 @@
 ﻿using Data.Dtos;
+using Data.Dtos.Comment;
 using Data.Dtos.Notification;
 using FluentValidation;
 using FluentValidation.Results;
+using Logic.Validations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Logic.Services.ValidationService
@@ -9,10 +11,16 @@ namespace Logic.Services.ValidationService
     public class ValidationService : IValidationService
     {
         private readonly IValidator<NotificationCreateDTO> _notificationCreateDTOValidator;
+        private readonly IValidator<CommentPostDTO> _commentPostDTOValidator;
+        private readonly IValidator<ReplyPostDTO> _replyPostDTOValidator;
 
-        public ValidationService(IValidator<NotificationCreateDTO> notificationCreateDTOValidator) 
+        public ValidationService(IValidator<NotificationCreateDTO> notificationCreateDTOValidator,
+                                 IValidator<CommentPostDTO> commentPostDTOValidator,
+                                 IValidator<ReplyPostDTO> replyPostDTOValidator)
         {
             _notificationCreateDTOValidator = notificationCreateDTOValidator;
+            _commentPostDTOValidator = commentPostDTOValidator;
+            _replyPostDTOValidator = replyPostDTOValidator;
         }
 
         // TO DO: Test preformance with ValueTask return type
@@ -23,6 +31,8 @@ namespace Logic.Services.ValidationService
             dynamic validator;
             bool isAsync;
             if (obj is NotificationCreateDTO) { validator = _notificationCreateDTOValidator; isAsync = false; }
+            else if (obj is CommentPostDTO) { validator = _commentPostDTOValidator; isAsync = true; }
+            else if (obj is ReplyPostDTO) { validator = _replyPostDTOValidator; isAsync = true; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 
             ValidationResult validationResult = isAsync ? await validator.ValidateAsync(obj) : validator.Validate(obj);
