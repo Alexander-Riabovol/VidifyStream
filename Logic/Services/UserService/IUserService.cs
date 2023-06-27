@@ -5,6 +5,6 @@ namespace Logic.Services.UserService
 {
     public interface IUserService
     {
-        Task<ServiceResponse> UploadProfilePicture(IFormFile file);
+        Task<ServiceResponse<string>> UploadProfilePicture(IFormFile file);
     }
 }

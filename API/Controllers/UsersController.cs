@@ -18,10 +18,14 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("pfp")]
-        public async Task<IActionResult> UploadProfilePicture(IFormFile file, CancellationToken cancellationToken)
+        public async Task<ActionResult<string>> UploadProfilePicture(IFormFile file, CancellationToken cancellationToken)
         {
             var result = await _userService.UploadProfilePicture(file);
-            return StatusCode(result.StatusCode, result.Message);
+            if(result.IsError) 
+            {
+                return StatusCode(result.StatusCode, result.Message);
+            }
+            return Ok(result.Content);
         }
     }
 }

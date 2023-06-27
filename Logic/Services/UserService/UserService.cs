@@ -16,11 +16,11 @@ namespace Logic.Services.UserService
             _fileService = fileService;
         }
 
-        public async Task<ServiceResponse> UploadProfilePicture(IFormFile file)
+        public async Task<ServiceResponse<string>> UploadProfilePicture(IFormFile file)
         {
             var result = await _fileService.Upload(file);
-            if(!result.IsError) return ServiceResponse.OK;
-            return new ServiceResponse(result.StatusCode, result.Message!);
+            if(!result.IsError) return ServiceResponse<string>.OK(result.Content);
+            return new ServiceResponse<string>(result.StatusCode, result.Message!);
         }
     }
 }
