@@ -4,17 +4,16 @@ using Logic.Mapping;
 using Data.Models;
 using Logic;
 using Logic.Hubs;
-using Logic.Services.AuthService;
-using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Logic.Services.AuthService;
+using Logic.Services.NotificationService;
 using Logic.Services.CommentService;
 using Logic.Services.UserService;
 using Logic.Services.FileService;
+using Logic.Services.ValidationService;
 using FluentValidation;
 using Data;
-using FluentValidation.AspNetCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +68,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddMappings();
 
 // Add Validation
-builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+builder.Services.AddScoped<IValidationService, ValidationService>();
 builder.Services.AddValidatorsFromAssemblyContaining<ILogicAssemblyMarker>();
 
 // Add Health Checks
