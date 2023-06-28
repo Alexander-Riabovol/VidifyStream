@@ -1,6 +1,7 @@
 ﻿using Data.Dtos;
 using Data.Dtos.Comment;
 using Data.Dtos.Notification;
+using Data.Dtos.User;
 using FluentValidation;
 using FluentValidation.Results;
 using Logic.Validations;
@@ -13,14 +14,20 @@ namespace Logic.Services.ValidationService
         private readonly IValidator<NotificationCreateDTO> _notificationCreateDTOValidator;
         private readonly IValidator<CommentPostDTO> _commentPostDTOValidator;
         private readonly IValidator<ReplyPostDTO> _replyPostDTOValidator;
+        private readonly IValidator<UserLoginDTO> _userLoginDTOValidator;
+        private readonly IValidator<UserRegisterDTO> _userRegisterDTOValidator;
 
         public ValidationService(IValidator<NotificationCreateDTO> notificationCreateDTOValidator,
                                  IValidator<CommentPostDTO> commentPostDTOValidator,
-                                 IValidator<ReplyPostDTO> replyPostDTOValidator)
+                                 IValidator<ReplyPostDTO> replyPostDTOValidator,
+                                 IValidator<UserLoginDTO> userLoginDTOValidator,
+                                 IValidator<UserRegisterDTO> userRegisterDTOValidator)
         {
             _notificationCreateDTOValidator = notificationCreateDTOValidator;
             _commentPostDTOValidator = commentPostDTOValidator;
             _replyPostDTOValidator = replyPostDTOValidator;
+            _userLoginDTOValidator = userLoginDTOValidator;
+            _userRegisterDTOValidator = userRegisterDTOValidator;
         }
 
         // TO DO: Test preformance with ValueTask return type
@@ -33,6 +40,8 @@ namespace Logic.Services.ValidationService
             if (obj is NotificationCreateDTO) { validator = _notificationCreateDTOValidator; isAsync = false; }
             else if (obj is CommentPostDTO) { validator = _commentPostDTOValidator; isAsync = true; }
             else if (obj is ReplyPostDTO) { validator = _replyPostDTOValidator; isAsync = true; }
+            else if (obj is UserLoginDTO) { validator = _userLoginDTOValidator; isAsync = false; }
+            else if (obj is UserRegisterDTO) { validator = _userRegisterDTOValidator; isAsync = false; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 
             ValidationResult validationResult = isAsync ? await validator.ValidateAsync(obj) : validator.Validate(obj);

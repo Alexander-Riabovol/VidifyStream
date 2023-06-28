@@ -7,6 +7,7 @@ namespace Logic.Services.AuthService
     {
         const string AuthScheme = "cookie";
         Task<ServiceResponse> LogIn(UserLoginDTO loginData);
+        Task<ServiceResponse> Register(UserRegisterDTO registerData);
         Task<ServiceResponse> LogOut();
     }
 }
