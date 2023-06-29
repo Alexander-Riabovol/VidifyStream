@@ -57,51 +57,39 @@ namespace Logic.Services.CommentService
             return ServiceResponse<IEnumerable<CommentGetDTO>>.OK(commentsDtos);
         }
 
-        public async Task<ServiceResponse<IEnumerable<CommentReplyGetDTO>>> GetReplies(int commentId)
+        public async Task<ServiceResponse<IEnumerable<ReplyGetDTO>>> GetReplies(int commentId)
         {
             var comment = await _dataContext.Comments.FindAsync(commentId);
 
             if (comment == null)
             {
-                return new ServiceResponse<IEnumerable<CommentReplyGetDTO>>(
+                return new ServiceResponse<IEnumerable<ReplyGetDTO>>(
                     404, $"Comment with ID {commentId} does not exist.");
             }
             if (comment.RepliedToId != null)
             {
-                return new ServiceResponse<IEnumerable<CommentReplyGetDTO>>(
+                return new ServiceResponse<IEnumerable<ReplyGetDTO>>(
                     400, $"A comment with ID {commentId} that you have provided is is not directly posted beneath the video.");
             }
 
             var replies = await _dataContext.Comments.Where(c => c.RepliedToId == commentId).ToListAsync();
-            var repliesDtos = replies.Select(_mapper.Map<CommentReplyGetDTO>);
+            var repliesDtos = replies.Select(_mapper.Map<ReplyGetDTO>);
 
-            return ServiceResponse<IEnumerable<CommentReplyGetDTO>>.OK(repliesDtos);
+            return ServiceResponse<IEnumerable<ReplyGetDTO>>.OK(repliesDtos);
         }
 
-        public async Task<ServiceResponse> PostComment(int videoId, CommentPostDTO commentDto)
+        public async Task<ServiceResponse> PostComment(CommentPostDTO commentPostDTO)
         {
-            // MOVE VALIDATION SOMEWHERE
-            if (commentDto == null || commentDto.Text == null)
-            {
-                return new ServiceResponse(400, "Bad Request");
-            }
-
-            var video = await _dataContext.Videos.FindAsync(videoId);
-            if(video == null)
-            {
-                return new ServiceResponse(404, $"Video with ID {videoId} does not exist.");
-            }
-
-            var comment = _mapper.Map<Comment>(commentDto);
-            comment.VideoId = videoId;
+            var comment = _mapper.Map<Comment>(commentPostDTO);
             comment.UserId = int.Parse(_accessor.HttpContext!.User!.Claims.First(c => c.Type == "id")!.Value);
 
             await _dataContext.AddAsync(comment);
             await _dataContext.SaveChangesAsync();
 
+            var video = (await _dataContext.Videos.FindAsync(commentPostDTO.VideoId))!;
             await _notificationService.CreateAndSend(new NotificationCreateDTO()
             { 
-                VideoId = videoId,
+                VideoId = commentPostDTO.VideoId,
                 CommentId = comment.CommentId,
                 UserId = video.UserId,
                 Type = NotificationType.LeftComment,
@@ -111,27 +99,15 @@ namespace Logic.Services.CommentService
             return ServiceResponse.OK;
         }
 
-        public async Task<ServiceResponse> PostReply(int repliedToId, CommentPostDTO commentDto)
+        public async Task<ServiceResponse> PostReply(ReplyPostDTO replyPostDTO)
         {
-            // MOVE VALIDATION SOMEWHERE
-            if (commentDto == null || commentDto.Text == null)
-            {
-                return new ServiceResponse(400, "Bad Request");
-            }
-
-            var repliedTo = await _dataContext.Comments.FindAsync(repliedToId);
-            if (repliedTo == null)
-            {
-                return new ServiceResponse(404, $"Comment with ID {repliedToId} does not exist.");
-            }
-
-            var comment = _mapper.Map<Comment>(commentDto);
-            comment.RepliedToId = repliedToId;
+            var comment = _mapper.Map<Comment>(replyPostDTO);
             comment.UserId = int.Parse(_accessor.HttpContext!.User!.Claims.First(c => c.Type == "id")!.Value);
 
             await _dataContext.AddAsync(comment);
             await _dataContext.SaveChangesAsync();
 
+            var repliedTo = (await _dataContext.Comments.FindAsync(replyPostDTO.RepliedToId))!;
             var top = repliedTo;
             while(top!.RepliedToId != null)
             {

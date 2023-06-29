@@ -1,5 +1,9 @@
 ﻿using Data.Dtos.Notification;
+using FluentValidation;
 using Logic.Services.NotificationService;
+using Logic.Services.ValidationService;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -13,10 +17,13 @@ namespace API.Controllers
     public class NotificationsController : ControllerBase
     {
         private readonly INotificationService _notificationService;
+        private readonly IValidationService _validationService;
 
-        public NotificationsController(INotificationService notificationService)
+        public NotificationsController(INotificationService notificationService,
+                                       IValidationService validationService)
         {
             _notificationService = notificationService;
+            _validationService = validationService;
         }
 
         [HttpGet]
@@ -44,9 +51,16 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(NotificationCreateDTO notificationDto)
+        public async Task<IActionResult> Post(NotificationAdminCreateDTO notificationDto)
         {
-            var response = await _notificationService.CreateAndSend(notificationDto);
+            var validationResult = await _validationService.Validate(notificationDto);
+            if(validationResult.IsError) 
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var response = await _notificationService.CreateAndSend(notificationDto.Adapt<NotificationCreateDTO>());
             return StatusCode(response.StatusCode, response.Message);
         }
     }

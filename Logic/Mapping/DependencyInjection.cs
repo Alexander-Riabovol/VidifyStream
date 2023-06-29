@@ -25,7 +25,7 @@ namespace Logic.Mapping
             services.AddScoped<NotificationMappingConfig>();
             // Create a temporary ServiceProvider
             var provider = services.BuildServiceProvider();
-            // Apply IRegister classes that now work with DI
+            // Apply only IRegister classes that use DI
             config.Apply(
                 provider.GetService<NotificationMappingConfig>()!
                 );

@@ -1,6 +1,7 @@
 ﻿using Data.Dtos.User;
 using Data.Models;
 using Logic.Services.AuthService;
+using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,17 +12,41 @@ namespace API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IValidationService _validationService;
 
-        public AuthController(IAuthService authService) 
+        public AuthController(IAuthService authService, IValidationService validationService) 
         {
             _authService = authService;
+            _validationService = validationService;
         }
 
         [HttpPost]
         [Route("api/login")]
-        public async Task<IActionResult> Login(UserLoginDTO loginDTO)
+        public async Task<IActionResult> Login(UserLoginDTO loginData)
         {
-            var result = await _authService.LogIn(loginDTO);
+            var validationResult = await _validationService.Validate(loginData);
+            if (validationResult.IsError)
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var result = await _authService.LogIn(loginData);
+            return StatusCode(result.StatusCode, result.Message);
+        }
+
+        [HttpPost]
+        [Route("api/register")]
+        public async Task<IActionResult> Register(UserRegisterDTO registerData)
+        {
+            var validationResult = await _validationService.Validate(registerData);
+            if (validationResult.IsError)
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var result = await _authService.Register(registerData);
             return StatusCode(result.StatusCode, result.Message);
         }
 

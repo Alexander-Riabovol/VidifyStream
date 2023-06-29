@@ -5,10 +5,10 @@ namespace Logic.Services.CommentService
 {
     public interface ICommentService
     {
-        Task<ServiceResponse<IEnumerable<CommentReplyGetDTO>>> GetReplies(int commentId);
+        Task<ServiceResponse<IEnumerable<ReplyGetDTO>>> GetReplies(int commentId);
         Task<ServiceResponse<IEnumerable<CommentGetDTO>>> GetCommentsByVideoId(int videoId);
         Task<ServiceResponse<CommentGetDTO>> GetComment(int commentId);
-        Task<ServiceResponse> PostComment(int videoId, CommentPostDTO commentDto);
-        Task<ServiceResponse> PostReply(int repliedToId, CommentPostDTO commentDto);
+        Task<ServiceResponse> PostComment(CommentPostDTO commentPostDTO);
+        Task<ServiceResponse> PostReply(ReplyPostDTO replyPostDTO);
     }
 }

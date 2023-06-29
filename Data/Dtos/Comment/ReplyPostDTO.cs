@@ -1,8 +1,8 @@
 ﻿namespace Data.Dtos.Comment
 {
-    public record CommentPostDTO
+    public record ReplyPostDTO
     {
-        public int VideoId { get; set; }
+        public int RepliedToId { get; set; }
         public string Text { get; set; } = null!;
     }
 }

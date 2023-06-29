@@ -1,5 +1,6 @@
 ﻿using Data.Dtos.Comment;
 using Logic.Services.CommentService;
+using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace API.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly ICommentService _commentService;
+        private readonly IValidationService _validationService;
 
-        public CommentsController(ICommentService commentService) 
+        public CommentsController(ICommentService commentService, IValidationService validationService) 
         {
             _commentService = commentService;
+            _validationService = validationService;
         }
 
         [HttpGet]
@@ -31,7 +34,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("replies/{commentId}")]
-        public async Task<ActionResult<List<CommentReplyGetDTO>>> GetReplies(int commentId)
+        public async Task<ActionResult<List<ReplyGetDTO>>> GetReplies(int commentId)
         {
             var response = await _commentService.GetReplies(commentId);
             if (response.IsError)
@@ -54,20 +57,34 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Route("video/{videoId}")]
+        [Route("video")]
         [Authorize(Policy = "user+")]
-        public async Task<IActionResult> Post(int videoId, CommentPostDTO commentDto)
+        public async Task<IActionResult> Post(CommentPostDTO commentPostDto)
         {
-            var response = await _commentService.PostComment(videoId, commentDto);
+            var validationResult = await _validationService.Validate(commentPostDto);
+            if (validationResult.IsError)
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var response = await _commentService.PostComment(commentPostDto);
             return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpPost]
-        [Route("replies/{commentId}")]
+        [Route("replies")]
         [Authorize(Policy = "user+")]
-        public async Task<IActionResult> PostReply(int commentId, CommentPostDTO commentDto)
+        public async Task<IActionResult> PostReply(ReplyPostDTO replyPostDTO)
         {
-            var response = await _commentService.PostReply(commentId, commentDto);
+            var validationResult = await _validationService.Validate(replyPostDTO);
+            if (validationResult.IsError)
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var response = await _commentService.PostReply(replyPostDTO);
             return StatusCode(response.StatusCode, response.Message);
         }
     }

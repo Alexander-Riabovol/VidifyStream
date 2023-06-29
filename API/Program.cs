@@ -4,13 +4,16 @@ using Logic.Mapping;
 using Data.Models;
 using Logic;
 using Logic.Hubs;
-using Logic.Services.AuthService;
-using Logic.Services.NotificationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Logic.Services.AuthService;
+using Logic.Services.NotificationService;
 using Logic.Services.CommentService;
 using Logic.Services.UserService;
 using Logic.Services.FileService;
+using Logic.Services.ValidationService;
+using FluentValidation;
+using Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +39,7 @@ builder.Services.AddDbContext<DataContext>(options =>
     // Set Data project as source for migrations
     assembly =>
     {
-        assembly.MigrationsAssembly(typeof(DataContext).Assembly.FullName);
+        assembly.MigrationsAssembly(typeof(IDataAssemblyMarker).Assembly.FullName);
         assembly.EnableRetryOnFailure();
     });
 });
@@ -63,6 +66,10 @@ builder.Services.AddAuthorization(options =>
 
 // Add Mapster configurations
 builder.Services.AddMappings();
+
+// Add Validation
+builder.Services.AddScoped<IValidationService, ValidationService>();
+builder.Services.AddValidatorsFromAssemblyContaining<ILogicAssemblyMarker>();
 
 // Add Health Checks
 builder.Services.AddHealthChecks();
