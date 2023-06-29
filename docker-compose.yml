@@ -8,7 +8,8 @@ services:
         ports:
           - "7173:80"
         depends_on:
-          - db
+            db:
+                condition: service_healthy
 
     db:
         image: "mcr.microsoft.com/mssql/server:2022-latest"
@@ -18,3 +19,9 @@ services:
         environment:
             SA_PASSWORD: "D0ckerDBPass"
             ACCEPT_EULA: "Y"
+        # health-check will always be succesful, we need it to make api container wait before db has fully started.
+        healthcheck:
+            test: ["CMD-SHELL", "echo 'Container is healthy'"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
