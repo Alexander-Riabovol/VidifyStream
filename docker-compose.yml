@@ -6,7 +6,11 @@ services:
           context: .
           dockerfile: Dockerfile
         ports:
-          - "8080:80"
+          - "7173:80"
+        # Enter your local machine ip here
+        # Temporary solution
+        extra_hosts: 
+          - "localhost:192.168.56.1"
         depends_on:
           - db
 

@@ -29,13 +29,12 @@ builder.Services.AddScoped<IFileService, LocalFileService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 
 // Add DB context
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Docker"),
     // Set Data project as source for migrations
     assembly =>
     {
