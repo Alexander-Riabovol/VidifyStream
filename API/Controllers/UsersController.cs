@@ -22,7 +22,8 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("pfp")]
-        public async Task<ActionResult<string>> UploadProfilePicture(IFormFile file, CancellationToken cancellationToken)
+        public async Task<ActionResult<string>> UploadProfilePicture(IFormFile file, 
+                                                                     CancellationToken cancellationToken)
         {
             var validationResult = _validationService.Validate(file, "image");
             if (validationResult.IsError)

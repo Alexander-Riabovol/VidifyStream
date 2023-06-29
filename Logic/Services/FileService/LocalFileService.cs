@@ -14,7 +14,7 @@ namespace Logic.Services.FileService
             // Get Current Directory
             var sb = new StringBuilder(Directory.GetCurrentDirectory());
             // Retrive Parent Directory
-            while (sb[sb.Length - 1] != '\\')
+            while (sb[sb.Length - 1] != Path.DirectorySeparatorChar)
             {
                 sb.Remove(sb.Length - 1, 1);
             }
@@ -25,7 +25,7 @@ namespace Logic.Services.FileService
             {
                 Directory.CreateDirectory(sb.ToString());
             }
-            sb.Append('\\');
+            sb.Append(Path.DirectorySeparatorChar);
             LocalBlobStoragePath = sb.ToString();
         }
 

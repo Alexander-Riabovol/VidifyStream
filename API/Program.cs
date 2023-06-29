@@ -108,7 +108,7 @@ app.MapGet("/username", (HttpContext ctx) =>
 
 app.MapGet("/test", () =>
 {
-    return "Succesfull!";
+    return Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
 }).AllowAnonymous();
 
 app.MapHealthChecks("/health");
