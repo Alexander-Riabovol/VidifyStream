@@ -14,12 +14,12 @@ namespace Logic.Validations
                                 .Length(1, 60);
             RuleFor(x => x.BirthDate).Custom((date, context) =>
             {
-                if (date > DateTime.Now)
+                if (date > DateTime.Now.Date)
                 {
                     context.AddFailure(new ValidationFailure(context.PropertyName,
                         $"Invalid '{context.PropertyName}': Future date detected. Please enter a valid date."));
                 }
-                else if (date < DateTime.Now.AddYears(-100))
+                else if (date < DateTime.Now.Date.AddYears(-100))
                 {
                     context.AddFailure(new ValidationFailure(context.PropertyName,
                         $"Invalid '{context.PropertyName}': Date exceeds allowable range. Please provide a valid '{context.PropertyName}' within the past century."));

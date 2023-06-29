@@ -4,7 +4,7 @@ using Data.Dtos.Notification;
 using Data.Dtos.User;
 using FluentValidation;
 using FluentValidation.Results;
-using Logic.Validations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Logic.Services.ValidationService
@@ -58,6 +58,23 @@ namespace Logic.Services.ValidationService
                 }
 
                 return new ServiceResponse<ModelStateDictionary>(400, "", modelStateDictionary);      
+            }
+
+            return ServiceResponse<ModelStateDictionary>.OK(null);
+        }
+        // If it is possible, maybe it is better to do a couple of IFormFile validator classes, 
+        // and use them directly in controllers, to not rewrite logic in case of IFormFile being a part of a model.
+        public ServiceResponse<ModelStateDictionary> Validate(IFormFile formFile, string requiredType)
+        {
+            if(!formFile.ContentType.Contains(requiredType))
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+
+                modelStateDictionary.AddModelError(
+                    "ContentType",
+                    $"Invalid file format. Please ensure you are uploading a file with the correct content type: {requiredType}.");
+
+                return new ServiceResponse<ModelStateDictionary>(400, "", modelStateDictionary);
             }
 
             return ServiceResponse<ModelStateDictionary>.OK(null);
