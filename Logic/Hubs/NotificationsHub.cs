@@ -57,6 +57,15 @@ namespace Logic.Hubs
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
+            // Context.Abort() in OnConnectedAsync function calls OnDisconnectedAsync()
+            // in any case, so an identity check will prevent InvalidOperationException
+            var identity = Context.User?.Identity;
+            if (identity == null || !identity.IsAuthenticated
+                || identity.AuthenticationType != IAuthService.AuthScheme)
+            {
+                return base.OnDisconnectedAsync(exception);
+            }
+
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
             
             _data.ActiveNotificationUsers[userId]--;
