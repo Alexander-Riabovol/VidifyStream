@@ -34,7 +34,7 @@ builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 // Add DB context
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Docker"),
+    options.UseSqlServer(builder.Configuration.GetConnectionString(AppData.InDocker ? "Docker" : "Default"),
     // Set Data project as source for migrations
     assembly =>
     {
