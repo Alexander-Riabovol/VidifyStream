@@ -26,14 +26,11 @@ namespace Logic.Services.NotificationService
             _mapper = mapper;
         }
 
+        // TO DO: Write a second createAndSend function for sending notifications via Admin NotificationController
+        // and rewrite this function with Notification as a parameter to avoid mapping.
+        // (It will be used by server only anyway)
         public async Task<ServiceResponse> CreateAndSend(NotificationCreateDTO notificationCreateDto)
         {
-            // return 404 if user to whom addressed a notification doesn't exist
-            var user = await _dataContext.Users.FindAsync(notificationCreateDto.UserId);
-            if(user == null) { return new ServiceResponse(404, "User Not Found");}
-
-            // add validation here
-
             var notification = _mapper.Map<Notification>(notificationCreateDto);
 
             await _dataContext.AddAsync(notification);

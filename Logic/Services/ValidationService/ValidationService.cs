@@ -11,19 +11,19 @@ namespace Logic.Services.ValidationService
 {
     public class ValidationService : IValidationService
     {
-        private readonly IValidator<NotificationCreateDTO> _notificationCreateDTOValidator;
+        private readonly IValidator<NotificationAdminCreateDTO> _notificationAdminCreateDTOValidator;
         private readonly IValidator<CommentPostDTO> _commentPostDTOValidator;
         private readonly IValidator<ReplyPostDTO> _replyPostDTOValidator;
         private readonly IValidator<UserLoginDTO> _userLoginDTOValidator;
         private readonly IValidator<UserRegisterDTO> _userRegisterDTOValidator;
 
-        public ValidationService(IValidator<NotificationCreateDTO> notificationCreateDTOValidator,
+        public ValidationService(IValidator<NotificationAdminCreateDTO> notificationAdminCreateDTOValidator,
                                  IValidator<CommentPostDTO> commentPostDTOValidator,
                                  IValidator<ReplyPostDTO> replyPostDTOValidator,
                                  IValidator<UserLoginDTO> userLoginDTOValidator,
                                  IValidator<UserRegisterDTO> userRegisterDTOValidator)
         {
-            _notificationCreateDTOValidator = notificationCreateDTOValidator;
+            _notificationAdminCreateDTOValidator = notificationAdminCreateDTOValidator;
             _commentPostDTOValidator = commentPostDTOValidator;
             _replyPostDTOValidator = replyPostDTOValidator;
             _userLoginDTOValidator = userLoginDTOValidator;
@@ -37,7 +37,7 @@ namespace Logic.Services.ValidationService
                 return new ServiceResponse<ModelStateDictionary>(400, "The server cannot process the request because the provided object is null.");
             dynamic validator;
             bool isAsync;
-            if (obj is NotificationCreateDTO) { validator = _notificationCreateDTOValidator; isAsync = false; }
+            if (obj is NotificationAdminCreateDTO) { validator = _notificationAdminCreateDTOValidator; isAsync = true; }
             else if (obj is CommentPostDTO) { validator = _commentPostDTOValidator; isAsync = true; }
             else if (obj is ReplyPostDTO) { validator = _replyPostDTOValidator; isAsync = true; }
             else if (obj is UserLoginDTO) { validator = _userLoginDTOValidator; isAsync = false; }

@@ -2,6 +2,8 @@
 using FluentValidation;
 using Logic.Services.NotificationService;
 using Logic.Services.ValidationService;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -49,7 +51,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(NotificationCreateDTO notificationDto)
+        public async Task<IActionResult> Post(NotificationAdminCreateDTO notificationDto)
         {
             var validationResult = await _validationService.Validate(notificationDto);
             if(validationResult.IsError) 
@@ -58,7 +60,7 @@ namespace API.Controllers
                 else return ValidationProblem(validationResult.Content);
             }
 
-            var response = await _notificationService.CreateAndSend(notificationDto);
+            var response = await _notificationService.CreateAndSend(notificationDto.Adapt<NotificationCreateDTO>());
             return StatusCode(response.StatusCode, response.Message);
         }
     }
