@@ -1,0 +1,11 @@
+﻿@page
+
+<p>@ViewBag.FileName</p>
+
+<div id="player"></div>
+<script src="~/playerjs.js" type="text/javascript" async></script>
+<script>
+function PlayerjsAsync(){
+    player = new Playerjs({id:"player", file:"@ViewBag.FileRoute"});
+}
+</script>

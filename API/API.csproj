@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Logic\Logic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\playerjs.js" />
+  </ItemGroup>
+
 </Project>
