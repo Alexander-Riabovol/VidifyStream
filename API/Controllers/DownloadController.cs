@@ -1,4 +1,5 @@
-﻿using Logic.Services.FileService;
+﻿using Data.Dtos;
+using Logic.Services.FileService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
