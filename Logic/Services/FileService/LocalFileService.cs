@@ -1,6 +1,7 @@
 ﻿using Data.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Logic.Services.FileService
@@ -8,6 +9,13 @@ namespace Logic.Services.FileService
     public class LocalFileService : IFileService
     {
         public static string LocalBlobStoragePath { get; }
+        private static readonly string _rangeMediaType = "text/plain";
+
+        private readonly IHttpContextAccessor _accessor;
+        public LocalFileService(IHttpContextAccessor accessor)
+        {
+            _accessor = accessor;
+        }
 
         static LocalFileService() 
         { 
@@ -54,6 +62,25 @@ namespace Logic.Services.FileService
                 return new ServiceResponse<(byte[], string)>(404, $"The File {fileName} does not exist");
             }
             await using var stream = File.OpenRead(LocalBlobStoragePath + fileName);
+
+            var rangeHeader = _accessor.HttpContext!.Request.Headers.Range;
+            if (rangeHeader.Any())
+            {
+                RangeHeaderValue rangeHeaderValue;
+                bool parseResult = RangeHeaderValue.TryParse(rangeHeader, out rangeHeaderValue!);
+
+                if(!parseResult) 
+                {
+                    return new ServiceResponse<(byte[], string)>(400, "The format of Range header is invalid.");
+                }
+
+                var range = new ByteRangeStreamContent(stream, rangeHeaderValue, _rangeMediaType);
+
+                var rangeResult = await range.ReadAsByteArrayAsync();
+
+                return ServiceResponse<(byte[], string)>.OK((rangeResult, _rangeMediaType));
+            }
+
             byte[] result = new byte[stream.Length];
             
             await stream.ReadAsync(result, 0, result.Length);
