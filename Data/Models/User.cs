@@ -16,7 +16,7 @@
         public string? Bio { get; set; }
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public List<string>? ProfilePictureUrls { get; set; }
+        public List<string> ProfilePictureUrls { get; set; } = new List<string>();
         public List<string>? UsedIPs { get; set; }
         public Status Status { get; set; }
         public List<Video>? Videos { get; set; }

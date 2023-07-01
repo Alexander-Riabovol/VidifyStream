@@ -7,15 +7,14 @@ using Logic.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Logic.Services.AuthService;
-using Logic.Services.NotificationService;
 using Logic.Services.CommentService;
-using Logic.Services.UserService;
 using Logic.Services.FileService;
+using Logic.Services.NotificationService;
+using Logic.Services.UserService;
 using Logic.Services.ValidationService;
+using Logic.Services.VideoService;
 using FluentValidation;
 using Data;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +29,7 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IFileService, LocalFileService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IVideoService, VideoService>();
 
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 

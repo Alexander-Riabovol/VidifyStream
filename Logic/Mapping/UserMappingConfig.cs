@@ -1,7 +1,6 @@
 ﻿using Data.Dtos.User;
 using Data.Models;
 using Mapster;
-using System.Runtime.CompilerServices;
 
 namespace Logic.Mapping
 {
