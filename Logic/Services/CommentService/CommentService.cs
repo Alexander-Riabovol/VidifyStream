@@ -3,9 +3,11 @@ using Data.Dtos;
 using Data.Dtos.Comment;
 using Data.Dtos.Notification;
 using Data.Models;
+using Logic.Extensions;
 using Logic.Services.NotificationService;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -102,7 +104,11 @@ namespace Logic.Services.CommentService
         public async Task<ServiceResponse> PostReply(ReplyPostDTO replyPostDTO)
         {
             var comment = _mapper.Map<Comment>(replyPostDTO);
-            comment.UserId = int.Parse(_accessor.HttpContext!.User!.Claims.First(c => c.Type == "id")!.Value);
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse<string>(idResult.StatusCode, idResult.Message!);
+
+            comment.UserId = idResult.Content;
 
             await _dataContext.AddAsync(comment);
             await _dataContext.SaveChangesAsync();
@@ -124,6 +130,31 @@ namespace Logic.Services.CommentService
                 Type = NotificationType.Reply,
                 Message = $"{user!.Name} replied to your comment: '{comment.Text}'."
             });
+
+            return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse> Put(int commentId, CommentPutDTO commentPutDTO)
+        {
+            var comment = await _dataContext.Comments.FindAsync(commentId);
+
+            if(comment == null)
+            {
+                return new ServiceResponse(404, $"Comment with ID {commentId} does not exist.");
+            }
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse<string>(idResult.StatusCode, idResult.Message!);
+
+            if(idResult.Content != comment.UserId)
+            {
+                return new ServiceResponse(403, "Forbidden");
+            }
+
+            comment = _mapper.Map(commentPutDTO, comment);
+
+            _dataContext.Update(comment);
+            await _dataContext.SaveChangesAsync();
 
             return ServiceResponse.OK;
         }

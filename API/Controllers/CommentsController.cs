@@ -87,5 +87,21 @@ namespace API.Controllers
             var response = await _commentService.PostReply(replyPostDTO);
             return StatusCode(response.StatusCode, response.Message);
         }
+
+        [HttpPut]
+        [Route("{commentId}")]
+        [Authorize(Policy = "user+")]
+        public async Task<IActionResult> Put([FromRoute]int commentId, [FromBody]CommentPutDTO commentPutDTO)
+        {
+            var validationResult = _validationService.Validate(commentPutDTO);
+            if (validationResult.IsError)
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var response = await _commentService.Put(commentId, commentPutDTO);
+            return StatusCode(response.StatusCode, response.Message);
+        }
     }
 }

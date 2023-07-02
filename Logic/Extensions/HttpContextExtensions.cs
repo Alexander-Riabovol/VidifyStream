@@ -1,20 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Net;
+﻿using Data.Dtos;
+using Microsoft.AspNetCore.Http;
 
 namespace Logic.Extensions
 {
     public static class HttpContextExtensions
     {
-        public static string DeriveIp(this HttpContext context)
+        public static ServiceResponse<int> RetriveUserId(this HttpContext context)
         {
-            var ip = context.Connection.RemoteIpAddress!.ToString();
-
-            if (ip == "::1") 
+            int id;
+            if (!int.TryParse(context.User!.Claims.First(c => c.Type == "id")!.Value, out id))
             {
-                return Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
+                return new ServiceResponse<int>(401, "Unauthorized");
             }
-
-            return ip;
+            return ServiceResponse<int>.OK(id);
         }
     }
 }

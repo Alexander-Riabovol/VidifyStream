@@ -20,6 +20,7 @@ namespace Logic.Services.ValidationService
         private readonly IValidator<UserRegisterDTO> _userRegisterDTOValidator;
         private readonly IValidator<VideoPostDTO> _videoPostDTOValidator;
         private readonly IValidator<UserProfilePicturePostDTO> _userProfilePicturePostDTOValidator;
+        private readonly IValidator<CommentPutDTO> _commentPutDTOValidator;
         private readonly IValidator<IFormFile> _formFileValidator;
 
 
@@ -30,6 +31,7 @@ namespace Logic.Services.ValidationService
                                  IValidator<UserRegisterDTO> userRegisterDTOValidator,
                                  IValidator<VideoPostDTO> videoPostDTOValidator,
                                  IValidator<UserProfilePicturePostDTO> userProfilePicturePostDTOValidator,
+                                 IValidator<CommentPutDTO> commentPutDTOValidator,
                                  IValidator<IFormFile> formFileValidator)
         {
             _notificationAdminCreateDTOValidator = notificationAdminCreateDTOValidator;
@@ -40,6 +42,7 @@ namespace Logic.Services.ValidationService
             _videoPostDTOValidator = videoPostDTOValidator;
             _userProfilePicturePostDTOValidator = userProfilePicturePostDTOValidator;
             _formFileValidator = formFileValidator;
+            _commentPutDTOValidator = commentPutDTOValidator;
         }
         // We need a synchronous version to not allocate unneeded memory for Task objects
         public ServiceResponse<ModelStateDictionary> Validate<T>(T obj)
@@ -51,6 +54,7 @@ namespace Logic.Services.ValidationService
             else if (obj is UserRegisterDTO) { validator = _userRegisterDTOValidator; }
             else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; }
             else if (obj is VideoPostDTO) { validator = _videoPostDTOValidator; }
+            else if (obj is CommentPutDTO) { validator = _commentPutDTOValidator; }
             else if (obj is IFormFile) { validator = _formFileValidator; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 

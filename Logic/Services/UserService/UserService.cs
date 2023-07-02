@@ -2,6 +2,7 @@
 using Data.Dtos;
 using Data.Dtos.User;
 using Data.Models;
+using Logic.Extensions;
 using Logic.Services.FileService;
 using Microsoft.AspNetCore.Http;
 
@@ -24,13 +25,13 @@ namespace Logic.Services.UserService
 
         public async Task<ServiceResponse<string>> UploadProfilePicture(UserProfilePicturePostDTO pfpDTO)
         {
-            var userId = int.Parse(_accessor.HttpContext!.User!.Claims.First(c => c.Type == "id")!.Value);
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse<string>(idResult.StatusCode, idResult.Message!);
 
-            var user = await _dataContext.Users.FindAsync(userId);
-
+            var user = await _dataContext.Users.FindAsync(idResult.Content);
             if(user == null)
             {
-                return new ServiceResponse<string>(500, $"Unknown error occured: a user with {userId} was not found.");
+                return new ServiceResponse<string>(500, $"Unknown error occured: a user with {idResult.Content} was not found.");
             }
 
             var fileUploadResult = await _fileService.Upload(pfpDTO.File);

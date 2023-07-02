@@ -10,5 +10,6 @@ namespace Logic.Services.CommentService
         Task<ServiceResponse<CommentGetDTO>> GetComment(int commentId);
         Task<ServiceResponse> PostComment(CommentPostDTO commentPostDTO);
         Task<ServiceResponse> PostReply(ReplyPostDTO replyPostDTO);
+        Task<ServiceResponse> Put(int commentId, CommentPutDTO commentPutDTO);
     }
 }

@@ -2,9 +2,11 @@
 using Data.Dtos;
 using Data.Dtos.Video;
 using Data.Models;
+using Logic.Extensions;
 using Logic.Services.FileService;
 using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Services.VideoService
@@ -38,6 +40,9 @@ namespace Logic.Services.VideoService
 
         public async Task<ServiceResponse> PostVideo(VideoPostDTO videoGetDTO)
         {
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
+
             var video = videoGetDTO.Adapt<Video>();
 
             var videoFileUploadResponse = await _fileService.Upload(videoGetDTO.VideoFile);
@@ -56,7 +61,7 @@ namespace Logic.Services.VideoService
 
             video.ThumbnailUrl = thumbnailFileUploadResponse.Content!;
             video.SourceUrl = videoFileUploadResponse.Content!;
-            video.UserId = int.Parse(_accessor.HttpContext!.User!.Claims.First(c => c.Type == "id")!.Value);
+            video.UserId = idResult.Content;
 
             await _dataContext.AddAsync(video);
             await _dataContext.SaveChangesAsync();
