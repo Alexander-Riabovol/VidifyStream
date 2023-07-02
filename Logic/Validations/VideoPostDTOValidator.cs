@@ -12,15 +12,14 @@ namespace Logic.Validations
             RuleFor(x => x.Description).Length(1, 2000);
             RuleFor(x => x.Thumbnail).Custom((file, content) =>
                                              content.RootContextData.Add("content-type", "image"))
-                                     .SetValidator(fileValidator!)
-                                     .When(x => x.Thumbnail != null);
+                                     .SetValidator(fileValidator!);
+                                     //.When(x => x.Thumbnail != null);
             RuleFor(x => x.VideoFile).Custom((file, content) =>
             {
-                if(!content.RootContextData.TryAdd("content-type", "video"))
-                {
+                //if(!content.RootContextData.TryAdd("content-type", "video"))
+                //{
                     content.RootContextData["content-type"] = "video";
-                }
-                
+                //}
             }).SetValidator(fileValidator);
         }
     }

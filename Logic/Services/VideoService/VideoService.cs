@@ -47,11 +47,6 @@ namespace Logic.Services.VideoService
                                                          videoFileUploadResponse.Message!);
             }
 
-            if(videoGetDTO.Thumbnail == null)
-            {
-                // Add thumbnail creation logic
-            }
-
             var thumbnailFileUploadResponse = await _fileService.Upload(videoGetDTO.Thumbnail);
             if (thumbnailFileUploadResponse.IsError)
             {
