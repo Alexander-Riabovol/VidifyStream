@@ -79,12 +79,19 @@ builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Add Razor Pages
 builder.Services.AddRazorPages();
 
 // App configurations
 var app = builder.Build();
+
+if(app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseFileServer();
 // Configure the HTTP request pipeline.
