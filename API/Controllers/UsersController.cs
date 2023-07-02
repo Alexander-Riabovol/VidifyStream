@@ -1,5 +1,4 @@
-﻿using Data.Dtos.Comment;
-using Data.Dtos.User;
+﻿using Data.Dtos.User;
 using Logic.Services.UserService;
 using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Http;
@@ -22,17 +21,17 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("pfp")]
-        public async Task<ActionResult<string>> UploadProfilePicture(IFormFile file, 
-                                                                     CancellationToken cancellationToken)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<string>> UploadProfilePicture([FromForm]UserProfilePicturePostDTO pfpDTO)
         {
-            var validationResult = _validationService.Validate(file, "image");
+            var validationResult = await _validationService.Validate(pfpDTO);
             if (validationResult.IsError)
             {
                 if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
                 else return ValidationProblem(validationResult.Content);
             }
 
-            var result = await _userService.UploadProfilePicture(file);
+            var result = await _userService.UploadProfilePicture(pfpDTO.File);
             if(result.IsError) 
             {
                 return StatusCode(result.StatusCode, result.Message);

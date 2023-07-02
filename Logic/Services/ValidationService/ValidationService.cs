@@ -2,8 +2,10 @@
 using Data.Dtos.Comment;
 using Data.Dtos.Notification;
 using Data.Dtos.User;
+using Data.Dtos.Video;
 using FluentValidation;
 using FluentValidation.Results;
+using Logic.Validations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -16,18 +18,25 @@ namespace Logic.Services.ValidationService
         private readonly IValidator<ReplyPostDTO> _replyPostDTOValidator;
         private readonly IValidator<UserLoginDTO> _userLoginDTOValidator;
         private readonly IValidator<UserRegisterDTO> _userRegisterDTOValidator;
+        private readonly IValidator<UserProfilePicturePostDTO> _userProfilePicturePostDTOValidator;
+        private readonly IValidator<IFormFile> _formFileValidator;
+
 
         public ValidationService(IValidator<NotificationAdminCreateDTO> notificationAdminCreateDTOValidator,
                                  IValidator<CommentPostDTO> commentPostDTOValidator,
                                  IValidator<ReplyPostDTO> replyPostDTOValidator,
                                  IValidator<UserLoginDTO> userLoginDTOValidator,
-                                 IValidator<UserRegisterDTO> userRegisterDTOValidator)
+                                 IValidator<UserRegisterDTO> userRegisterDTOValidator,
+                                 IValidator<UserProfilePicturePostDTO> userProfilePicturePostDTOValidator,
+                                 IValidator<IFormFile> formFileValidator)
         {
             _notificationAdminCreateDTOValidator = notificationAdminCreateDTOValidator;
             _commentPostDTOValidator = commentPostDTOValidator;
             _replyPostDTOValidator = replyPostDTOValidator;
             _userLoginDTOValidator = userLoginDTOValidator;
             _userRegisterDTOValidator = userRegisterDTOValidator;
+            _userProfilePicturePostDTOValidator = userProfilePicturePostDTOValidator;
+            _formFileValidator = formFileValidator;
         }
 
         // TO DO: Test preformance with ValueTask return type
@@ -42,6 +51,8 @@ namespace Logic.Services.ValidationService
             else if (obj is ReplyPostDTO) { validator = _replyPostDTOValidator; isAsync = true; }
             else if (obj is UserLoginDTO) { validator = _userLoginDTOValidator; isAsync = false; }
             else if (obj is UserRegisterDTO) { validator = _userRegisterDTOValidator; isAsync = false; }
+            else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; isAsync = false; }
+            else if (obj is IFormFile) { validator = _formFileValidator; isAsync = false; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 
             ValidationResult validationResult = isAsync ? await validator.ValidateAsync(obj) : validator.Validate(obj);
@@ -58,23 +69,6 @@ namespace Logic.Services.ValidationService
                 }
 
                 return new ServiceResponse<ModelStateDictionary>(400, "", modelStateDictionary);      
-            }
-
-            return ServiceResponse<ModelStateDictionary>.OK(null);
-        }
-        // If it is possible, maybe it is better to do a couple of IFormFile validator classes, 
-        // and use them directly in controllers, to not rewrite logic in case of IFormFile being a part of a model.
-        public ServiceResponse<ModelStateDictionary> Validate(IFormFile formFile, string requiredType)
-        {
-            if(!formFile.ContentType.Contains(requiredType))
-            {
-                var modelStateDictionary = new ModelStateDictionary();
-
-                modelStateDictionary.AddModelError(
-                    "ContentType",
-                    $"Invalid file format. Please ensure you are uploading a file with the correct content type: {requiredType}.");
-
-                return new ServiceResponse<ModelStateDictionary>(400, "", modelStateDictionary);
             }
 
             return ServiceResponse<ModelStateDictionary>.OK(null);

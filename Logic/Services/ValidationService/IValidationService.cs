@@ -7,6 +7,5 @@ namespace Logic.Services.ValidationService
     public interface IValidationService
     {
         Task<ServiceResponse<ModelStateDictionary>> Validate<T>(T obj);
-        ServiceResponse<ModelStateDictionary> Validate(IFormFile formFile, string requiredType);
     }
 }
