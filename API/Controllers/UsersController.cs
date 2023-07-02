@@ -1,6 +1,7 @@
 ﻿using Data.Dtos.User;
 using Logic.Services.UserService;
 using Logic.Services.ValidationService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("pfp")]
+        [Authorize("user+")]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<string>> UploadProfilePicture([FromForm]UserProfilePicturePostDTO pfpDTO)
         {
@@ -31,7 +33,7 @@ namespace API.Controllers
                 else return ValidationProblem(validationResult.Content);
             }
 
-            var result = await _userService.UploadProfilePicture(pfpDTO.File);
+            var result = await _userService.UploadProfilePicture(pfpDTO);
             if(result.IsError) 
             {
                 return StatusCode(result.StatusCode, result.Message);

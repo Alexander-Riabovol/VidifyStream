@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Route("api/download")]
-    [ApiController]
     [AllowAnonymous]
+    [ApiController]
     public class DownloadController : ControllerBase
     {
         private readonly IFileService _fileService;

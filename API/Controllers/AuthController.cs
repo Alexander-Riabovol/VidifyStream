@@ -1,5 +1,4 @@
 ﻿using Data.Dtos.User;
-using Data.Models;
 using Logic.Services.AuthService;
 using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Route("api/auth")]
+    [AllowAnonymous]
     [ApiController]
     public class AuthController : ControllerBase
     {

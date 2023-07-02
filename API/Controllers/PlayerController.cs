@@ -1,4 +1,5 @@
 ﻿using Logic.Services.VideoService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -13,6 +14,7 @@ namespace API.Controllers
         }
 
         [Route("/player/{videoId}")]
+        [AllowAnonymous]
         // This will hide the method from swagger, preventing it from crushing.
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PlayVideoById(int videoId)

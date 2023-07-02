@@ -22,6 +22,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("{videoId}")]
+        [AllowAnonymous]
         public async Task<ActionResult<VideoGetDTO>> Get(int videoId)
         {
             var response = await _videoService.GetVideo(videoId);
@@ -34,6 +35,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize("user+")]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> Post([FromForm]VideoPostDTO videoPostDTO)
         {
             var validationResult = _validationService.Validate(videoPostDTO);
