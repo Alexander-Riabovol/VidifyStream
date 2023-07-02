@@ -5,6 +5,7 @@ namespace Logic.Services.VideoService
 {
     public interface IVideoService
     {
-        Task<ServiceResponse<VideoGetDTO>> Get(int videoId);
+        Task<ServiceResponse<VideoGetDTO>> GetVideo(int videoId);
+        Task<ServiceResponse> PostVideo(VideoPostDTO videoGetDTO);
     }
 }

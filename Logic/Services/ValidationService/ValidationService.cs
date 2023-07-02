@@ -18,6 +18,7 @@ namespace Logic.Services.ValidationService
         private readonly IValidator<ReplyPostDTO> _replyPostDTOValidator;
         private readonly IValidator<UserLoginDTO> _userLoginDTOValidator;
         private readonly IValidator<UserRegisterDTO> _userRegisterDTOValidator;
+        private readonly IValidator<VideoPostDTO> _videoPostDTOValidator;
         private readonly IValidator<UserProfilePicturePostDTO> _userProfilePicturePostDTOValidator;
         private readonly IValidator<IFormFile> _formFileValidator;
 
@@ -27,6 +28,7 @@ namespace Logic.Services.ValidationService
                                  IValidator<ReplyPostDTO> replyPostDTOValidator,
                                  IValidator<UserLoginDTO> userLoginDTOValidator,
                                  IValidator<UserRegisterDTO> userRegisterDTOValidator,
+                                 IValidator<VideoPostDTO> videoPostDTOValidator,
                                  IValidator<UserProfilePicturePostDTO> userProfilePicturePostDTOValidator,
                                  IValidator<IFormFile> formFileValidator)
         {
@@ -35,6 +37,7 @@ namespace Logic.Services.ValidationService
             _replyPostDTOValidator = replyPostDTOValidator;
             _userLoginDTOValidator = userLoginDTOValidator;
             _userRegisterDTOValidator = userRegisterDTOValidator;
+            _videoPostDTOValidator = videoPostDTOValidator;
             _userProfilePicturePostDTOValidator = userProfilePicturePostDTOValidator;
             _formFileValidator = formFileValidator;
         }
@@ -51,6 +54,7 @@ namespace Logic.Services.ValidationService
             else if (obj is ReplyPostDTO) { validator = _replyPostDTOValidator; isAsync = true; }
             else if (obj is UserLoginDTO) { validator = _userLoginDTOValidator; isAsync = false; }
             else if (obj is UserRegisterDTO) { validator = _userRegisterDTOValidator; isAsync = false; }
+            else if (obj is VideoPostDTO) { validator = _videoPostDTOValidator; isAsync = false; }
             else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; isAsync = false; }
             else if (obj is IFormFile) { validator = _formFileValidator; isAsync = false; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
