@@ -6,6 +6,7 @@ namespace Logic.Services.ValidationService
 {
     public interface IValidationService
     {
-        Task<ServiceResponse<ModelStateDictionary>> Validate<T>(T obj);
+        ServiceResponse<ModelStateDictionary> Validate<T>(T obj);
+        Task<ServiceResponse<ModelStateDictionary>> ValidateAsync<T>(T obj);
     }
 }

@@ -36,7 +36,7 @@ namespace API.Controllers
         [Authorize("user+")]
         public async Task<IActionResult> Post([FromForm]VideoPostDTO videoPostDTO)
         {
-            var validationResult = await _validationService.Validate(videoPostDTO);
+            var validationResult = _validationService.Validate(videoPostDTO);
             if (validationResult.IsError)
             {
                 if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);

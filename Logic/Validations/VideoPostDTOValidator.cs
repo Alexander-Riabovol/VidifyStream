@@ -1,7 +1,6 @@
 ﻿using Data.Dtos.Video;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
 namespace Logic.Validations
 {

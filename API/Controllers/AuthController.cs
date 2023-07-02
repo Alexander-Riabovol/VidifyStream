@@ -24,7 +24,7 @@ namespace API.Controllers
         [Route("api/login")]
         public async Task<IActionResult> Login(UserLoginDTO loginData)
         {
-            var validationResult = await _validationService.Validate(loginData);
+            var validationResult = _validationService.Validate(loginData);
             if (validationResult.IsError)
             {
                 if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
@@ -39,7 +39,7 @@ namespace API.Controllers
         [Route("api/register")]
         public async Task<IActionResult> Register(UserRegisterDTO registerData)
         {
-            var validationResult = await _validationService.Validate(registerData);
+            var validationResult = _validationService.Validate(registerData);
             if (validationResult.IsError)
             {
                 if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);

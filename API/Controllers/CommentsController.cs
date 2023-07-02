@@ -61,7 +61,7 @@ namespace API.Controllers
         [Authorize(Policy = "user+")]
         public async Task<IActionResult> Post(CommentPostDTO commentPostDto)
         {
-            var validationResult = await _validationService.Validate(commentPostDto);
+            var validationResult = await _validationService.ValidateAsync(commentPostDto);
             if (validationResult.IsError)
             {
                 if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
@@ -77,7 +77,7 @@ namespace API.Controllers
         [Authorize(Policy = "user+")]
         public async Task<IActionResult> PostReply(ReplyPostDTO replyPostDTO)
         {
-            var validationResult = await _validationService.Validate(replyPostDTO);
+            var validationResult = await _validationService.ValidateAsync(replyPostDTO);
             if (validationResult.IsError)
             {
                 if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);

@@ -41,38 +41,53 @@ namespace Logic.Services.ValidationService
             _userProfilePicturePostDTOValidator = userProfilePicturePostDTOValidator;
             _formFileValidator = formFileValidator;
         }
-
-        // TO DO: Test preformance with ValueTask return type
-        public async Task<ServiceResponse<ModelStateDictionary>> Validate<T>(T obj)
+        // We need a synchronous version to not allocate unneeded memory for Task objects
+        public ServiceResponse<ModelStateDictionary> Validate<T>(T obj)
         {
             if (obj == null) 
                 return new ServiceResponse<ModelStateDictionary>(400, "The server cannot process the request because the provided object is null.");
             dynamic validator;
-            bool isAsync;
-            if (obj is NotificationAdminCreateDTO) { validator = _notificationAdminCreateDTOValidator; isAsync = true; }
-            else if (obj is CommentPostDTO) { validator = _commentPostDTOValidator; isAsync = true; }
-            else if (obj is ReplyPostDTO) { validator = _replyPostDTOValidator; isAsync = true; }
-            else if (obj is UserLoginDTO) { validator = _userLoginDTOValidator; isAsync = false; }
-            else if (obj is UserRegisterDTO) { validator = _userRegisterDTOValidator; isAsync = false; }
-            else if (obj is VideoPostDTO) { validator = _videoPostDTOValidator; isAsync = false; }
-            else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; isAsync = false; }
-            else if (obj is IFormFile) { validator = _formFileValidator; isAsync = false; }
+            if (obj is UserLoginDTO) { validator = _userLoginDTOValidator; }
+            else if (obj is UserRegisterDTO) { validator = _userRegisterDTOValidator; }
+            else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; }
+            else if (obj is VideoPostDTO) { validator = _videoPostDTOValidator; }
+            else if (obj is IFormFile) { validator = _formFileValidator; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 
-            ValidationResult validationResult = isAsync ? await validator.ValidateAsync(obj) : validator.Validate(obj);
+            ValidationResult validationResult = validator.Validate(obj);
 
-            if(!validationResult.IsValid)
+            return processValidationResult(validationResult);
+        }
+
+        public async Task<ServiceResponse<ModelStateDictionary>> ValidateAsync<T>(T obj)
+        {
+            if (obj == null)
+                return new ServiceResponse<ModelStateDictionary>(400, "The server cannot process the request because the provided object is null.");
+            dynamic validator;
+            if (obj is NotificationAdminCreateDTO) { validator = _notificationAdminCreateDTOValidator; }
+            else if (obj is CommentPostDTO) { validator = _commentPostDTOValidator; }
+            else if (obj is ReplyPostDTO) { validator = _replyPostDTOValidator; }
+            else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate asynchronous validator found for the {obj.GetType()} type.");
+
+            ValidationResult validationResult = await validator.ValidateAsync(obj);
+
+            return processValidationResult(validationResult);
+        }
+
+        private ServiceResponse<ModelStateDictionary> processValidationResult(ValidationResult validationResult)
+        {
+            if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
 
-                foreach (var validationFailure in validationResult.Errors) 
+                foreach (var validationFailure in validationResult.Errors)
                 {
                     modelStateDictionary.AddModelError(
                         validationFailure.PropertyName,
                         validationFailure.ErrorMessage);
                 }
 
-                return new ServiceResponse<ModelStateDictionary>(400, "", modelStateDictionary);      
+                return new ServiceResponse<ModelStateDictionary>(400, "", modelStateDictionary);
             }
 
             return ServiceResponse<ModelStateDictionary>.OK(null);

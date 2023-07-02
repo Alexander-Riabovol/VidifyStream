@@ -24,7 +24,7 @@ namespace API.Controllers
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<string>> UploadProfilePicture([FromForm]UserProfilePicturePostDTO pfpDTO)
         {
-            var validationResult = await _validationService.Validate(pfpDTO);
+            var validationResult = _validationService.Validate(pfpDTO);
             if (validationResult.IsError)
             {
                 if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);

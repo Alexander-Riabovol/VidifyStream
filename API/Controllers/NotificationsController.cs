@@ -53,7 +53,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(NotificationAdminCreateDTO notificationDto)
         {
-            var validationResult = await _validationService.Validate(notificationDto);
+            var validationResult = await _validationService.ValidateAsync(notificationDto);
             if(validationResult.IsError) 
             {
                 if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
