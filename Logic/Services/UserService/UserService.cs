@@ -23,6 +23,19 @@ namespace Logic.Services.UserService
             _accessor = accessor;
         }
 
+        public async Task<ServiceResponse<int>> CreateUser(User user)
+        {
+            // Set the blank profile picture as default
+            var scheme = _accessor.HttpContext!.Request.Scheme;
+            var host = _accessor.HttpContext!.Request.Host.ToUriComponent();
+            user.ProfilePictureUrls.Add($"{scheme}://{host}/api/download/blank");
+
+            await _dataContext.AddAsync(user);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse<int>.OK(user.UserId);
+        }
+
         public async Task<ServiceResponse<string>> UploadProfilePicture(UserProfilePicturePostDTO pfpDTO)
         {
             var idResult = _accessor.HttpContext!.RetriveUserId();

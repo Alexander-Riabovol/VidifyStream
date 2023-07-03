@@ -6,7 +6,6 @@
     // Navigation Properties Relationships:
     // User -> Video    | One-to-Many
     // User -> Comments | One-to-Many
-    // User -> Playlist | Many-to-Many
     // User -> ViewData | One-to-Many
     public record User
     {
@@ -17,7 +16,6 @@
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public List<string> ProfilePictureUrls { get; set; } = new List<string>();
-        public List<string>? UsedIPs { get; set; }
         public Status Status { get; set; }
         public List<Video>? Videos { get; set; }
         public List<Comment>? Comments { get; set; }

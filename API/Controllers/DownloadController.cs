@@ -28,5 +28,12 @@ namespace API.Controllers
             }
             return File(response.Content.Data, response.Content.ContentType);
         }
+
+        [HttpGet]
+        [Route("blank")]
+        public IActionResult GetBlankProfilePicture()
+        {
+            return File("~/blank.jpg", "image/jpg");
+        }
     }
 }

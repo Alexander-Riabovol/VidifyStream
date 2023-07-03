@@ -52,9 +52,9 @@ namespace Logic.Services.FileService
             await using var stream = File.OpenWrite(LocalBlobStoragePath + newFileName);
             await file.CopyToAsync(stream);
 
-            char? securedChar = _accessor.HttpContext!.Request.IsHttps ? 's' : null;
-            var host = _accessor.HttpContext!.Request.Host;
-            var filePath = $"http{securedChar}://{host}/api/download/{newFileName}";
+            var scheme = _accessor.HttpContext!.Request.Scheme;
+            var host = _accessor.HttpContext!.Request.Host.ToUriComponent();
+            var filePath = $"{scheme}://{host}/api/download/{newFileName}";
 
             return ServiceResponse<string>.OK(filePath);
         }

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/auth")]
     [AllowAnonymous]
     [ApiController]
     public class AuthController : ControllerBase
@@ -38,7 +37,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("api/register")]
-        public async Task<IActionResult> Register(UserRegisterDTO registerData)
+        public async Task<ActionResult<int>> Register(UserRegisterDTO registerData)
         {
             var validationResult = _validationService.Validate(registerData);
             if (validationResult.IsError)
@@ -48,7 +47,11 @@ namespace API.Controllers
             }
 
             var result = await _authService.Register(registerData);
-            return StatusCode(result.StatusCode, result.Message);
+            if(result.IsError)
+            {
+                return StatusCode(result.StatusCode, result.Message);
+            }
+            return Ok(result.Content);
         }
 
         [HttpGet]

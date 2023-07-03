@@ -3,6 +3,7 @@ using Data.Dtos;
 using Data.Dtos.User;
 using Data.Models;
 using Logic.Extensions;
+using Logic.Services.UserService;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -17,32 +18,36 @@ namespace Logic.Services.AuthService
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public AuthService(DataContext dataContext, IHttpContextAccessor accessor, IMapper mapper)
+        public AuthService(DataContext dataContext,
+                           IHttpContextAccessor accessor,
+                           IMapper mapper,
+                           IUserService userService)
         {
             _dataContext = dataContext;
             _accessor = accessor;
             _mapper = mapper;
+            _userService = userService;
         }
 
-        public async Task<ServiceResponse> Register(UserRegisterDTO registerData)
+        public async Task<ServiceResponse<int>> Register(UserRegisterDTO registerData)
         {
             var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == registerData.Email);
             if (user != null)
             {
-                return new ServiceResponse(409, "The provided email address is already associated with an existing user account.");
+                return new ServiceResponse<int>(409, "The provided email address is already associated with an existing user account.");
             }
 
             var registeredUser = _mapper.Map<User>(registerData);
 
-            await _dataContext.AddAsync(registeredUser);
-            await _dataContext.SaveChangesAsync();
+            var response = await _userService.CreateUser(registeredUser);
 
             var loginData = _mapper.Map<UserLoginDTO>(registerData);
             await LogIn(loginData);
 
             // Send confrimation email here
-            return ServiceResponse.OK;
+            return ServiceResponse<int>.OK(response.Content);
         }
 
         public async Task<ServiceResponse> LogIn(UserLoginDTO loginData)

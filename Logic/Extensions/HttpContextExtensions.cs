@@ -8,7 +8,8 @@ namespace Logic.Extensions
         public static ServiceResponse<int> RetriveUserId(this HttpContext context)
         {
             int id;
-            if (!int.TryParse(context.User!.Claims.First(c => c.Type == "id")!.Value, out id))
+            var strId = context.User?.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            if (!int.TryParse(strId, out id))
             {
                 return new ServiceResponse<int>(401, "Unauthorized");
             }

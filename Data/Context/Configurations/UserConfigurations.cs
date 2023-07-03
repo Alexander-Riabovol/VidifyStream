@@ -42,13 +42,8 @@ namespace Data.Context.Configurations
             // To contain a List<string> variable in one table cell we use Join and Split methods.
             builder.Property(u => u.ProfilePictureUrls)
                 .HasConversion(
-                v => v == null ? null : string.Join(',', v),
-                v => v == null ? null : v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
-
-            builder.Property(u => u.UsedIPs)
-                .HasConversion(
-                v => v == null ? null : string.Join(',', v),
-                v => v == null ? null : v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
         }
     }
 }
