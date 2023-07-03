@@ -2,7 +2,7 @@
 using Data.Dtos.Notification;
 using FluentValidation;
 
-namespace Logic.Validations
+namespace Logic.Validations.Notification
 {
     public class NotificationAdminCreateDTOValidator : AbstractValidator<NotificationAdminCreateDTO>
     {

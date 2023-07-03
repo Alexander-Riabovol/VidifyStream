@@ -2,7 +2,7 @@
 using Data.Dtos.Comment;
 using FluentValidation;
 
-namespace Logic.Validations
+namespace Logic.Validations.CommentValidators
 {
     public class CommentPostDTOValidator : AbstractValidator<CommentPostDTO>
     {

@@ -47,6 +47,21 @@ namespace API.Controllers
             return Ok(response.Content);
         }
 
+        [HttpPut]
+        [Authorize("user+")]
+        public async Task<IActionResult> Put(UserPutDTO userPutDTO)
+        {
+            var validationResult = _validationService.Validate(userPutDTO);
+            if (validationResult.IsError)
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var result = await _userService.Put(userPutDTO);
+            return StatusCode(result.StatusCode, result.Message);
+        }
+
         [HttpPost]
         [Route("pfp")]
         [Authorize("user+")]

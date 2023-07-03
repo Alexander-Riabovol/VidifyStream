@@ -89,9 +89,8 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        [Route("{commentId}")]
         [Authorize(Policy = "user+")]
-        public async Task<IActionResult> Put([FromRoute]int commentId, [FromBody]CommentPutDTO commentPutDTO)
+        public async Task<IActionResult> Put(CommentPutDTO commentPutDTO)
         {
             var validationResult = _validationService.Validate(commentPutDTO);
             if (validationResult.IsError)
@@ -100,7 +99,7 @@ namespace API.Controllers
                 else return ValidationProblem(validationResult.Content);
             }
 
-            var response = await _commentService.Put(commentId, commentPutDTO);
+            var response = await _commentService.Put(commentPutDTO);
             return StatusCode(response.StatusCode, response.Message);
         }
     }

@@ -134,13 +134,13 @@ namespace Logic.Services.CommentService
             return ServiceResponse.OK;
         }
 
-        public async Task<ServiceResponse> Put(int commentId, CommentPutDTO commentPutDTO)
+        public async Task<ServiceResponse> Put(CommentPutDTO commentPutDTO)
         {
-            var comment = await _dataContext.Comments.FindAsync(commentId);
+            var comment = await _dataContext.Comments.FindAsync(commentPutDTO.CommentId);
 
             if(comment == null)
             {
-                return new ServiceResponse(404, $"Comment with ID {commentId} does not exist.");
+                return new ServiceResponse(404, $"Comment with ID {commentPutDTO.CommentId} does not exist.");
             }
 
             var idResult = _accessor.HttpContext!.RetriveUserId();

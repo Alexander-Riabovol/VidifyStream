@@ -2,11 +2,11 @@
 using Data.Dtos.Comment;
 using FluentValidation;
 
-namespace Logic.Validations
+namespace Logic.Validations.CommentValidators
 {
     public class ReplyPostDTOValidator : AbstractValidator<ReplyPostDTO>
     {
-        public ReplyPostDTOValidator(DataContext dataContext) 
+        public ReplyPostDTOValidator(DataContext dataContext)
         {
             RuleFor(x => x.Text).NotEmpty().Length(0, 250);
             RuleFor(x => x.RepliedToId).MustAsync(async (repliedToId, cancellation) =>

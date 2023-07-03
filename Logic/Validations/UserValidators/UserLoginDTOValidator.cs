@@ -1,7 +1,7 @@
 ﻿using Data.Dtos.User;
 using FluentValidation;
 
-namespace Logic.Validations
+namespace Logic.Validations.UserValidators
 {
     public class UserLoginDTOValidator : AbstractValidator<UserLoginDTO>
     {
