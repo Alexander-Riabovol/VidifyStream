@@ -21,6 +21,7 @@ namespace API.Controllers
         {
             var serviceResponse = await _videoService.GetVideo(videoId);
             this.ViewBag.FileRoute = serviceResponse.Content?.SourceUrl;
+            this.ViewBag.Title = serviceResponse.Content?.Title;
             return View("~/Pages/Player.cshtml");
         }
     }

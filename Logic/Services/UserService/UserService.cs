@@ -1,10 +1,14 @@
 ﻿using Data.Context;
 using Data.Dtos;
+using Data.Dtos.Comment;
 using Data.Dtos.User;
 using Data.Models;
 using Logic.Extensions;
 using Logic.Services.FileService;
+using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace Logic.Services.UserService
 {
@@ -34,6 +38,47 @@ namespace Logic.Services.UserService
             await _dataContext.SaveChangesAsync();
 
             return ServiceResponse<int>.OK(user.UserId);
+        }
+
+        public async Task<ServiceResponse<UserGetDTO>> Get(int userId)
+        {
+            var user = await _dataContext.Users.Include(u => u.Videos)
+                                         .FirstOrDefaultAsync(u => u.UserId == userId &&
+                                                                   u.Status != Status.Banned);
+
+            if (user == null) 
+            {
+                return new ServiceResponse<UserGetDTO>(404, $"User with ID {userId} does not exist.");
+            }
+
+            var userGetDTO = user.Adapt<UserGetDTO>();
+            return ServiceResponse<UserGetDTO>.OK(userGetDTO);
+        }
+
+        public async Task<ServiceResponse<UserAdminGetDTO>> GetAdmin(int userId)
+        {
+            var user = await _dataContext.Users.Include(u => u.Videos)
+                                               .Include(u => u.Comments)
+                                               .Include(u => u.Notifications)
+                                               .FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (user == null)
+            {
+                return new ServiceResponse<UserAdminGetDTO>(404, $"User with ID {userId} does not exist.");
+            }
+
+
+            var userAdminGetDTO = user.Adapt<UserAdminGetDTO>();
+
+            if (userAdminGetDTO.Status == Status.Admin)
+            {
+                if(_accessor.HttpContext!.RetriveUserId().Content != userId)
+                {
+                    userAdminGetDTO.Password = "hidden";
+                }
+            }
+
+            return ServiceResponse<UserAdminGetDTO>.OK(userAdminGetDTO);
         }
 
         public async Task<ServiceResponse<string>> UploadProfilePicture(UserProfilePicturePostDTO pfpDTO)

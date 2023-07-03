@@ -8,5 +8,7 @@ namespace Logic.Services.UserService
     {
         Task<ServiceResponse<string>> UploadProfilePicture(UserProfilePicturePostDTO pfpDTO);
         Task<ServiceResponse<int>> CreateUser(User user);
+        Task<ServiceResponse<UserGetDTO>> Get(int userId);
+        Task<ServiceResponse<UserAdminGetDTO>> GetAdmin(int userId);
     }
 }

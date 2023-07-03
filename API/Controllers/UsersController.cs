@@ -1,4 +1,5 @@
 ﻿using Data.Dtos.User;
+using Data.Models;
 using Logic.Services.UserService;
 using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,32 @@ namespace API.Controllers
         {
             _userService = userService;
             _validationService = validationService;
+        }
+
+        [HttpGet]
+        [Route("{userId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<UserGetDTO>> Get(int userId)
+        {
+            var response = await _userService.Get(userId);
+            if (response.IsError)
+            {
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            return Ok(response.Content);
+        }
+
+        [HttpGet]
+        [Route("admin/{userId}")]
+        [Authorize("admin-only")]
+        public async Task<ActionResult<UserAdminGetDTO>> GetAdmin(int userId)
+        {
+            var response = await _userService.GetAdmin(userId);
+            if (response.IsError)
+            {
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            return Ok(response.Content);
         }
 
         [HttpPost]

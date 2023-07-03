@@ -15,6 +15,11 @@ namespace Logic.Mapping
                   // Omit time details
                   .Map(dest => dest.BirthDate, src => src.BirthDate.Date)
                   .Map(dest => dest.Status, src => Status.Unverified);
+
+            config.NewConfig<User, UserAdminGetDTO>()
+                  .Map(dest => dest.VideosIds, src => src.Videos!.Select(v => v.VideoId))
+                  .Map(dest => dest.CommentsIds, src => src.Comments!.Select(c => c.CommentId))
+                  .Map(dest => dest.NotificationsIds, src => src.Notifications!.Select(n => n.NotificationId));
         }
     }
 }
