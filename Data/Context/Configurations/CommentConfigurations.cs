@@ -10,6 +10,9 @@ namespace Data.Context.Configurations
         // Video navigation property is configured in VideoConfigurations
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
+            // Ignore soft deleted entries
+            builder.HasQueryFilter(x => x.DeletedAt == null);
+
             builder.HasKey(c => c.CommentId);
 
             builder.Property(c => c.Text)

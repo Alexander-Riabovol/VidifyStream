@@ -1,4 +1,6 @@
-﻿namespace Data.Models
+﻿using Data.Persistence;
+
+namespace Data.Models
 {
     /// <summary>
     /// User data. Be careful to avoid leaking personal info.
@@ -7,7 +9,7 @@
     // User -> Video    | One-to-Many
     // User -> Comments | One-to-Many
     // User -> ViewData | One-to-Many
-    public record User
+    public record User : ISoftDelete
     {
         public int UserId { get; set; }
         public string Name { get; set; } = null!;
@@ -22,6 +24,7 @@
         public List<ViewData>? ViewData { get; set; }
         public List<Notification>? Notifications { get; set; }
         public string? BanMessage { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
         public User() { }
     }
 }

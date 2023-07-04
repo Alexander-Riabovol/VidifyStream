@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.Context.Interceptors;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Context
@@ -12,6 +13,9 @@ namespace Data.Context
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
+            optionsBuilder.AddInterceptors(new SoftDeleteInterceptor());
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -48,8 +48,7 @@ namespace Logic.Services.UserService
         public async Task<ServiceResponse<UserGetDTO>> Get(int userId)
         {
             var user = await _dataContext.Users.Include(u => u.Videos)
-                                         .FirstOrDefaultAsync(u => u.UserId == userId &&
-                                                                   u.Status != Status.Banned);
+                                         .FirstOrDefaultAsync(u => u.UserId == userId);
 
             if (user == null) 
             {
@@ -62,7 +61,8 @@ namespace Logic.Services.UserService
 
         public async Task<ServiceResponse<UserAdminGetDTO>> GetAdmin(int userId)
         {
-            var user = await _dataContext.Users.Include(u => u.Videos)
+            var user = await _dataContext.Users.IgnoreQueryFilters()
+                                               .Include(u => u.Videos)
                                                .Include(u => u.Comments)
                                                .Include(u => u.Notifications)
                                                .FirstOrDefaultAsync(u => u.UserId == userId);
@@ -100,7 +100,7 @@ namespace Logic.Services.UserService
 
             user = _mapper.Map(userPutDTO, user);
 
-            _dataContext.Update(user);
+            _dataContext.Remove(user);
             await _dataContext.SaveChangesAsync();
 
             return ServiceResponse.OK;

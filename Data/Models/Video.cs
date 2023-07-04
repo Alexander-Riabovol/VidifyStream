@@ -1,4 +1,6 @@
-﻿namespace Data.Models
+﻿using Data.Persistence;
+
+namespace Data.Models
 {
     /// <summary>
     /// Represents a set of information about a piece of a film.
@@ -8,7 +10,7 @@
     // Video -> User     | Many-to-One
     // Video -> Comment  | One-to-Many
     // Video -> ViewData | One-to-Many
-    public record Video
+    public record Video : ISoftDelete
     {
         public int VideoId { get; set; }
         public string Title { get; set; } = null!;
@@ -20,6 +22,7 @@
         public User? User { get; set; }
         public List<Comment>? Comments { get; set; }
         public List<ViewData>? ViewData { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
         public Video() { }
     }
 }

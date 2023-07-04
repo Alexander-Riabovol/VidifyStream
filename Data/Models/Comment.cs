@@ -1,4 +1,6 @@
-﻿namespace Data.Models
+﻿using Data.Persistence;
+
+namespace Data.Models
 {
     /// <summary>
     /// A comment beneath a <see cref="Data.Models.Video"/>!
@@ -8,7 +10,7 @@
     // Comment -> Video   | Many-to-One
     // Comment -> Comment | One-to-Many & Many-to-One (Replies & RepliesTo)
     // Comment -> User    | Many-to-Many (Likes)
-    public record Comment
+    public record Comment : ISoftDelete
     {
         public int CommentId { get; set; }
         public string Text { get; set; } = null!;
@@ -22,6 +24,7 @@
         public List<User>? Likes { get; set; }
         public bool IsAuthorLiked { get; set; }
         public bool Edited { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
         public Comment() { }
     }
 }

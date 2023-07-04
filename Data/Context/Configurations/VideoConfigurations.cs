@@ -10,6 +10,9 @@ namespace Data.Context.Configurations
         // ViewData navigation property is configured in ViewDataConfigurations
         public void Configure(EntityTypeBuilder<Video> builder)
         {
+            // Ignore soft deleted entries
+            builder.HasQueryFilter(x => x.DeletedAt == null);
+
             builder.HasKey(v => v.VideoId);
 
             builder.Property(v => v.Title)

@@ -9,6 +9,9 @@ namespace Data.Context.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            // Ignore soft deleted entries
+            builder.HasQueryFilter(x => x.DeletedAt == null);
+
             builder.HasKey(u => u.UserId);
 
             builder.Property(u => u.Name)

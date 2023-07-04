@@ -16,5 +16,6 @@ namespace Data.Dtos.User
         public List<int>? CommentsIds { get; set; }
         public List<int>? NotificationsIds { get; set; }
         public string? BanMessage { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
     }
 }
