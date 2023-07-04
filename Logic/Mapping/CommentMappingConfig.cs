@@ -4,7 +4,7 @@ using Mapster;
 
 namespace Logic.Mapping
 {
-    public class CommentMappingConfig : IRegister
+    internal class CommentMappingConfig : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {

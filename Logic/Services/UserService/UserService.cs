@@ -14,19 +14,19 @@ namespace Logic.Services.UserService
     public class UserService : IUserService
     {
         private readonly DataContext _dataContext;
-        private readonly IFileService _fileService;
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
+        private readonly IFileService _fileService;
 
         public UserService(DataContext dataContext,
-                           IFileService fileService,
                            IHttpContextAccessor accessor,
-                           IMapper mapper)
+                           IMapper mapper,
+                           IFileService fileService)
         {
             _dataContext = dataContext;
-            _fileService = fileService;
             _accessor = accessor;
             _mapper = mapper;
+            _fileService = fileService;
         }
 
         public async Task<ServiceResponse<int>> CreateUser(User user)

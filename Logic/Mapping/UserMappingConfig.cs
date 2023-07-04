@@ -4,7 +4,7 @@ using Mapster;
 
 namespace Logic.Mapping
 {
-    public class UserMappingConfig : IRegister
+    internal class UserMappingConfig : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Context.Configurations
 {
-    public class CommentConfigurations : IEntityTypeConfiguration<Comment>
+    internal class CommentConfigurations : IEntityTypeConfiguration<Comment>
     {
         // User  navigation property is configured in UserConfigurations
         // Video navigation property is configured in VideoConfigurations

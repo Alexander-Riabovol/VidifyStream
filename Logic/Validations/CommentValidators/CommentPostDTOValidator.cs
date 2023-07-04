@@ -1,6 +1,7 @@
 ﻿using Data.Context;
 using Data.Dtos.Comment;
 using FluentValidation;
+using Logic.Validations.AppendageValidators;
 
 namespace Logic.Validations.CommentValidators
 {
@@ -9,7 +10,7 @@ namespace Logic.Validations.CommentValidators
         public CommentPostDTOValidator(DataContext dataContext)
         {
             RuleFor(x => x.Text).NotEmpty().Length(0, 250);
-            RuleFor(x => x.VideoId).MustAsync(async (videoId, cancellation) =>
+            RuleFor(x => x.VideoId).Id().MustAsync(async (videoId, cancellation) =>
             {
                 var video = await dataContext.Videos.FindAsync(videoId);
                 return video != null;

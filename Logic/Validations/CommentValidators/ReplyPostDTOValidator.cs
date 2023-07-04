@@ -1,6 +1,7 @@
 ﻿using Data.Context;
 using Data.Dtos.Comment;
 using FluentValidation;
+using Logic.Validations.AppendageValidators;
 
 namespace Logic.Validations.CommentValidators
 {
@@ -9,7 +10,7 @@ namespace Logic.Validations.CommentValidators
         public ReplyPostDTOValidator(DataContext dataContext)
         {
             RuleFor(x => x.Text).NotEmpty().Length(0, 250);
-            RuleFor(x => x.RepliedToId).MustAsync(async (repliedToId, cancellation) =>
+            RuleFor(x => x.RepliedToId).Id().MustAsync(async (repliedToId, cancellation) =>
             {
                 var repliedTo = await dataContext.Comments.FindAsync(repliedToId);
                 return repliedTo != null;

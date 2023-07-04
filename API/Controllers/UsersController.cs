@@ -3,7 +3,6 @@ using Logic.Services.AuthService;
 using Logic.Services.UserService;
 using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

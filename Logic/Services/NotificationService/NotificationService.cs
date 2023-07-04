@@ -7,23 +7,22 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MapsterMapper;
 using Mapster;
-using System.Linq.Expressions;
 
 namespace Logic.Services.NotificationService
 {
     public class NotificationService : INotificationService
     {
         private readonly DataContext _dataContext;
-        private readonly IHubContext<NotificationsHub> _notificationsHub;
         private readonly IMapper _mapper;
+        private readonly IHubContext<NotificationsHub> _notificationsHub;
 
         public NotificationService(DataContext dataContext,
-                                   IHubContext<NotificationsHub> notificationsHub,
-                                   IMapper mapper) 
+                                   IMapper mapper,
+                                   IHubContext<NotificationsHub> notificationsHub) 
         {
             _dataContext = dataContext;
-            _notificationsHub = notificationsHub;
             _mapper = mapper;
+            _notificationsHub = notificationsHub;
         }
 
         // TO DO: Write a second createAndSend function for sending notifications via Admin NotificationController

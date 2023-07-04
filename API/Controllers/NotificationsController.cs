@@ -1,12 +1,8 @@
 ﻿using Data.Dtos.Notification;
-using FluentValidation;
 using Logic.Services.NotificationService;
 using Logic.Services.ValidationService;
 using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

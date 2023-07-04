@@ -2,7 +2,6 @@
 using Logic.Services.ValidationService;
 using Logic.Services.VideoService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

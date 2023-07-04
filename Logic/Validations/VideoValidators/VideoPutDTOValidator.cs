@@ -1,5 +1,6 @@
 ﻿using Data.Dtos.Video;
 using FluentValidation;
+using Logic.Validations.AppendageValidators;
 using Microsoft.AspNetCore.Http;
 
 namespace Logic.Validations.VideoValidators
@@ -8,6 +9,7 @@ namespace Logic.Validations.VideoValidators
     {
         public VideoPutDTOValidator(IValidator<IFormFile> fileValidator)
         {
+            RuleFor(x => x.VideoId).Id();
             RuleFor(x => x).Must(x => x.Title != null ||
                                       x.Description != null ||
                                       x.Category != null ||

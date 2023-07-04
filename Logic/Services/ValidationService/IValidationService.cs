@@ -1,5 +1,4 @@
 ﻿using Data.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Logic.Services.ValidationService

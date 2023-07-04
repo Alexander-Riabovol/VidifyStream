@@ -1,6 +1,6 @@
 ﻿namespace Data.Dtos.User
 {
-    public class UserRegisterDTO
+    public record UserRegisterDTO
     {
         public string Name { get; set; } = null!;
         public DateTime BirthDate { get; set; } = new DateTime();

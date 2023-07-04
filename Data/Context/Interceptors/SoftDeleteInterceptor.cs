@@ -2,7 +2,6 @@
 using Data.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Xml.Linq;
 
 namespace Data.Context.Interceptors
 {

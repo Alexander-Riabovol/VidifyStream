@@ -7,28 +7,26 @@ using Logic.Extensions;
 using Logic.Services.NotificationService;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Logic.Services.CommentService
 {
     public class CommentService : ICommentService
     {
         private readonly DataContext _dataContext;
+        private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
-        private readonly IHttpContextAccessor _accessor;
 
         public CommentService(DataContext dataContext,
+                              IHttpContextAccessor accessor,
                               IMapper mapper,
-                              INotificationService notificationService,
-                              IHttpContextAccessor accessor) 
+                              INotificationService notificationService) 
         {
             _dataContext = dataContext;
+            _accessor = accessor;
             _mapper = mapper;
             _notificationService = notificationService;
-            _accessor = accessor;
         }
 
         public async Task<ServiceResponse> Delete(int commentId)

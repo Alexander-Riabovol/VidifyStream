@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Context.Configurations
 {
-    public class VideoConfigurations : IEntityTypeConfiguration<Video>
+    internal class VideoConfigurations : IEntityTypeConfiguration<Video>
     {
         // User navigation property is configured in UserConfigurations
         // ViewData navigation property is configured in ViewDataConfigurations

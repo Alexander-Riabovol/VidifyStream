@@ -1,9 +1,7 @@
 ﻿using Data.Dtos.Comment;
-using Data.Models;
 using Logic.Services.CommentService;
 using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

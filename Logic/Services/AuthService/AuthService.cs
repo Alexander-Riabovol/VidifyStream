@@ -2,7 +2,6 @@
 using Data.Dtos;
 using Data.Dtos.User;
 using Data.Models;
-using Logic.Extensions;
 using Logic.Services.UserService;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication;

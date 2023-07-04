@@ -4,7 +4,7 @@ using Mapster;
 
 namespace Logic.Mapping
 {
-    public class VideoMappingConfig : IRegister
+    internal class VideoMappingConfig : IRegister
     {
         public void Register(TypeAdapterConfig config)
         {

@@ -1,6 +1,7 @@
 ﻿using Data.Context;
 using Data.Dtos.Notification;
 using FluentValidation;
+using Logic.Validations.AppendageValidators;
 
 namespace Logic.Validations.Notification
 {
@@ -9,7 +10,7 @@ namespace Logic.Validations.Notification
         public NotificationAdminCreateDTOValidator(DataContext dataContext)
         {
             RuleFor(x => x.Message).NotEmpty().Length(0, 250);
-            RuleFor(x => x.UserId).MustAsync(async (userId, cancellation) =>
+            RuleFor(x => x.UserId).Id().MustAsync(async (userId, cancellation) =>
             {
                 var user = await dataContext.Users.FindAsync(userId);
                 return user != null;

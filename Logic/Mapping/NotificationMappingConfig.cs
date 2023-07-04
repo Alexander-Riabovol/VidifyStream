@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 // Move mapping entirely to the Logic .csproj
 namespace Logic.Mapping
 {
-    public class NotificationMappingConfig : IRegister
+    internal class NotificationMappingConfig : IRegister
     {
         private readonly DataContext _dataContext;
 

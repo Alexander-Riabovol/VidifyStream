@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Context.Configurations
 {
-    public class ViewDataConfigurations : IEntityTypeConfiguration<ViewData>
+    internal class ViewDataConfigurations : IEntityTypeConfiguration<ViewData>
     {
         public void Configure(EntityTypeBuilder<ViewData> builder)
         {

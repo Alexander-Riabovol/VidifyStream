@@ -1,6 +1,5 @@
 ﻿using Data.Context;
 using Data.Dtos;
-using Data.Dtos.Comment;
 using Data.Dtos.Video;
 using Data.Models;
 using Logic.Extensions;
@@ -8,28 +7,26 @@ using Logic.Services.FileService;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.Design;
 
 namespace Logic.Services.VideoService
 {
     public class VideoService : IVideoService
     {
         private readonly DataContext _dataContext;
+        private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
-        private readonly IHttpContextAccessor _accessor;
 
         public VideoService(DataContext dataContext,
+                            IHttpContextAccessor accessor,
                             IMapper mapper, 
-                            IFileService fileService,
-                            IHttpContextAccessor accessor)
+                            IFileService fileService)
         {
             _dataContext = dataContext;
+            _accessor = accessor;
             _mapper = mapper;
             _fileService = fileService;
-            _accessor = accessor;
         }
 
         public async Task<ServiceResponse> Delete(int videoId)
