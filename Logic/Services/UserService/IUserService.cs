@@ -12,5 +12,7 @@ namespace Logic.Services.UserService
         Task<ServiceResponse<UserGetMeDTO>> GetMe();
         Task<ServiceResponse<UserAdminGetDTO>> GetAdmin(int userId);
         Task<ServiceResponse> Put(UserPutDTO userPutDTO);
+        Task<ServiceResponse> DeleteMe();
+        Task<ServiceResponse> DeleteAdmin(UserAdminDeleteDTO userAdminDeleteDTO);
     }
 }

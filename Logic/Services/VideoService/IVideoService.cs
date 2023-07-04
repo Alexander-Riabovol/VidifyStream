@@ -8,5 +8,7 @@ namespace Logic.Services.VideoService
         Task<ServiceResponse<VideoGetDTO>> GetVideo(int videoId);
         Task<ServiceResponse<int>> PostVideo(VideoPostDTO videoPostDTO);
         Task<ServiceResponse> PutVideo(VideoPutDTO videoPutDTO);
+        Task<ServiceResponse> Delete(int videoId);
+        Task<ServiceResponse> DeleteAdmin(int videoId);
     }
 }

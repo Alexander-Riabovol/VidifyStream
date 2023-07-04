@@ -68,5 +68,23 @@ namespace API.Controllers
             var response = await _videoService.PutVideo(videoPutDTO);
             return StatusCode(response.StatusCode, response.Message);
         }
+
+        [HttpDelete]
+        [Route("{videoId}")]
+        [Authorize(Policy = "user+")]
+        public async Task<IActionResult> Delete(int videoId)
+        {
+            var response = await _videoService.Delete(videoId);
+            return StatusCode(response.StatusCode, response.Message);
+        }
+
+        [HttpDelete]
+        [Route("admin/{videoId}")]
+        [Authorize(Policy = "admin-only")]
+        public async Task<IActionResult> DeleteAdmin(int videoId)
+        {
+            var response = await _videoService.DeleteAdmin(videoId);
+            return StatusCode(response.StatusCode, response.Message);
+        }
     }
 }

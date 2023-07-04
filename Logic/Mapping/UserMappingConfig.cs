@@ -8,6 +8,9 @@ namespace Logic.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
+            config.NewConfig<UserAdminDeleteDTO, User>()
+                  .Map(dest => dest.Status, src => Status.Banned);
+
             config.NewConfig<UserRegisterDTO, User>()
                   // Remove all spaces inbetween words
                   .Map(dest => dest.Name, src => string.Join(' ',

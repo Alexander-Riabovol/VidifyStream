@@ -1,5 +1,5 @@
 ﻿using Data.Dtos.User;
-using Data.Models;
+using Logic.Services.AuthService;
 using Logic.Services.UserService;
 using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +12,15 @@ namespace API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly IValidationService _validationService;
 
-        public UsersController(IUserService userService, IValidationService validationService) 
+        public UsersController(IAuthService authService,
+                               IUserService userService,
+                               IValidationService validationService) 
         {
+            _authService = authService;
             _userService = userService;
             _validationService = validationService;
         }
@@ -94,6 +98,34 @@ namespace API.Controllers
                 return StatusCode(result.StatusCode, result.Message);
             }
             return Ok(result.Content);
+        }
+
+        [HttpDelete]
+        [Route("admin/")]
+        [Authorize("admin-only")]
+        public async Task<IActionResult> DeleteAdmin(UserAdminDeleteDTO userAdminDeleteDTO)
+        {
+            var validationResult = _validationService.Validate(userAdminDeleteDTO);
+            if (validationResult.IsError)
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var result = await _userService.DeleteAdmin(userAdminDeleteDTO);
+            return StatusCode(result.StatusCode, result.Message);
+        }
+        [HttpDelete]
+        [Route("profile")]
+        [Authorize("user+")]
+        public async Task<IActionResult> DeleteMyProfile()
+        {
+            var result = await _userService.DeleteMe();
+            if(!result.IsError) 
+            {
+                await _authService.LogOut();
+            }
+            return StatusCode(result.StatusCode, result.Message);
         }
     }
 }

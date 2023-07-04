@@ -20,6 +20,7 @@ namespace Logic.Services.ValidationService
         // Notification
         private readonly IValidator<NotificationAdminCreateDTO> _notificationAdminCreateDTOValidator;
         // User
+        private readonly IValidator<UserAdminDeleteDTO> _userAdminDeleteDTOValidator;
         private readonly IValidator<UserLoginDTO> _userLoginDTOValidator;
         private readonly IValidator<UserProfilePicturePostDTO> _userProfilePicturePostDTOValidator;
         private readonly IValidator<UserPutDTO> _userPutDTOValidator;
@@ -35,6 +36,7 @@ namespace Logic.Services.ValidationService
                                  IValidator<CommentPutDTO> commentPutDTOValidator,
                                  IValidator<ReplyPostDTO> replyPostDTOValidator,
                                  IValidator<NotificationAdminCreateDTO> notificationAdminCreateDTOValidator,
+                                 IValidator<UserAdminDeleteDTO> userAdminDeleteDTOValidator,
                                  IValidator<UserLoginDTO> userLoginDTOValidator,
                                  IValidator<UserProfilePicturePostDTO> userProfilePicturePostDTOValidator,
                                  IValidator<UserPutDTO> userPutDTOValidator,
@@ -47,6 +49,7 @@ namespace Logic.Services.ValidationService
             _commentPutDTOValidator = commentPutDTOValidator;
             _replyPostDTOValidator = replyPostDTOValidator;
             _notificationAdminCreateDTOValidator = notificationAdminCreateDTOValidator;
+            _userAdminDeleteDTOValidator = userAdminDeleteDTOValidator;
             _userLoginDTOValidator = userLoginDTOValidator;
             _userProfilePicturePostDTOValidator = userProfilePicturePostDTOValidator;
             _userPutDTOValidator = userPutDTOValidator;
@@ -63,6 +66,7 @@ namespace Logic.Services.ValidationService
 
             dynamic validator;
             if (obj is CommentPutDTO) { validator = _commentPutDTOValidator; }
+            else if (obj is UserAdminDeleteDTO) { validator = _userAdminDeleteDTOValidator; }
             else if (obj is UserLoginDTO) { validator = _userLoginDTOValidator; }
             else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; }
             else if (obj is UserPutDTO) { validator = _userPutDTOValidator; }

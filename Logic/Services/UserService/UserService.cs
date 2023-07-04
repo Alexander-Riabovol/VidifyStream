@@ -1,6 +1,5 @@
 ﻿using Data.Context;
 using Data.Dtos;
-using Data.Dtos.Comment;
 using Data.Dtos.User;
 using Data.Models;
 using Logic.Extensions;
@@ -8,9 +7,7 @@ using Logic.Services.FileService;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.Design;
 
 namespace Logic.Services.UserService
 {
@@ -43,6 +40,56 @@ namespace Logic.Services.UserService
             await _dataContext.SaveChangesAsync();
 
             return ServiceResponse<int>.OK(user.UserId);
+        }
+
+        public async Task<ServiceResponse> DeleteAdmin(UserAdminDeleteDTO userAdminDeleteDTO)
+        {
+            var user = await _dataContext.Users.IgnoreQueryFilters()
+                                               .FirstOrDefaultAsync(u => u.UserId == userAdminDeleteDTO.UserId);
+
+            if (user == null)
+            {
+                return new ServiceResponse(404, $"User with ID {userAdminDeleteDTO.UserId} was not found in the database.");
+            }
+            if (user.DeletedAt != null)
+            {
+                return ServiceResponse.NotModified;
+            }
+            if(user.Status == Status.Admin)
+            {
+                return new ServiceResponse(403, "Forbidden");
+            }
+
+            user = _mapper.Map(userAdminDeleteDTO, user);
+
+            _dataContext.Remove(user);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse> DeleteMe()
+        {
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
+
+            var user = await _dataContext.Users.FindAsync(idResult.Content);
+
+            if (user == null)
+            {
+                return new ServiceResponse(500, $"Unknown error occured: a user with {idResult.Content} was not found.");
+            }
+            if (user.Status == Status.Admin)
+            {
+                return new ServiceResponse(403, "You can't delete your own account because you are an Admin.");
+            }
+
+            user.Status = Status.SelfDeleted;
+
+            _dataContext.Remove(user);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
         }
 
         public async Task<ServiceResponse<UserGetDTO>> Get(int userId)

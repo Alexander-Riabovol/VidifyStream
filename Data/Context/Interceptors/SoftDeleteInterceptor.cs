@@ -15,7 +15,6 @@ namespace Data.Context.Interceptors
             foreach (var entry in eventData.Context.ChangeTracker.Entries())
             {
                 if (entry is not { State: EntityState.Deleted, Entity: ISoftDelete deleted }) continue;
-                if (deleted is User user) user.Status = Status.Banned;
                 entry.State = EntityState.Modified;
                 deleted.DeletedAt = DateTimeOffset.Now;
             }

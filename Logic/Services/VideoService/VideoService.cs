@@ -10,6 +10,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace Logic.Services.VideoService
 {
@@ -29,6 +30,49 @@ namespace Logic.Services.VideoService
             _mapper = mapper;
             _fileService = fileService;
             _accessor = accessor;
+        }
+
+        public async Task<ServiceResponse> Delete(int videoId)
+        {
+            var video = await _dataContext.Videos.FindAsync(videoId);
+
+            if (video == null)
+            {
+                return new ServiceResponse(404, $"Video with ID already {videoId} does not exist.");
+            }
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
+
+            if (video.UserId != idResult.Content)
+            {
+                return new ServiceResponse(403, "Forbidden");
+            }
+
+            _dataContext.Remove(video);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse> DeleteAdmin(int videoId)
+        {
+            var video = await _dataContext.Videos.IgnoreQueryFilters()
+                                                 .FirstOrDefaultAsync(v => v.VideoId == videoId);
+
+            if (video == null)
+            {
+                return new ServiceResponse(404, $"Video with ID {videoId} was not found in the database.");
+            }
+            if (video.DeletedAt != null)
+            {
+                return ServiceResponse.NotModified;
+            }
+
+            _dataContext.Remove(video);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
         }
 
         public async Task<ServiceResponse<VideoGetDTO>> GetVideo(int videoId)

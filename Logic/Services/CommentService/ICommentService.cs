@@ -11,5 +11,7 @@ namespace Logic.Services.CommentService
         Task<ServiceResponse<int>> PostComment(CommentPostDTO commentPostDTO);
         Task<ServiceResponse<int>> PostReply(ReplyPostDTO replyPostDTO);
         Task<ServiceResponse> Put(CommentPutDTO commentPutDTO);
+        Task<ServiceResponse> Delete(int commentId);
+        Task<ServiceResponse> DeleteAdmin(int commentId);
     }
 }

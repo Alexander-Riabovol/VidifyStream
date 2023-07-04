@@ -1,4 +1,5 @@
 ﻿using Data.Dtos.Comment;
+using Data.Models;
 using Logic.Services.CommentService;
 using Logic.Services.ValidationService;
 using Microsoft.AspNetCore.Authorization;
@@ -108,6 +109,24 @@ namespace API.Controllers
             }
 
             var response = await _commentService.Put(commentPutDTO);
+            return StatusCode(response.StatusCode, response.Message);
+        }
+
+        [HttpDelete]
+        [Route("{commentId}")]
+        [Authorize(Policy = "user+")]
+        public async Task<IActionResult> Delete(int commentId)
+        {
+            var response = await _commentService.Delete(commentId);
+            return StatusCode(response.StatusCode, response.Message);
+        }
+
+        [HttpDelete]
+        [Route("admin/{commentId}")]
+        [Authorize(Policy = "admin-only")]
+        public async Task<IActionResult> DeleteAdmin(int commentId)
+        {
+            var response = await _commentService.DeleteAdmin(commentId);
             return StatusCode(response.StatusCode, response.Message);
         }
     }

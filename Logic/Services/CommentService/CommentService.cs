@@ -31,6 +31,49 @@ namespace Logic.Services.CommentService
             _accessor = accessor;
         }
 
+        public async Task<ServiceResponse> Delete(int commentId)
+        {
+            var comment = await _dataContext.Comments.FindAsync(commentId);
+
+            if (comment == null)
+            {
+                return new ServiceResponse(404, $"Comment with ID already {commentId} does not exist.");
+            }
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
+
+            if(comment.UserId != idResult.Content)
+            {
+                return new ServiceResponse(403, "Forbidden");
+            }
+
+            _dataContext.Remove(comment);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse> DeleteAdmin(int commentId)
+        {
+            var comment = await _dataContext.Comments.IgnoreQueryFilters()
+                                                     .FirstOrDefaultAsync(c => c.CommentId == commentId);
+
+            if (comment == null)
+            {
+                return new ServiceResponse(404, $"Comment with ID {commentId} was not found in the database.");
+            }
+            if (comment.DeletedAt != null)
+            {
+                return ServiceResponse.NotModified;
+            }
+
+            _dataContext.Remove(comment);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
+        }
+
         public async Task<ServiceResponse<CommentGetDTO>> GetComment(int commentId)
         {
             var comment = await _dataContext.Comments.FindAsync(commentId);
@@ -82,8 +125,12 @@ namespace Logic.Services.CommentService
 
         public async Task<ServiceResponse<int>> PostComment(CommentPostDTO commentPostDTO)
         {
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse<int>(idResult.StatusCode, idResult.Message!);
+
             var comment = _mapper.Map<Comment>(commentPostDTO);
-            comment.UserId = int.Parse(_accessor.HttpContext!.User!.Claims.First(c => c.Type == "id")!.Value);
+
+            comment.UserId = idResult.Content;
 
             await _dataContext.AddAsync(comment);
             await _dataContext.SaveChangesAsync();

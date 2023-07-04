@@ -14,5 +14,6 @@ namespace Data.Models
         Janitor = 2,
         Admin = 3,
         Banned = 4,
+        SelfDeleted = 5,
     }
 }
