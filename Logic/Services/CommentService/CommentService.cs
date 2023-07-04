@@ -80,7 +80,7 @@ namespace Logic.Services.CommentService
             return ServiceResponse<IEnumerable<ReplyGetDTO>>.OK(repliesDtos);
         }
 
-        public async Task<ServiceResponse> PostComment(CommentPostDTO commentPostDTO)
+        public async Task<ServiceResponse<int>> PostComment(CommentPostDTO commentPostDTO)
         {
             var comment = _mapper.Map<Comment>(commentPostDTO);
             comment.UserId = int.Parse(_accessor.HttpContext!.User!.Claims.First(c => c.Type == "id")!.Value);
@@ -98,15 +98,15 @@ namespace Logic.Services.CommentService
                 Message = $"New comment under your '{video.Title}' video: '{comment.Text}'."
             });
 
-            return ServiceResponse.OK;
+            return ServiceResponse<int>.OK(comment.CommentId);
         }
 
-        public async Task<ServiceResponse> PostReply(ReplyPostDTO replyPostDTO)
+        public async Task<ServiceResponse<int>> PostReply(ReplyPostDTO replyPostDTO)
         {
             var comment = _mapper.Map<Comment>(replyPostDTO);
 
             var idResult = _accessor.HttpContext!.RetriveUserId();
-            if (idResult.IsError) return new ServiceResponse<string>(idResult.StatusCode, idResult.Message!);
+            if (idResult.IsError) return new ServiceResponse<int>(idResult.StatusCode, idResult.Message!);
 
             comment.UserId = idResult.Content;
 
@@ -131,7 +131,7 @@ namespace Logic.Services.CommentService
                 Message = $"{user!.Name} replied to your comment: '{comment.Text}'."
             });
 
-            return ServiceResponse.OK;
+            return ServiceResponse<int>.OK(comment.CommentId);
         }
 
         public async Task<ServiceResponse> Put(CommentPutDTO commentPutDTO)
@@ -144,7 +144,7 @@ namespace Logic.Services.CommentService
             }
 
             var idResult = _accessor.HttpContext!.RetriveUserId();
-            if (idResult.IsError) return new ServiceResponse<string>(idResult.StatusCode, idResult.Message!);
+            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
 
             if(idResult.Content != comment.UserId)
             {

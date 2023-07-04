@@ -8,8 +8,8 @@ namespace Logic.Services.CommentService
         Task<ServiceResponse<IEnumerable<ReplyGetDTO>>> GetReplies(int commentId);
         Task<ServiceResponse<IEnumerable<CommentGetDTO>>> GetCommentsByVideoId(int videoId);
         Task<ServiceResponse<CommentGetDTO>> GetComment(int commentId);
-        Task<ServiceResponse> PostComment(CommentPostDTO commentPostDTO);
-        Task<ServiceResponse> PostReply(ReplyPostDTO replyPostDTO);
+        Task<ServiceResponse<int>> PostComment(CommentPostDTO commentPostDTO);
+        Task<ServiceResponse<int>> PostReply(ReplyPostDTO replyPostDTO);
         Task<ServiceResponse> Put(CommentPutDTO commentPutDTO);
     }
 }

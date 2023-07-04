@@ -26,6 +26,7 @@ namespace Logic.Services.ValidationService
         private readonly IValidator<UserRegisterDTO> _userRegisterDTOValidator;
         // Video
         private readonly IValidator<VideoPostDTO> _videoPostDTOValidator;
+        private readonly IValidator<VideoPutDTO> _videoPutDTOValidator;
         // Other
         private readonly IValidator<IFormFile> _formFileValidator;
 
@@ -39,6 +40,7 @@ namespace Logic.Services.ValidationService
                                  IValidator<UserPutDTO> userPutDTOValidator,
                                  IValidator<UserRegisterDTO> userRegisterDTOValidator,
                                  IValidator<VideoPostDTO> videoPostDTOValidator,
+                                 IValidator<VideoPutDTO> videoPutDTOValidator,
                                  IValidator<IFormFile> formFileValidator)
         {
             _commentPostDTOValidator = commentPostDTOValidator;
@@ -50,6 +52,7 @@ namespace Logic.Services.ValidationService
             _userPutDTOValidator = userPutDTOValidator;
             _userRegisterDTOValidator = userRegisterDTOValidator;
             _videoPostDTOValidator = videoPostDTOValidator;
+            _videoPutDTOValidator = videoPutDTOValidator;
             _formFileValidator = formFileValidator;
         }
         // We need a synchronous version to not allocate unneeded memory for Task objects
@@ -65,6 +68,7 @@ namespace Logic.Services.ValidationService
             else if (obj is UserPutDTO) { validator = _userPutDTOValidator; }
             else if (obj is UserRegisterDTO) { validator = _userRegisterDTOValidator; }
             else if (obj is VideoPostDTO) { validator = _videoPostDTOValidator; }
+            else if (obj is VideoPutDTO) { validator = _videoPutDTOValidator; }
             else if (obj is IFormFile) { validator = _formFileValidator; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 

@@ -46,8 +46,27 @@ namespace API.Controllers
             }
 
             var response = await _videoService.PostVideo(videoPostDTO);
-            return StatusCode(response.StatusCode, response.Message);
+            if (response.IsError)
+            {
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            return Ok(response.Content);
         }
 
+        [HttpPut]
+        [Authorize("user+")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Put([FromForm] VideoPutDTO videoPutDTO)
+        {
+            var validationResult = _validationService.Validate(videoPutDTO);
+            if (validationResult.IsError)
+            {
+                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
+                else return ValidationProblem(validationResult.Content);
+            }
+
+            var response = await _videoService.PutVideo(videoPutDTO);
+            return StatusCode(response.StatusCode, response.Message);
+        }
     }
 }

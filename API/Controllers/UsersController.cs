@@ -22,6 +22,19 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("profile")]
+        [Authorize("user+")]
+        public async Task<ActionResult<UserGetMeDTO>> GetMyProfile()
+        {
+            var response = await _userService.GetMe();
+            if (response.IsError)
+            {
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            return Ok(response.Content);
+        }
+
+        [HttpGet]
         [Route("{userId}")]
         [AllowAnonymous]
         public async Task<ActionResult<UserGetDTO>> Get(int userId)

@@ -69,7 +69,11 @@ namespace API.Controllers
             }
 
             var response = await _commentService.PostComment(commentPostDto);
-            return StatusCode(response.StatusCode, response.Message);
+            if (response.IsError)
+            {
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            return Ok(response.Content);
         }
 
         [HttpPost]
@@ -85,7 +89,11 @@ namespace API.Controllers
             }
 
             var response = await _commentService.PostReply(replyPostDTO);
-            return StatusCode(response.StatusCode, response.Message);
+            if (response.IsError)
+            {
+                return StatusCode(response.StatusCode, response.Message);
+            }
+            return Ok(response.Content);
         }
 
         [HttpPut]

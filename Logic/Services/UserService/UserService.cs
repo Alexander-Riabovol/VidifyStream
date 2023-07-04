@@ -86,10 +86,27 @@ namespace Logic.Services.UserService
             return ServiceResponse<UserAdminGetDTO>.OK(userAdminGetDTO);
         }
 
+        public async Task<ServiceResponse<UserGetMeDTO>> GetMe()
+        {
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse<UserGetMeDTO>(idResult.StatusCode, idResult.Message!);
+
+            var user = await _dataContext.Users.Include(u => u.Videos)
+                                               .FirstOrDefaultAsync(u => u.UserId == idResult.Content);
+
+            if (user == null)
+            {
+                return new ServiceResponse<UserGetMeDTO>(500, $"Unknown error occured: a user with {idResult.Content} was not found.");
+            }
+
+            var userDto = user.Adapt<UserGetMeDTO>();
+            return ServiceResponse<UserGetMeDTO>.OK(userDto);
+        }
+
         public async Task<ServiceResponse> Put(UserPutDTO userPutDTO)
         {
             var idResult = _accessor.HttpContext!.RetriveUserId();
-            if (idResult.IsError) return new ServiceResponse<string>(idResult.StatusCode, idResult.Message!);
+            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
 
             var user = await _dataContext.Users.FindAsync(idResult.Content);
 
@@ -100,7 +117,7 @@ namespace Logic.Services.UserService
 
             user = _mapper.Map(userPutDTO, user);
 
-            _dataContext.Remove(user);
+            _dataContext.Update(user);
             await _dataContext.SaveChangesAsync();
 
             return ServiceResponse.OK;
