@@ -8,6 +8,7 @@ using Logic.Services.NotificationService;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Logic.Services.CommentService
 {
@@ -15,16 +16,19 @@ namespace Logic.Services.CommentService
     {
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _accessor;
+        private readonly ILogger<CommentService> _logger;
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
 
         public CommentService(DataContext dataContext,
                               IHttpContextAccessor accessor,
+                              ILogger<CommentService> logger,
                               IMapper mapper,
                               INotificationService notificationService) 
         {
             _dataContext = dataContext;
             _accessor = accessor;
+            _logger = logger;
             _mapper = mapper;
             _notificationService = notificationService;
         }
@@ -68,6 +72,10 @@ namespace Logic.Services.CommentService
 
             _dataContext.Remove(comment);
             await _dataContext.SaveChangesAsync();
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            var admin = await _dataContext.Users.FindAsync(idResult.Content);
+            _logger.LogInformation($"Admin {{Name: {admin?.Name}, ID: {admin?.UserId}}} deleted Comment {{ID: {comment.CommentId}}}.");
 
             return ServiceResponse.OK;
         }

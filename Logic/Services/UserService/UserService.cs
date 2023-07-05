@@ -8,6 +8,8 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 
 namespace Logic.Services.UserService
 {
@@ -15,16 +17,19 @@ namespace Logic.Services.UserService
     {
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _accessor;
+        private readonly ILogger<UserService> _logger;
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
 
         public UserService(DataContext dataContext,
                            IHttpContextAccessor accessor,
+                           ILogger<UserService> logger,
                            IMapper mapper,
                            IFileService fileService)
         {
             _dataContext = dataContext;
             _accessor = accessor;
+            _logger = logger;
             _mapper = mapper;
             _fileService = fileService;
         }
@@ -65,6 +70,9 @@ namespace Logic.Services.UserService
             _dataContext.Remove(user);
             await _dataContext.SaveChangesAsync();
 
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            var admin = await _dataContext.Users.FindAsync(idResult.Content);
+            _logger.LogInformation($"Admin {{Name: {admin?.Name}, ID: {admin?.UserId}}} banned User {{Name: {user.Name}, Email: {user.Email}, ID: {user.UserId}}}.");
             return ServiceResponse.OK;
         }
 

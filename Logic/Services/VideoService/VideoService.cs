@@ -8,6 +8,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Logic.Services.VideoService
 {
@@ -15,16 +16,19 @@ namespace Logic.Services.VideoService
     {
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _accessor;
+        private readonly ILogger<VideoService> _logger;
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
 
         public VideoService(DataContext dataContext,
                             IHttpContextAccessor accessor,
-                            IMapper mapper, 
+                            ILogger<VideoService> logger,
+                            IMapper mapper,
                             IFileService fileService)
         {
             _dataContext = dataContext;
             _accessor = accessor;
+            _logger = logger;
             _mapper = mapper;
             _fileService = fileService;
         }
@@ -68,6 +72,10 @@ namespace Logic.Services.VideoService
 
             _dataContext.Remove(video);
             await _dataContext.SaveChangesAsync();
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            var admin = await _dataContext.Users.FindAsync(idResult.Content);
+            _logger.LogInformation($"Admin {{Name: {admin?.Name}, ID: {admin?.UserId}}} deleted Video {{Title: {video.Title}, ID: {{videoId}}}}.", video.VideoId);
 
             return ServiceResponse.OK;
         }
