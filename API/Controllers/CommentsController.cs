@@ -110,6 +110,15 @@ namespace API.Controllers
             return StatusCode(response.StatusCode, response.Message);
         }
 
+        [HttpPut]
+        [Route("like/{commentId}")]
+        [Authorize(Policy = "user+")]
+        public async Task<IActionResult> ToggleLike(int commentId)
+        {
+            var response = await _commentService.ToggleLike(commentId);
+            return StatusCode(response.StatusCode, response.Message);
+        }
+
         [HttpDelete]
         [Route("{commentId}")]
         [Authorize(Policy = "user+")]

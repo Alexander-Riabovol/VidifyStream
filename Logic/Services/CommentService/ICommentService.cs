@@ -37,6 +37,10 @@ namespace Logic.Services.CommentService
         /// </summary>
         Task<ServiceResponse> Put(CommentPutDTO commentPutDTO);
         /// <summary>
+        /// Leaves or removes a like from the <see cref="Comment"/> depending on the state of the like.
+        /// </summary>
+        Task<ServiceResponse> ToggleLike(int commentId);
+        /// <summary>
         /// Deletes a <see cref="Comment"/> by its ID if it's the authenticated <see cref="User"/>'s comment.
         /// </summary>
         Task<ServiceResponse> Delete(int commentId);

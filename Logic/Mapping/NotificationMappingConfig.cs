@@ -94,11 +94,12 @@ namespace Logic.Mapping
                 // Set the notification video thumbnail to that of the video under which the comment is left, and
                 // Set the notification user's profile picture to the one that the author of the video has.
                 case NotificationType.AuthorLikedComment:
-                    var comment = await _dataContext.Comments.Include(c => c.Video).FirstOrDefaultAsync(c => c.CommentId == src.CommentId);
-                    if(comment != null && comment.Video != null)
+                    var comment = await _dataContext.Comments.FindAsync(src.CommentId);
+                    var video = await _dataContext.Videos.FindAsync(src.VideoId);
+                    if(comment != null && video != null)
                     {
-                        dest.VideoThumbnailUrl = comment.Video.ThumbnailUrl;
-                        var author = await _dataContext.Users.FindAsync(comment.Video.UserId);
+                        dest.VideoThumbnailUrl = video.ThumbnailUrl;
+                        var author = await _dataContext.Users.FindAsync(video.UserId);
                         dest.UserProfilePictureUrl = author?.ProfilePictureUrls?.FirstOrDefault()!;
                     }
                     break;
@@ -107,11 +108,11 @@ namespace Logic.Mapping
                 // Set the notification user pfp to the one which the author of the video currently has.
                 case NotificationType.NewSubscribtionsVideo:
                 case NotificationType.RecommendedVideo:
-                    var video = await _dataContext.Videos.Include(v => v.User).FirstOrDefaultAsync(v => v.VideoId == src.VideoId);
-                    if (video != null)
+                    var video2 = await _dataContext.Videos.Include(v => v.User).FirstOrDefaultAsync(v => v.VideoId == src.VideoId);
+                    if (video2 != null)
                     {
-                        dest.VideoThumbnailUrl = video.ThumbnailUrl;
-                        dest.UserProfilePictureUrl = video.User?.ProfilePictureUrls?.FirstOrDefault()!;
+                        dest.VideoThumbnailUrl = video2.ThumbnailUrl;
+                        dest.UserProfilePictureUrl = video2.User?.ProfilePictureUrls?.FirstOrDefault()!;
                     }
                     break;
             }
