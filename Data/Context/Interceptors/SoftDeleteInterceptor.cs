@@ -5,15 +5,24 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Data.Context.Interceptors
 {
+    /// <summary>
+    /// Interceptor for implementing soft delete functionality during database save changes.
+    /// </summary>
     internal class SoftDeleteInterceptor : SaveChangesInterceptor
     {
+
+        /// <summary>
+        /// Overrides the SavingChanges method to perform soft delete logic synchronously.
+        /// </summary>
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData,
                                                               InterceptionResult<int> result)
         {
             return SavingChangesAsync(eventData, result).Result;
         }
 
-
+        /// <summary>
+        /// Overrides the SavingChangesAsync method to perform soft delete logic asynchronously.
+        /// </summary>
         public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             if (eventData.Context is null) return result;

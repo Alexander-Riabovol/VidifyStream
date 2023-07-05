@@ -5,7 +5,9 @@ using System.Text;
 
 namespace API.Middleware
 {
-    // Add a comment why we need to check User.Status field dynamicly and can not just store it in the cookie.
+    /// <summary>
+    /// Represents a handler for the <see cref="StatusRequirement"/> authorization requirement.
+    /// </summary>
     public class StatusRequirementHandler : AuthorizationHandler<StatusRequirement>
     {
         private readonly DataContext _dataContext;
@@ -15,12 +17,8 @@ namespace API.Middleware
             _dataContext = dataContext;
         }
 
-        // TO DO:
-        // Check if the ip is usual
-        // var ip = filterContext?.HttpContext.Connection.RemoteIpAddress;
-        // The idea is that if the ip is not usual but the user have the cookie,
-        // than maybe it is someone who has stolen the cookie, so it is better to redirect to login
-        // maybe we need something like a session also
+        // In this method we dynamicaly retrive user from the database according to id in his cookie.
+        // The reason we do not store user's Status is that user might get banned before resetting his cookie.
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
                                                              StatusRequirement requirement) 
         {

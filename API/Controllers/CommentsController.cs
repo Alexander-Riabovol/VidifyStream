@@ -32,10 +32,10 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("replies/{commentId}")]
-        public async Task<ActionResult<List<ReplyGetDTO>>> GetReplies(int commentId)
+        [Route("video/{videoId}")]
+        public async Task<ActionResult<List<CommentGetDTO>>> GetCommentsByVideoId(int videoId)
         {
-            var response = await _commentService.GetReplies(commentId);
+            var response = await _commentService.GetCommentsByVideoId(videoId);
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -44,10 +44,10 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("video/{videoId}")]
-        public async Task<ActionResult<List<CommentGetDTO>>> GetCommentsByVideoId(int videoId)
+        [Route("replies/{commentId}")]
+        public async Task<ActionResult<List<ReplyGetDTO>>> GetReplies(int commentId)
         {
-            var response = await _commentService.GetCommentsByVideoId(videoId);
+            var response = await _commentService.GetReplies(commentId);
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);

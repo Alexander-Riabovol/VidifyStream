@@ -87,6 +87,7 @@ builder.Services.AddRazorPages();
 // App configurations
 var app = builder.Build();
 
+// Use Swagger in development
 if(app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -106,17 +107,6 @@ app.UseAuthorization();
 
 // Register SignalR hubs
 app.MapHub<NotificationsHub>("/wss/notifications");
-
-// Map the testing endpoints
-app.MapGet("/username", (HttpContext ctx) =>
-{
-    return $"{ctx.User.FindFirst("id")?.Value}";
-}).RequireAuthorization("user+");
-
-app.MapGet("/test", () =>
-{
-    return Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
-}).AllowAnonymous();
 
 app.MapHealthChecks("/health");
 

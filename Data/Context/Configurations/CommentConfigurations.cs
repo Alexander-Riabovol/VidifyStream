@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Context.Configurations
 {
+    /// <summary>
+    /// Configures the <see cref="Comment"/> database model for code-first
+    /// migrations and its relationships with other models.
+    /// </summary>
     internal class CommentConfigurations : IEntityTypeConfiguration<Comment>
     {
         // User  navigation property is configured in UserConfigurations

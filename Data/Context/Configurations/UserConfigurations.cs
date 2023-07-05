@@ -4,9 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Context.Configurations
 {
-    // ViewData navigation property is configured in ViewDataConfigurations
+    /// <summary>
+    /// Configures the <see cref="User"/> database model for code-first
+    /// migrations and its relationships with other models.
+    /// </summary>
     internal class UserConfigurations : IEntityTypeConfiguration<User>
     {
+        // ViewData navigation property is configured in ViewDataConfigurations
+        // Notifications navigation property is configured in NotificationConfigurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             // Ignore soft deleted entries

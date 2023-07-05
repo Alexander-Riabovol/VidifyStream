@@ -4,6 +4,9 @@ using Mapster;
 
 namespace Logic.Mapping
 {
+    /// <summary>
+    /// Configuration class for mapping VideoDTOs to <see cref="Video"/> models and vice versa.
+    /// </summary>
     internal class VideoMappingConfig : IRegister
     {
         public void Register(TypeAdapterConfig config)

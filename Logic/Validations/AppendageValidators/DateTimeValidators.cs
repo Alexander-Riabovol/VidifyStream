@@ -3,8 +3,14 @@ using FluentValidation.Results;
 
 namespace Logic.Validations.AppendageValidators
 {
+    /// <summary>
+    /// Provides custom validation rules for the type <see cref="DateTime"/>.
+    /// </summary>
     internal static class DateTimeValidators
     {
+        /// <summary>
+        /// Validates a birth date of type <see cref="DateTime"/>?.
+        /// </summary>
         public static IRuleBuilderOptionsConditions<T, DateTime?> BirthDate<T>(
             this IRuleBuilderInitial<T, DateTime?> ruleBuilder)
         {
@@ -23,6 +29,9 @@ namespace Logic.Validations.AppendageValidators
             });
         }
 
+        /// <summary>
+        /// Validates a birth date of type <see cref="DateTime"/>.
+        /// </summary>
         public static IRuleBuilderOptionsConditions<T, DateTime> BirthDate<T>(
             this IRuleBuilderInitial<T, DateTime> ruleBuilder)
         {

@@ -2,8 +2,14 @@
 
 namespace Logic.Validations.AppendageValidators
 {
+    /// <summary>
+    /// Provides custom validation rules for the type <see cref="string"/>.
+    /// </summary>
     internal static class StringValidators
     {
+        /// <summary>
+        /// Validates a Name property.
+        /// </summary>
         public static IRuleBuilderOptions<T, string> Name<T>(
             this IRuleBuilderInitial<T, string> ruleBuilder)
         {
@@ -12,7 +18,9 @@ namespace Logic.Validations.AppendageValidators
                               .WithMessage("'{PropertyName}' must contain only 'A-z' letters or spaces.")
                               .Length(1, 60);
         }
-
+        /// <summary>
+        /// Validates a Password property.
+        /// </summary>
         public static IRuleBuilderOptions<T, string> Password<T>(
             this IRuleBuilderInitial<T, string> ruleBuilder)
         {

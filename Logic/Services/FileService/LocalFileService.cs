@@ -6,8 +6,16 @@ using System.Text;
 
 namespace Logic.Services.FileService
 {
+    /// <summary>
+    /// Represents a file service implementation that handles local file storage.
+    /// This class provides methods for uploading and downloading files,
+    /// as well as generating unique file names for uploaded files.
+    /// </summary>
     public class LocalFileService : IFileService
     {
+        /// <summary>
+        /// The local path where the files are stored.
+        /// </summary>
         public static string LocalBlobStoragePath { get; }
         private static readonly string _rangeMediaType = "text/plain";
 
@@ -97,7 +105,7 @@ namespace Logic.Services.FileService
 
             return ServiceResponse<(byte[], string)>.OK((result, contentType));
         }
-
+        // I don't like Path.GetRandomFileName() method, so I wrote mine.
         private string GenerateFileName(string extension)
         {
             var random = new Random();

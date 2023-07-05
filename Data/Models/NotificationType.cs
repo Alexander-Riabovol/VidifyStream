@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Data.Models
+﻿namespace Data.Models
 {
-    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
+    /// <summary>
+    /// Defines the type of a <see cref="Notification"/>.
+    /// This enum is used internally for logic and is not directly accessible to a <see cref="User"/>.
+    /// </summary>
     public enum NotificationType
     {
         Blank = -1,

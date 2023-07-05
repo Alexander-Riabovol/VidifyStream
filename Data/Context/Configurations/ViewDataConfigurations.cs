@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Context.Configurations
 {
+    /// <summary>
+    /// Configures the <see cref="ViewData"/> database model for code-first
+    /// migrations and its relationships with other models.
+    /// </summary>
     internal class ViewDataConfigurations : IEntityTypeConfiguration<ViewData>
     {
         public void Configure(EntityTypeBuilder<ViewData> builder)

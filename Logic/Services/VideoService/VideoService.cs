@@ -33,53 +33,6 @@ namespace Logic.Services.VideoService
             _fileService = fileService;
         }
 
-        public async Task<ServiceResponse> Delete(int videoId)
-        {
-            var video = await _dataContext.Videos.FindAsync(videoId);
-
-            if (video == null)
-            {
-                return new ServiceResponse(404, $"Video with ID already {videoId} does not exist.");
-            }
-
-            var idResult = _accessor.HttpContext!.RetriveUserId();
-            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
-
-            if (video.UserId != idResult.Content)
-            {
-                return new ServiceResponse(403, "Forbidden");
-            }
-
-            _dataContext.Remove(video);
-            await _dataContext.SaveChangesAsync();
-
-            return ServiceResponse.OK;
-        }
-
-        public async Task<ServiceResponse> DeleteAdmin(int videoId)
-        {
-            var video = await _dataContext.Videos.IgnoreQueryFilters()
-                                                 .FirstOrDefaultAsync(v => v.VideoId == videoId);
-
-            if (video == null)
-            {
-                return new ServiceResponse(404, $"Video with ID {videoId} was not found in the database.");
-            }
-            if (video.DeletedAt != null)
-            {
-                return ServiceResponse.NotModified;
-            }
-
-            _dataContext.Remove(video);
-            await _dataContext.SaveChangesAsync();
-
-            var idResult = _accessor.HttpContext!.RetriveUserId();
-            var admin = await _dataContext.Users.FindAsync(idResult.Content);
-            _logger.LogInformation($"Admin {{Name: {admin?.Name}, ID: {admin?.UserId}}} deleted Video {{Title: {video.Title}, ID: {{videoId}}}}.", video.VideoId);
-
-            return ServiceResponse.OK;
-        }
-
         public async Task<ServiceResponse<VideoGetDTO>> GetVideo(int videoId)
         {
             var video = await _dataContext.Videos.Include(v => v.User)
@@ -157,6 +110,53 @@ namespace Logic.Services.VideoService
 
             _dataContext.Update(video);
             await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse> Delete(int videoId)
+        {
+            var video = await _dataContext.Videos.FindAsync(videoId);
+
+            if (video == null)
+            {
+                return new ServiceResponse(404, $"Video with ID already {videoId} does not exist.");
+            }
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
+
+            if (video.UserId != idResult.Content)
+            {
+                return new ServiceResponse(403, "Forbidden");
+            }
+
+            _dataContext.Remove(video);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse> DeleteAdmin(int videoId)
+        {
+            var video = await _dataContext.Videos.IgnoreQueryFilters()
+                                                 .FirstOrDefaultAsync(v => v.VideoId == videoId);
+
+            if (video == null)
+            {
+                return new ServiceResponse(404, $"Video with ID {videoId} was not found in the database.");
+            }
+            if (video.DeletedAt != null)
+            {
+                return ServiceResponse.NotModified;
+            }
+
+            _dataContext.Remove(video);
+            await _dataContext.SaveChangesAsync();
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            var admin = await _dataContext.Users.FindAsync(idResult.Content);
+            _logger.LogInformation($"Admin {{Name: {admin?.Name}, ID: {admin?.UserId}}} deleted Video {{Title: {video.Title}, ID: {{videoId}}}}.", video.VideoId);
 
             return ServiceResponse.OK;
         }

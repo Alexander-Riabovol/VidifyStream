@@ -2,21 +2,26 @@
 using Data.Dtos.Notification;
 using Data.Models;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-// Move mapping entirely to the Logic .csproj
 namespace Logic.Mapping
 {
+    /// <summary>
+    /// Configuration class for mapping NotificationDTOs to <see cref="Notification"/> models and vice versa.
+    /// </summary>
     internal class NotificationMappingConfig : IRegister
     {
         private readonly DataContext _dataContext;
+        private readonly IHttpContextAccessor _accessor;
 
 #pragma warning disable CS8618 // We need a parameterless .ctor for the config.Scan() method to work.
         public NotificationMappingConfig() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public NotificationMappingConfig(DataContext dataContext) 
+        public NotificationMappingConfig(DataContext dataContext, IHttpContextAccessor accessor) 
         {
             _dataContext = dataContext;
+            _accessor = accessor;
         }
 
         public void Register(TypeAdapterConfig config)
@@ -39,24 +44,32 @@ namespace Logic.Mapping
         // "There's a new video in your subscriptions", you are redirected to the video itself.
         // If we apply the same logic but without a Frontend, the best we can do is provide
         // a user with a link to the API that will return the information about the new video.
+        /// <summary>
+        /// Gets the action link based on the <see cref="NotificationType"/> and constructs the URL.
+        /// </summary>
+        /// <returns>The action link URL that points to the corresponding resource.</returns>
         private string? GetActionLink(Notification src)
         {
-            switch(src.Type)
+            var scheme = _accessor.HttpContext!.Request.Scheme;
+            var host = _accessor.HttpContext!.Request.Host.ToUriComponent();
+            switch (src.Type)
             {
                 case NotificationType.SubscribersGoal:
-                    return $"/api/users/{src.UserId}";
+                    return $"{scheme}://{host}/api/users/{src.UserId}";
                 case NotificationType.Reply:
                 case NotificationType.AuthorLikedComment:
                 case NotificationType.LeftComment:
-                    return $"/api/comments/{src.CommentId}";
+                    return $"{scheme}://{host}/api/comments/{src.CommentId}";
                 case NotificationType.NewSubscribtionsVideo:
                 case NotificationType.RecommendedVideo:
-                    return $"/api/video/{src.VideoId}";
+                    return $"{scheme}://{host}/api/videos/{src.VideoId}";
                 default: 
                     return null;
             }
         }
-
+        /// <summary>
+        /// Retrieves additional URLs and sets them in the destination NotificationGetDTO instance.
+        /// </summary>
         private async Task RetrieveUrls(Notification src, NotificationGetDTO dest) 
         {
             switch (src.Type)

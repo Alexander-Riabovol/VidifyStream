@@ -4,6 +4,9 @@ using Mapster;
 
 namespace Logic.Mapping
 {
+    /// <summary>
+    /// Configuration class for mapping UserDTOs to <see cref="User"/> models and vice versa.
+    /// </summary>
     internal class UserMappingConfig : IRegister
     {
         public void Register(TypeAdapterConfig config)

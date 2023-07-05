@@ -10,8 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Logic.Services.AuthService
-{
-    //TO DO: Add Register method + RegisterDTO & LoginDTO validation
+{   
     public class AuthService : IAuthService
     {
         private readonly DataContext _dataContext;
@@ -61,8 +60,6 @@ namespace Logic.Services.AuthService
             {
                 return new ServiceResponse(401, "The password is not correct.");
             }
-
-            //var ip = _accessor.HttpContext!.DeriveIp();
 
             var claims = new List<Claim>
             {

@@ -6,9 +6,10 @@ namespace Data.Models
     /// User data. Be careful to avoid leaking personal info.
     /// </summary>
     // Navigation Properties Relationships:
-    // User -> Video    | One-to-Many
-    // User -> Comments | One-to-Many
-    // User -> ViewData | One-to-Many
+    // User -> Video         | One-to-Many
+    // User -> Comments      | One-to-Many
+    // User -> ViewData      | One-to-Many
+    // User -> Notifications | One-to-Many
     public record User : ISoftDelete
     {
         public int UserId { get; set; }

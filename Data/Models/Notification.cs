@@ -1,5 +1,9 @@
 ﻿namespace Data.Models
 {
+    /// <summary>
+    /// A piece of information about an important event.
+    /// Intended to be sent via SignalR directly to a <see cref="Models.User"/>.
+    /// </summary>
     public record Notification
     {
         public int NotificationId { get; set; }

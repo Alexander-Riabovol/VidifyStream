@@ -33,53 +33,6 @@ namespace Logic.Services.CommentService
             _notificationService = notificationService;
         }
 
-        public async Task<ServiceResponse> Delete(int commentId)
-        {
-            var comment = await _dataContext.Comments.FindAsync(commentId);
-
-            if (comment == null)
-            {
-                return new ServiceResponse(404, $"Comment with ID already {commentId} does not exist.");
-            }
-
-            var idResult = _accessor.HttpContext!.RetriveUserId();
-            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
-
-            if(comment.UserId != idResult.Content)
-            {
-                return new ServiceResponse(403, "Forbidden");
-            }
-
-            _dataContext.Remove(comment);
-            await _dataContext.SaveChangesAsync();
-
-            return ServiceResponse.OK;
-        }
-
-        public async Task<ServiceResponse> DeleteAdmin(int commentId)
-        {
-            var comment = await _dataContext.Comments.IgnoreQueryFilters()
-                                                     .FirstOrDefaultAsync(c => c.CommentId == commentId);
-
-            if (comment == null)
-            {
-                return new ServiceResponse(404, $"Comment with ID {commentId} was not found in the database.");
-            }
-            if (comment.DeletedAt != null)
-            {
-                return ServiceResponse.NotModified;
-            }
-
-            _dataContext.Remove(comment);
-            await _dataContext.SaveChangesAsync();
-
-            var idResult = _accessor.HttpContext!.RetriveUserId();
-            var admin = await _dataContext.Users.FindAsync(idResult.Content);
-            _logger.LogInformation($"Admin {{Name: {admin?.Name}, ID: {admin?.UserId}}} deleted Comment {{ID: {comment.CommentId}}}.");
-
-            return ServiceResponse.OK;
-        }
-
         public async Task<ServiceResponse<CommentGetDTO>> GetComment(int commentId)
         {
             var comment = await _dataContext.Comments.FindAsync(commentId);
@@ -142,14 +95,18 @@ namespace Logic.Services.CommentService
             await _dataContext.SaveChangesAsync();
 
             var video = (await _dataContext.Videos.FindAsync(commentPostDTO.VideoId))!;
-            await _notificationService.CreateAndSend(new NotificationCreateDTO()
-            { 
-                VideoId = commentPostDTO.VideoId,
-                CommentId = comment.CommentId,
-                UserId = video.UserId,
-                Type = NotificationType.LeftComment,
-                Message = $"New comment under your '{video.Title}' video: '{comment.Text}'."
-            });
+            // If a user left a comment under his own video, do not send him a notification.
+            if(video.UserId != comment.UserId)
+            {
+                await _notificationService.CreateAndSend(new NotificationCreateDTO()
+                {
+                    VideoId = commentPostDTO.VideoId,
+                    CommentId = comment.CommentId,
+                    UserId = video.UserId,
+                    Type = NotificationType.LeftComment,
+                    Message = $"New comment under your '{video.Title}' video: '{comment.Text}'."
+                });
+            }
 
             return ServiceResponse<int>.OK(comment.CommentId);
         }
@@ -174,15 +131,18 @@ namespace Logic.Services.CommentService
             }
 
             var user = await _dataContext.Users.FindAsync(comment.UserId);
-
-            await _notificationService.CreateAndSend(new NotificationCreateDTO()
+            // If a user replied to his own comment, do not send him a notification.
+            if (repliedTo.UserId != comment.UserId)
             {
-                VideoId = top!.VideoId,
-                CommentId = comment.CommentId,
-                UserId = repliedTo.UserId,
-                Type = NotificationType.Reply,
-                Message = $"{user!.Name} replied to your comment: '{comment.Text}'."
-            });
+                await _notificationService.CreateAndSend(new NotificationCreateDTO()
+                {
+                    VideoId = top!.VideoId,
+                    CommentId = comment.CommentId,
+                    UserId = repliedTo.UserId,
+                    Type = NotificationType.Reply,
+                    Message = $"{user!.Name} replied to your comment: '{comment.Text}'."
+                });
+            }
 
             return ServiceResponse<int>.OK(comment.CommentId);
         }
@@ -208,6 +168,53 @@ namespace Logic.Services.CommentService
 
             _dataContext.Update(comment);
             await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse> Delete(int commentId)
+        {
+            var comment = await _dataContext.Comments.FindAsync(commentId);
+
+            if (comment == null)
+            {
+                return new ServiceResponse(404, $"Comment with ID already {commentId} does not exist.");
+            }
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse(idResult.StatusCode, idResult.Message!);
+
+            if (comment.UserId != idResult.Content)
+            {
+                return new ServiceResponse(403, "Forbidden");
+            }
+
+            _dataContext.Remove(comment);
+            await _dataContext.SaveChangesAsync();
+
+            return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse> DeleteAdmin(int commentId)
+        {
+            var comment = await _dataContext.Comments.IgnoreQueryFilters()
+                                                     .FirstOrDefaultAsync(c => c.CommentId == commentId);
+
+            if (comment == null)
+            {
+                return new ServiceResponse(404, $"Comment with ID {commentId} was not found in the database.");
+            }
+            if (comment.DeletedAt != null)
+            {
+                return ServiceResponse.NotModified;
+            }
+
+            _dataContext.Remove(comment);
+            await _dataContext.SaveChangesAsync();
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            var admin = await _dataContext.Users.FindAsync(idResult.Content);
+            _logger.LogInformation($"Admin {{Name: {admin?.Name}, ID: {admin?.UserId}}} deleted Comment {{ID: {comment.CommentId}}}.");
 
             return ServiceResponse.OK;
         }

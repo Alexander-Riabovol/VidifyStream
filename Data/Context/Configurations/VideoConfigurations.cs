@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Data.Context.Configurations
 {
+    /// <summary>
+    /// Configures the <see cref="Video"/> database model for code-first
+    /// migrations and its relationships with other models.
+    /// </summary>
     internal class VideoConfigurations : IEntityTypeConfiguration<Video>
     {
         // User navigation property is configured in UserConfigurations
@@ -28,7 +32,7 @@ namespace Data.Context.Configurations
                    .IsRequired();
 
             // One-to-Many relationships between Video and Comment.
-            // A comment can be left only be tied with a single video.
+            // A comment can only be tied with a single video.
             // However, the opposite is not true.
             builder.HasMany(v => v.Comments)
                    .WithOne(c => c.Video)
