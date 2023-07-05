@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MapsterMapper;
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using Logic.Extensions;
 
 namespace Logic.Services.NotificationService
 {
@@ -14,26 +16,32 @@ namespace Logic.Services.NotificationService
     {
         private readonly DataContext _dataContext;
         private readonly IHubContext<NotificationsHub> _notificationsHub;
+        private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
 
         public NotificationService(DataContext dataContext,
                                    IHubContext<NotificationsHub> notificationsHub,
+                                   IHttpContextAccessor accessor,
                                    IMapper mapper) 
         {
             _dataContext = dataContext;
             _notificationsHub = notificationsHub;
+            _accessor = accessor;
             _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<IEnumerable<NotificationGetDTO>>> GetAll(int userId, bool onlyUnread)
+        public async Task<ServiceResponse<IEnumerable<NotificationGetDTO>>> GetAllMy(bool onlyUnread)
         {
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse<IEnumerable<NotificationGetDTO>> (idResult.StatusCode, idResult.Message!);
+
             var user = await _dataContext.Users
                                          .Include(u => u.Notifications)
-                                         .FirstOrDefaultAsync(u => u.UserId == userId);
+                                         .FirstOrDefaultAsync(u => u.UserId == idResult.Content);
 
             if (user == null)
             {
-                return new ServiceResponse<IEnumerable<NotificationGetDTO>>(404, "User has not been found.");
+                return new ServiceResponse<IEnumerable<NotificationGetDTO>>(500, $"Unknown error occured: a user with {idResult.Content} was not found.");
             }
 
             if (onlyUnread)
@@ -85,13 +93,8 @@ namespace Logic.Services.NotificationService
            return ServiceResponse<IEnumerable<NotificationAdminGetDTO>>.OK(notificationsDtos);
         }
 
-        // TO DO: Write a second createAndSend function for sending notifications via Admin NotificationController
-        // and rewrite this function with Notification as a parameter to avoid mapping.
-        // (It will be used by server only anyway)
-        public async Task<ServiceResponse> CreateAndSend(NotificationCreateDTO notificationCreateDto)
+        public async Task<ServiceResponse> CreateAndSend(Notification notification)
         {
-            var notification = _mapper.Map<Notification>(notificationCreateDto);
-
             await _dataContext.AddAsync(notification);
             await _dataContext.SaveChangesAsync();
 
@@ -103,7 +106,14 @@ namespace Logic.Services.NotificationService
             return ServiceResponse.OK;
         }
 
-        public async Task<ServiceResponse> ToggleTrueIsRead(int notificationId, int userId)
+        public async Task<ServiceResponse> CreateAndSendAdmin(NotificationAdminCreateDTO notificationAdminCreateDto)
+        {
+            var notification = _mapper.Map<Notification>(notificationAdminCreateDto);
+
+            return await CreateAndSend(notification);
+        }
+
+        public async Task<ServiceResponse> ToggleTrueIsRead(int notificationId)
         {
             var notification = await _dataContext.Notifications.FindAsync(notificationId);
             // If the notification does not exists, return 404
@@ -111,8 +121,12 @@ namespace Logic.Services.NotificationService
             {
                 return new ServiceResponse(404, $"Notification with ID {notificationId} does not exist.");
             }
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse<IEnumerable<NotificationGetDTO>>(idResult.StatusCode, idResult.Message!);
+
             // If userIds do not match, return 403
-            if (userId != -1 && notification.UserId != userId)
+            if (notification.UserId != idResult.Content)
             {
                 return new ServiceResponse(403, "Forbidden");
             }
@@ -127,7 +141,7 @@ namespace Logic.Services.NotificationService
             return ServiceResponse.OK;
         }
 
-        public async Task<ServiceResponse> Delete(int notificationId, int callerId)
+        public async Task<ServiceResponse> Delete(int notificationId)
         {
             var notification = await _dataContext.Notifications.FindAsync(notificationId);
             // If the notification does not exists, return 404
@@ -135,8 +149,12 @@ namespace Logic.Services.NotificationService
             {
                 return new ServiceResponse(404, $"Notification with ID {notificationId} does not exist.");
             }
+
+            var idResult = _accessor.HttpContext!.RetriveUserId();
+            if (idResult.IsError) return new ServiceResponse<IEnumerable<NotificationGetDTO>>(idResult.StatusCode, idResult.Message!);
+
             // If userIds do not match, return 403
-            if (callerId != -1 && notification.UserId != callerId)
+            if (notification.UserId != idResult.Content)
             {
                 return new ServiceResponse(403, "Forbidden");
             }

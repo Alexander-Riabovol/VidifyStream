@@ -56,7 +56,7 @@ namespace API.Controllers
                 else return ValidationProblem(validationResult.Content);
             }
 
-            var response = await _notificationService.CreateAndSend(notificationDto.Adapt<NotificationCreateDTO>());
+            var response = await _notificationService.CreateAndSendAdmin(notificationDto);
             return StatusCode(response.StatusCode, response.Message);
         }
     }

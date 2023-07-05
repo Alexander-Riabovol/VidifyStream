@@ -26,10 +26,8 @@ namespace Logic.Mapping
 
         public void Register(TypeAdapterConfig config)
         {
-            config.NewConfig<NotificationAdminCreateDTO, NotificationCreateDTO>()
-                  .Map(dest => dest.Type, serc => NotificationType.Blank);
-
-            config.NewConfig<NotificationCreateDTO, Notification>()
+            config.NewConfig<NotificationAdminCreateDTO, Notification>()
+                  .Map(dest => dest.Type, serc => NotificationType.Blank)
                   .Map(dest => dest.Date, src => DateTime.Now);
 
             config.NewConfig<Notification, NotificationGetDTO>()

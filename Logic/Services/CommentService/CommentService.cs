@@ -98,13 +98,14 @@ namespace Logic.Services.CommentService
             // If a user left a comment under his own video, do not send him a notification.
             if(video.UserId != comment.UserId)
             {
-                await _notificationService.CreateAndSend(new NotificationCreateDTO()
+                await _notificationService.CreateAndSend(new Notification()
                 {
                     VideoId = commentPostDTO.VideoId,
                     CommentId = comment.CommentId,
                     UserId = video.UserId,
                     Type = NotificationType.LeftComment,
-                    Message = $"New comment under your '{video.Title}' video: '{comment.Text}'."
+                    Message = $"New comment under your '{video.Title}' video: '{comment.Text}'.",
+                    Date = DateTime.Now
                 });
             }
 
@@ -134,13 +135,14 @@ namespace Logic.Services.CommentService
             // If a user replied to his own comment, do not send him a notification.
             if (repliedTo.UserId != comment.UserId)
             {
-                await _notificationService.CreateAndSend(new NotificationCreateDTO()
+                await _notificationService.CreateAndSend(new Notification()
                 {
                     VideoId = top!.VideoId,
                     CommentId = comment.CommentId,
                     UserId = repliedTo.UserId,
                     Type = NotificationType.Reply,
-                    Message = $"{user!.Name} replied to your comment: '{comment.Text}'."
+                    Message = $"{user!.Name} replied to your comment: '{comment.Text}'.",
+                    Date = DateTime.Now
                 });
             }
 

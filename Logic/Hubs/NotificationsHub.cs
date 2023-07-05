@@ -5,12 +5,17 @@ using Microsoft.AspNetCore.SignalR;
 namespace Logic.Hubs
 {
     // Hub sent events:
-    // 
+    // {"type": 1,"target": "broadcast-notifications","arguments": []} - sent whenever there is a new notification, in OnConnectedAsync() and in GetAll().
+    // {"type": 1,"target": "error","arguments": []} - sent as a response to failed client command execution.
+    // {"type":1,"target":"read-notification","arguments":[notificationId]} - sent to the group as a sign that a notifications has been read.
+    // {"type":1,"target":"delete-notification","arguments":[notificationId]} - sent to the group as a sign that a notifications has been deleted.
+    // {"type":1,"target":"group-ping","arguments":[userId, numberOfActiveConnectionsInTheGroup, pingCount]} - pretty self explanatory.
     // Client commands:
     // {"protocol":"json","version":1} - start communication
-    // {"arguments":[],"target":"ping","type":1} - ping test function
-    // {"arguments":[{id}],"target":"read","type":1} - read a notification by id
-    // {"arguments":[{id}],"target":"delete","type":1} - delete a notification by id
+    // {"arguments":[],"target":"ping","type":1} - ping function for testing
+    // {"arguments":[],"target":"getall","type":1} - get all notifications
+    // {"arguments":[notificationId],"target":"read","type":1} - read a notification by id
+    // {"arguments":[notificationId],"target":"delete","type":1} - delete a notification by id
     public class NotificationsHub : Hub
     {
         private readonly AppData _data;
@@ -42,12 +47,12 @@ namespace Logic.Hubs
             if (!_data.ActiveNotificationUsers.ContainsKey(userId))
             {
                 // Get All notifications (unread by default)
-                var response = await _notificationService.GetAll(int.Parse(userId));
+                var response = await _notificationService.GetAllMy();
                 var incomingNotifications = response.Content;
                 // If there is any, send notifications to the user
                 if(!response.IsError && incomingNotifications != null)
                 {
-                    await Clients.Caller.SendAsync("push-notifications", incomingNotifications);
+                    await Clients.Caller.SendAsync("broadcast-notifications", incomingNotifications);
                 }
                 // Add the user into the active users dictionary
                 _data.ActiveNotificationUsers.Add(userId, 0);
@@ -80,7 +85,7 @@ namespace Logic.Hubs
         public async Task Read(int notificationId)
         {
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            var response = await _notificationService.ToggleTrueIsRead(notificationId, int.Parse(userId));
+            var response = await _notificationService.ToggleTrueIsRead(notificationId);
             if(!response.IsError)
             {
                 // If ToggleTrueIsRead method is succesful, inform other users that the notification has been read
@@ -95,7 +100,7 @@ namespace Logic.Hubs
         public async Task Delete(int notificationId)
         {
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            var response = await _notificationService.Delete(notificationId, int.Parse(userId));
+            var response = await _notificationService.Delete(notificationId);
             if (!response.IsError)
             {
                 // If Delete method is succesful, inform other users that the notification has been deleted
@@ -109,8 +114,7 @@ namespace Logic.Hubs
 
         public async Task GetAll()
         {
-            string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            var response = await _notificationService.GetAll(int.Parse(userId), false);
+            var response = await _notificationService.GetAllMy(false);
             // In any case we give a response only to the caller
             if (!response.IsError)
             {
@@ -126,7 +130,7 @@ namespace Logic.Hubs
         {
             pingCount++;
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            await Clients.Group($"push-{userId}").SendAsync("groupPing", userId, _data.ActiveNotificationUsers[userId], pingCount);
+            await Clients.Group($"push-{userId}").SendAsync("group-ping", userId, _data.ActiveNotificationUsers[userId], pingCount);
         }
     }
 }

@@ -12,9 +12,8 @@ namespace Logic.Services.NotificationService
         /// <summary>
         /// Retrieves all <see cref="Notification"/>s for a calling <see cref="User"/>.
         /// </summary>
-        /// <param name="userId">The ID of the user.</param>
         /// <param name="onlyUnread">A flag indicating whether to retrieve only unread notifications. Default is true.</param>
-        Task<ServiceResponse<IEnumerable<NotificationGetDTO>>> GetAll(int userId, bool onlyUnread = true);
+        Task<ServiceResponse<IEnumerable<NotificationGetDTO>>> GetAllMy(bool onlyUnread = true);
         /// <summary>
         /// Retrieves a <see cref="Notification"/> by its ID the way they are stored in the database.
         /// </summary>
@@ -26,20 +25,22 @@ namespace Logic.Services.NotificationService
         /// <param name="userId">The ID of the user.</param>
         Task<ServiceResponse<IEnumerable<NotificationAdminGetDTO>>> GetAllAdmin(int userId);
         /// <summary>
+        /// Creates a new <see cref="Notification"/> and sends it. Supposed to be used only by the server.
+        /// </summary>
+        Task<ServiceResponse> CreateAndSend(Notification notification);
+        /// <summary>
         /// Creates a new <see cref="Notification"/> and sends it.
         /// </summary>
-        Task<ServiceResponse> CreateAndSend(NotificationCreateDTO notificationCreateDto);
+        Task<ServiceResponse> CreateAndSendAdmin(NotificationAdminCreateDTO notificationAdminCreateDto);
         /// <summary>
         /// Toggles the IsRead property of a <see cref="Notification"/> to true.
         /// </summary>
         /// <param name="notificationId">The ID of the notification.</param>
-        /// <param name="callerId">The ID of the caller performing the operation. Set to -1 to bypass security checks.</param>
-        Task<ServiceResponse> ToggleTrueIsRead(int notificationId, int callerId = -1);
+        Task<ServiceResponse> ToggleTrueIsRead(int notificationId);
         /// <summary>
         /// Deletes a <see cref="Notification"/> by ID.
         /// </summary>
         /// <param name="notificationId">The ID of the notification.</param>
-        /// <param name="callerId">The ID of the caller performing the operation. Set to -1 to bypass security checks.</param>
-        Task<ServiceResponse> Delete(int notificationId, int callerId = -1);
+        Task<ServiceResponse> Delete(int notificationId);
     }
 }
