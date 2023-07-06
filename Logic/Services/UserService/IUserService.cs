@@ -41,5 +41,6 @@ namespace Logic.Services.UserService
         /// Deletes a <see cref="User"/> by it's ID.
         /// </summary>
         Task<ServiceResponse> DeleteAdmin(UserAdminDeleteDTO userAdminDeleteDTO);
+        Task<ServiceResponse<User>> AddAdminDebug();
     }
 }

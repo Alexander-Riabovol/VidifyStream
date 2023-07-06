@@ -22,35 +22,14 @@ namespace Data.Migrations
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProfilePictureUrls = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UsedIPs = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfilePictureUrls = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    BanMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    BanMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Playlists",
-                columns: table => new
-                {
-                    PlaylistId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Playlists", x => x.PlaylistId);
-                    table.ForeignKey(
-                        name: "FK_Playlists_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -61,9 +40,11 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
                     SourceUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ThumbnailUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,28 +58,6 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UsersToSavedPlaylists",
-                columns: table => new
-                {
-                    SavedByUsersUserId = table.Column<int>(type: "int", nullable: false),
-                    SavedPlaylistsPlaylistId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UsersToSavedPlaylists", x => new { x.SavedByUsersUserId, x.SavedPlaylistsPlaylistId });
-                    table.ForeignKey(
-                        name: "FK_UsersToSavedPlaylists_Playlists_SavedPlaylistsPlaylistId",
-                        column: x => x.SavedPlaylistsPlaylistId,
-                        principalTable: "Playlists",
-                        principalColumn: "PlaylistId");
-                    table.ForeignKey(
-                        name: "FK_UsersToSavedPlaylists_Users_SavedByUsersUserId",
-                        column: x => x.SavedByUsersUserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
@@ -106,9 +65,11 @@ namespace Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    VideoId = table.Column<int>(type: "int", nullable: false),
+                    VideoId = table.Column<int>(type: "int", nullable: true),
                     RepliedToId = table.Column<int>(type: "int", nullable: true),
-                    IsAuthorLiked = table.Column<bool>(type: "bit", nullable: false)
+                    IsAuthorLiked = table.Column<bool>(type: "bit", nullable: false),
+                    Edited = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -129,30 +90,6 @@ namespace Data.Migrations
                         column: x => x.VideoId,
                         principalTable: "Videos",
                         principalColumn: "VideoId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PlaylistsToVideos",
-                columns: table => new
-                {
-                    PlaylistId = table.Column<int>(type: "int", nullable: false),
-                    VideosVideoId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlaylistsToVideos", x => new { x.PlaylistId, x.VideosVideoId });
-                    table.ForeignKey(
-                        name: "FK_PlaylistsToVideos_Playlists_PlaylistId",
-                        column: x => x.PlaylistId,
-                        principalTable: "Playlists",
-                        principalColumn: "PlaylistId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PlaylistsToVideos_Videos_VideosVideoId",
-                        column: x => x.VideosVideoId,
-                        principalTable: "Videos",
-                        principalColumn: "VideoId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -206,6 +143,41 @@ namespace Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    CommentId = table.Column<int>(type: "int", nullable: true),
+                    VideoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Comments_CommentId",
+                        column: x => x.CommentId,
+                        principalTable: "Comments",
+                        principalColumn: "CommentId");
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Videos_VideoId",
+                        column: x => x.VideoId,
+                        principalTable: "Videos",
+                        principalColumn: "VideoId");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_RepliedToId",
                 table: "Comments",
@@ -227,19 +199,19 @@ namespace Data.Migrations
                 column: "LikesUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Playlists_UserId",
-                table: "Playlists",
+                name: "IX_Notifications_CommentId",
+                table: "Notifications",
+                column: "CommentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlaylistsToVideos_VideosVideoId",
-                table: "PlaylistsToVideos",
-                column: "VideosVideoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsersToSavedPlaylists_SavedPlaylistsPlaylistId",
-                table: "UsersToSavedPlaylists",
-                column: "SavedPlaylistsPlaylistId");
+                name: "IX_Notifications_VideoId",
+                table: "Notifications",
+                column: "VideoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Videos_UserId",
@@ -259,19 +231,13 @@ namespace Data.Migrations
                 name: "Likes");
 
             migrationBuilder.DropTable(
-                name: "PlaylistsToVideos");
-
-            migrationBuilder.DropTable(
-                name: "UsersToSavedPlaylists");
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "ViewData");
 
             migrationBuilder.DropTable(
                 name: "Comments");
-
-            migrationBuilder.DropTable(
-                name: "Playlists");
 
             migrationBuilder.DropTable(
                 name: "Videos");

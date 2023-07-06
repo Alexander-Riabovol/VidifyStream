@@ -3,12 +3,15 @@ using Data.Dtos;
 using Data.Dtos.User;
 using Data.Models;
 using Logic.Extensions;
+using Logic.Services.AuthService;
 using Logic.Services.FileService;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 
 namespace Logic.Services.UserService
 {
@@ -200,6 +203,41 @@ namespace Logic.Services.UserService
             var admin = await _dataContext.Users.FindAsync(idResult.Content);
             _logger.LogInformation($"Admin {{Name: {admin?.Name}, ID: {admin?.UserId}}} banned User {{Name: {user.Name}, Email: {user.Email}, ID: {user.UserId}}}.");
             return ServiceResponse.OK;
+        }
+
+        public async Task<ServiceResponse<User>> AddAdminDebug()
+        {
+            int number = 0;
+            User? user = new User();
+            while(user != null)
+            {
+                number++;
+                user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == $"admin{number}@test.com");
+            }
+
+            var result = await CreateUser(new User()
+            {
+                Name = $"Admin{number}",
+                BirthDate = DateTime.Now.AddYears(-20),
+                Email = $"admin{number}@test.com",
+                Password = "admin",
+                Status = Status.Admin,
+            });
+
+            if (result.IsError) return new ServiceResponse<User>(result.StatusCode, result.Message!);
+
+            user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == $"admin{number}@test.com");
+
+            var claims = new List<Claim>
+            {
+                new Claim("id", user!.UserId.ToString())
+            };
+            var identity = new ClaimsIdentity(claims, IAuthService.AuthScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await _accessor.HttpContext!.SignInAsync(IAuthService.AuthScheme, principal);
+
+            return ServiceResponse<User>.OK(user);
         }
     }
 }

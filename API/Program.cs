@@ -111,15 +111,12 @@ app.MapHub<NotificationsHub>("/wss/notifications");
 app.MapHealthChecks("/health");
 
 // Apply pending ef core migrations
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
+app.ApplyPendingMigrations();
 
-    var context = services.GetRequiredService<DataContext>();
-    if (context.Database.GetPendingMigrations().Any())
-    {
-        context.Database.Migrate();
-    }
-}
+// Add debug endpoints
+app.MapPost("/debug/addadmin", async (IUserService userService) =>
+{
+    return await userService.AddAdminDebug();
+});
 
 app.Run();

@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230620081815_ModifyCommentAndVideoModels")]
-    partial class ModifyCommentAndVideoModels
+    [Migration("20230706112604_InitialMigrations")]
+    partial class InitialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.7")
+                .HasAnnotation("ProductVersion", "7.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -32,6 +32,9 @@ namespace Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("Edited")
                         .HasColumnType("bit");
@@ -49,7 +52,7 @@ namespace Data.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VideoId")
+                    b.Property<int?>("VideoId")
                         .HasColumnType("int");
 
                     b.HasKey("CommentId");
@@ -65,11 +68,11 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.Notification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("NotificationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
 
                     b.Property<int?>("CommentId")
                         .HasColumnType("int");
@@ -93,7 +96,7 @@ namespace Data.Migrations
                     b.Property<int?>("VideoId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("NotificationId");
 
                     b.HasIndex("CommentId");
 
@@ -102,34 +105,6 @@ namespace Data.Migrations
                     b.HasIndex("VideoId");
 
                     b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("Data.Models.Playlist", b =>
-                {
-                    b.Property<int>("PlaylistId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlaylistId"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsPublic")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlaylistId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Playlists");
                 });
 
             modelBuilder.Entity("Data.Models.User", b =>
@@ -149,6 +124,9 @@ namespace Data.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -162,13 +140,11 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfilePictureUrls")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<string>("UsedIPs")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 
@@ -185,6 +161,9 @@ namespace Data.Migrations
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -251,36 +230,6 @@ namespace Data.Migrations
                     b.ToTable("Likes");
                 });
 
-            modelBuilder.Entity("PlaylistsToVideos", b =>
-                {
-                    b.Property<int>("PlaylistId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VideosVideoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlaylistId", "VideosVideoId");
-
-                    b.HasIndex("VideosVideoId");
-
-                    b.ToTable("PlaylistsToVideos");
-                });
-
-            modelBuilder.Entity("UsersToSavedPlaylists", b =>
-                {
-                    b.Property<int>("SavedByUsersUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SavedPlaylistsPlaylistId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SavedByUsersUserId", "SavedPlaylistsPlaylistId");
-
-                    b.HasIndex("SavedPlaylistsPlaylistId");
-
-                    b.ToTable("UsersToSavedPlaylists");
-                });
-
             modelBuilder.Entity("Data.Models.Comment", b =>
                 {
                     b.HasOne("Data.Models.Comment", "RepliedTo")
@@ -297,8 +246,7 @@ namespace Data.Migrations
                     b.HasOne("Data.Models.Video", "Video")
                         .WithMany("Comments")
                         .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("RepliedTo");
 
@@ -330,17 +278,6 @@ namespace Data.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Video");
-                });
-
-            modelBuilder.Entity("Data.Models.Playlist", b =>
-                {
-                    b.HasOne("Data.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Data.Models.Video", b =>
@@ -385,36 +322,6 @@ namespace Data.Migrations
                         .WithMany()
                         .HasForeignKey("LikesUserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PlaylistsToVideos", b =>
-                {
-                    b.HasOne("Data.Models.Playlist", null)
-                        .WithMany()
-                        .HasForeignKey("PlaylistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.Video", null)
-                        .WithMany()
-                        .HasForeignKey("VideosVideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("UsersToSavedPlaylists", b =>
-                {
-                    b.HasOne("Data.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("SavedByUsersUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Data.Models.Playlist", null)
-                        .WithMany()
-                        .HasForeignKey("SavedPlaylistsPlaylistId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
