@@ -20,9 +20,11 @@ This is my pet-project. I tried to implement a **video-hosting** solution.
 
 ## Usage
 
-Add a `https://api.postman.com/collections/20418337-491d3294-dc54-4d68-9023-a94d06459556?access_key=PMAT-01H4P576GGM9HB8ETY9025TQPT` **Postman** collection that contains requests and a documentation to endpoints via `Import` button in the *left corner* of the screen.
+Fork **Postman** collections that contain requests and a documentation to endpoints via `Fork` button in the the dropdown list or by pressing `Ctrl + Alt + F` from the workspace:
 
-![import.png](https://github.com/Alexander-Riabovol/VidifyStream/blob/master/import.png)
+`https://www.postman.com/gold-astronaut-497435/workspace/vidifystream-workspace/collection/28405641-c4d7122b-1b12-41dc-8efe-397785854420?action=share&creator=28405641`  
+
+Make sure to fork both collections from the workspace.
 
 If you want to view the complete documentation, press the following button in the *right corner* of the screen.
 
