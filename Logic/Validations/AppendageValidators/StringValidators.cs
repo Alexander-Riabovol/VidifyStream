@@ -25,7 +25,7 @@ namespace Logic.Validations.AppendageValidators
             this IRuleBuilderInitial<T, string> ruleBuilder)
         {
             // Regex: At least 1 number, 1 uppercase letter, 1 lowercase letter
-            return ruleBuilder.Matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]+$")
+            return ruleBuilder.Matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
                               .WithMessage("You entered a weak password. '{PropertyName}' must contain at least 1 number, 1 uppercase letter and 1 lowercase letter.")
                               .Length(8, 60);
         }

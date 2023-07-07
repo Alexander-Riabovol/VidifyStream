@@ -8,12 +8,12 @@ namespace API.Controllers
 {
     [Route("api/videos")]
     [ApiController]
-    public class VideoController : ControllerBase
+    public class VideosController : ControllerBase
     {
         private readonly IVideoService _videoService;
         private readonly IValidationService _validationService;
 
-        public VideoController(IVideoService videoService, IValidationService validationService) 
+        public VideosController(IVideoService videoService, IValidationService validationService) 
         {
             _videoService = videoService;
             _validationService = validationService;
