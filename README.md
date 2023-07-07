@@ -21,9 +21,11 @@ This is my pet-project. I tried to implement a **video-hosting** solution.
 ## Usage
 
 Add a `https://api.postman.com/collections/20418337-491d3294-dc54-4d68-9023-a94d06459556?access_key=PMAT-01H4P576GGM9HB8ETY9025TQPT` **Postman** collection that contains requests and a documentation to endpoints via `Import` button in the *left corner* of the screen.
+
 ![import.png](https://github.com/Alexander-Riabovol/VidifyStream/blob/master/import.png)
 
 If you want to view the complete documentation, press the following button in the *right corner* of the screen.
+
 ![ViewCompleteCollectionDocumentation.png](https://github.com/Alexander-Riabovol/VidifyStream/blob/master/ViewCompleteCollectionDocumentation.png)
 
 That's it. Since you have successfully started the application, you can read the documentation and try out the desired endpoints.
