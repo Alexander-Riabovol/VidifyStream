@@ -1,5 +1,5 @@
 ﻿using Data.Context;
-using Logic.Services.AuthService;
+using Logic.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
 

@@ -1,6 +1,6 @@
 ﻿using Data.Dtos.User;
-using Logic.Services.AuthService;
-using Logic.Services.ValidationService;
+using Logic.Services.Auth;
+using Logic.Services.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

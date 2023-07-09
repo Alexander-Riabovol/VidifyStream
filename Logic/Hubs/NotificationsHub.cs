@@ -1,5 +1,5 @@
-﻿using Logic.Services.AuthService;
-using Logic.Services.NotificationService;
+﻿using Logic.Services.Auth;
+using Logic.Services.Notifications;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logic.Hubs

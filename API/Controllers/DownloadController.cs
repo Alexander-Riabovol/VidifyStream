@@ -1,4 +1,4 @@
-﻿using Logic.Services.FileService;
+﻿using Logic.Services.Files;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

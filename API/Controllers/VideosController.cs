@@ -1,6 +1,6 @@
 ﻿using Data.Dtos.Video;
-using Logic.Services.ValidationService;
-using Logic.Services.VideoService;
+using Logic.Services.Validation;
+using Logic.Services.Videos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

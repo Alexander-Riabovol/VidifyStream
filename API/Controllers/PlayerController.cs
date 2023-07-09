@@ -1,4 +1,4 @@
-﻿using Logic.Services.VideoService;
+﻿using Logic.Services.Videos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

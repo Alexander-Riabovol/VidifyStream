@@ -1,6 +1,6 @@
 ﻿using Data.Dtos.Notification;
-using Logic.Services.NotificationService;
-using Logic.Services.ValidationService;
+using Logic.Services.Notifications;
+using Logic.Services.Validation;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
