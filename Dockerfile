@@ -7,18 +7,18 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["API/API.csproj", "API/"]
-COPY ["Data/Data.csproj", "Data/"]
-COPY ["Logic/Logic.csproj", "Logic/"]
-RUN dotnet restore "API/API.csproj"
+COPY ["API/VidifyStream.API.csproj", "API/"]
+COPY ["Data/VidifyStream.Data.csproj", "Data/"]
+COPY ["Logic/VidifyStream.Logic.csproj", "Logic/"]
+RUN dotnet restore "API/VidifyStream.API.csproj"
 COPY . .
 WORKDIR "/src/API"
-RUN dotnet build "API.csproj" -c Release -o /app/build
+RUN dotnet build "VidifyStream.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "VidifyStream.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "API.dll"]
+ENTRYPOINT ["dotnet", "VidifyStream.API.dll"]
