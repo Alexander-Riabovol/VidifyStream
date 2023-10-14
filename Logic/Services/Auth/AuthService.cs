@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using VidifyStream.Logic.CQRS.Auth.Common;
 
 namespace Logic.Services.Auth
 {   
@@ -65,10 +66,10 @@ namespace Logic.Services.Auth
             {
                 new Claim("id", user.UserId.ToString())
             };
-            var identity = new ClaimsIdentity(claims, IAuthService.AuthScheme);
+            var identity = new ClaimsIdentity(claims, AuthScheme.Default);
             var principal = new ClaimsPrincipal(identity);
 
-            await _accessor.HttpContext!.SignInAsync(IAuthService.AuthScheme, principal);
+            await _accessor.HttpContext!.SignInAsync(AuthScheme.Default, principal);
             return ServiceResponse.OK;
         }
 

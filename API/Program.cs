@@ -6,7 +6,6 @@ using Logic;
 using Logic.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Logic.Services.Auth;
 using Logic.Services.Comments;
 using Logic.Services.Files;
 using Logic.Services.Notifications;
@@ -15,6 +14,7 @@ using Logic.Services.Validation;
 using Logic.Services.Videos;
 using FluentValidation;
 using Data;
+using VidifyStream.Logic.CQRS.Auth.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +24,10 @@ builder.Services.AddHttpContextAccessor();
 // Add services to the container.
 builder.Services.AddSingleton<AppData>();
 
-builder.Services.AddScoped<IAuthService, AuthService>();
+//Add MediatR
+builder.Services.AddMediatR(config => 
+    config.RegisterServicesFromAssembly(typeof(ILogicAssemblyMarker).Assembly));
+
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IFileService, LocalFileService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
@@ -46,21 +49,21 @@ builder.Services.AddDbContext<DataContext>(options =>
 });
 
 // Add Authentication
-builder.Services.AddAuthentication(IAuthService.AuthScheme)
-                .AddCookie(IAuthService.AuthScheme);
+builder.Services.AddAuthentication(AuthScheme.Default)
+                .AddCookie(AuthScheme.Default);
 // Add Authorization
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("admin-only", policy => 
     {
         policy.RequireAuthenticatedUser()
-              .AddAuthenticationSchemes(IAuthService.AuthScheme)
+              .AddAuthenticationSchemes(AuthScheme.Default)
               .AddRequirements(new StatusRequirement(Status.Admin));
     });
     options.AddPolicy("user+", policy =>
     {
         policy.RequireAuthenticatedUser()
-              .AddAuthenticationSchemes(IAuthService.AuthScheme)
+              .AddAuthenticationSchemes(AuthScheme.Default)
               .AddRequirements(new StatusRequirement(Status.User, Status.Janitor, Status.Admin));
     });
 });

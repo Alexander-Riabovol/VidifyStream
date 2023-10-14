@@ -1,6 +1,6 @@
-﻿using Logic.Services.Auth;
-using Logic.Services.Notifications;
+﻿using Logic.Services.Notifications;
 using Microsoft.AspNetCore.SignalR;
+using VidifyStream.Logic.CQRS.Auth.Common;
 
 namespace Logic.Hubs
 {
@@ -34,7 +34,7 @@ namespace Logic.Hubs
 
             // If not authenticated, close the connection
             if (identity == null || !identity.IsAuthenticated 
-                || identity.AuthenticationType != IAuthService.AuthScheme)
+                || identity.AuthenticationType != AuthScheme.Default)
             {
                 Context.Abort();
                 return;
@@ -66,7 +66,7 @@ namespace Logic.Hubs
             // in any case, so an identity check will prevent InvalidOperationException
             var identity = Context.User?.Identity;
             if (identity == null || !identity.IsAuthenticated
-                || identity.AuthenticationType != IAuthService.AuthScheme)
+                || identity.AuthenticationType != AuthScheme.Default)
             {
                 return base.OnDisconnectedAsync(exception);
             }

@@ -3,7 +3,6 @@ using Data.Dtos;
 using Data.Dtos.User;
 using Data.Models;
 using Logic.Extensions;
-using Logic.Services.Auth;
 using Logic.Services.Files;
 using Mapster;
 using MapsterMapper;
@@ -12,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using VidifyStream.Logic.CQRS.Auth.Common;
 
 namespace Logic.Services.Users
 {
@@ -232,10 +232,10 @@ namespace Logic.Services.Users
             {
                 new Claim("id", user!.UserId.ToString())
             };
-            var identity = new ClaimsIdentity(claims, IAuthService.AuthScheme);
+            var identity = new ClaimsIdentity(claims, AuthScheme.Default);
             var principal = new ClaimsPrincipal(identity);
 
-            await _accessor.HttpContext!.SignInAsync(IAuthService.AuthScheme, principal);
+            await _accessor.HttpContext!.SignInAsync(AuthScheme.Default, principal);
 
             return ServiceResponse<User>.OK(user);
         }

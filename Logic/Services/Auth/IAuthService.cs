@@ -9,10 +9,6 @@ namespace Logic.Services.Auth
     public interface IAuthService
     {
         /// <summary>
-        /// Represents the authentication scheme used for cookie-based authentication.
-        /// </summary>
-        const string AuthScheme = "cookie";
-        /// <summary>
         /// Registers a new user with the provided registration data.
         /// </summary>
         /// <param name="registerData">The user registration data.</param>

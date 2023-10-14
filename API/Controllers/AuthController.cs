@@ -1,8 +1,12 @@
 ﻿using Data.Dtos.User;
-using Logic.Services.Auth;
 using Logic.Services.Validation;
+using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VidifyStream.Logic.CQRS.Auth.Commands.Register;
+using VidifyStream.Logic.CQRS.Auth.Queries.Login;
+using VidifyStream.Logic.CQRS.Auth.Queries.Logout;
 
 namespace API.Controllers
 {
@@ -10,12 +14,16 @@ namespace API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IMapper _mapper;
+        private readonly ISender _mediator;
         private readonly IValidationService _validationService;
 
-        public AuthController(IAuthService authService, IValidationService validationService) 
+        public AuthController(IMapper mapper,
+                              ISender mediator,
+                              IValidationService validationService) 
         {
-            _authService = authService;
+            _mapper = mapper;
+            _mediator = mediator;
             _validationService = validationService;
         }
 
@@ -30,7 +38,9 @@ namespace API.Controllers
                 else return ValidationProblem(validationResult.Content);
             }
 
-            var result = await _authService.LogIn(loginData);
+            var query = _mapper.Map<LoginQuery>(loginData);
+            var result = await _mediator.Send(query);
+
             return StatusCode(result.StatusCode, result.Message);
         }
 
@@ -45,8 +55,10 @@ namespace API.Controllers
                 else return ValidationProblem(validationResult.Content);
             }
 
-            var result = await _authService.Register(registerData);
-            if(result.IsError)
+            var command = _mapper.Map<RegisterCommand>(registerData);
+            var result = await _mediator.Send(command);
+
+            if (result.IsError)
             {
                 return StatusCode(result.StatusCode, result.Message);
             }
@@ -57,7 +69,7 @@ namespace API.Controllers
         [Route("api/logout")]
         public async Task<IActionResult> Logout()
         {
-            var result = await _authService.LogOut();
+            var result = await _mediator.Send(new LogoutQuery());
             return StatusCode(result.StatusCode, result.Message);
         }
     }

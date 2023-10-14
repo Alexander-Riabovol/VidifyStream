@@ -1,9 +1,10 @@
 ﻿using Data.Dtos.User;
-using Logic.Services.Auth;
 using Logic.Services.Users;
 using Logic.Services.Validation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VidifyStream.Logic.CQRS.Auth.Queries.Logout;
 
 namespace API.Controllers
 {
@@ -11,16 +12,16 @@ namespace API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IAuthService _authService;
         private readonly IUserService _userService;
+        private readonly ISender _mediator;
         private readonly IValidationService _validationService;
 
-        public UsersController(IAuthService authService,
-                               IUserService userService,
+        public UsersController(IUserService userService,
+                               ISender mediator,   
                                IValidationService validationService) 
         {
-            _authService = authService;
             _userService = userService;
+            _mediator = mediator;
             _validationService = validationService;
         }
 
@@ -122,7 +123,7 @@ namespace API.Controllers
             var result = await _userService.DeleteMe();
             if(!result.IsError) 
             {
-                await _authService.LogOut();
+                await _mediator.Send(new LogoutQuery());
             }
             return StatusCode(result.StatusCode, result.Message);
         }
