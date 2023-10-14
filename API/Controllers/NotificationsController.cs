@@ -1,11 +1,10 @@
-﻿using Data.Dtos.Notification;
-using Logic.Services.Notifications;
-using Logic.Services.Validation;
-using Mapster;
+﻿using VidifyStream.Data.Dtos.Notification;
+using VidifyStream.Logic.Services.Notifications;
+using VidifyStream.Logic.Services.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [Route("api/notifications")]
     [Authorize(Policy = "admin-only")]

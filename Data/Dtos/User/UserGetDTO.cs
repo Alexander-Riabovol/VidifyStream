@@ -1,6 +1,6 @@
-﻿using Data.Dtos.Video;
+﻿using VidifyStream.Data.Dtos.Video;
 
-namespace Data.Dtos.User
+namespace VidifyStream.Data.Dtos.User
 {
     public record UserGetDTO
     {

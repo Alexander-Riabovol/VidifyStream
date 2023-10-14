@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
-namespace Logic.Validators
+namespace VidifyStream.Logic.Validators
 {
     public class FormFileValidator : AbstractValidator<IFormFile>
     {

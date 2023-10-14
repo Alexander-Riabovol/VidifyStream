@@ -1,10 +1,10 @@
-﻿using Data.Dtos;
+﻿using VidifyStream.Data.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace Logic.Services.Files
+namespace VidifyStream.Logic.Services.Files
 {
     /// <summary>
     /// Represents a file service implementation that handles local file storage.

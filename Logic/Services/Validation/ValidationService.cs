@@ -1,14 +1,14 @@
-﻿using Data.Dtos;
-using Data.Dtos.Comment;
-using Data.Dtos.Notification;
-using Data.Dtos.User;
-using Data.Dtos.Video;
+﻿using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.Comment;
+using VidifyStream.Data.Dtos.Notification;
+using VidifyStream.Data.Dtos.User;
+using VidifyStream.Data.Dtos.Video;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Logic.Services.Validation
+namespace VidifyStream.Logic.Services.Validation
 {
     public class ValidationService : IValidationService
     {

@@ -1,8 +1,8 @@
-﻿using Data.Dtos.User;
+﻿using VidifyStream.Data.Dtos.User;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
-namespace Logic.Validators.Users
+namespace VidifyStream.Logic.Validators.Users
 {
     public class UserProfilePicturePostDTOValidator : AbstractValidator<UserProfilePicturePostDTO>
     {

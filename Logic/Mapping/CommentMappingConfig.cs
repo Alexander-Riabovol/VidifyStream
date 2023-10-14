@@ -1,8 +1,8 @@
-﻿using Data.Dtos.Comment;
-using Data.Models;
+﻿using VidifyStream.Data.Dtos.Comment;
+using VidifyStream.Data.Models;
 using Mapster;
 
-namespace Logic.Mapping
+namespace VidifyStream.Logic.Mapping
 {
     /// <summary>
     /// Configuration class for mapping CommentDTOs to <see cref="Comment"/> models and vice versa.

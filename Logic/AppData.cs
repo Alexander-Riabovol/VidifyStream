@@ -1,4 +1,4 @@
-﻿namespace Logic
+﻿namespace VidifyStream.Logic
 {
     // AppData Will be used as Singletone via Dependency Injector.
     /// <summary>

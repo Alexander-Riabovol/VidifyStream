@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Data.Migrations
+namespace VidifyStream.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigrations : Migration

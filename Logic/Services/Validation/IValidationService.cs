@@ -1,7 +1,7 @@
-﻿using Data.Dtos;
+﻿using VidifyStream.Data.Dtos;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Logic.Services.Validation
+namespace VidifyStream.Logic.Services.Validation
 {
     /// <summary>
     /// Service responsible for validating data using FluentValidation.

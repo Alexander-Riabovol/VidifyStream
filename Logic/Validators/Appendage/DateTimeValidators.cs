@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 
-namespace Logic.Validators.Appendage
+namespace VidifyStream.Logic.Validators.Appendage
 {
     /// <summary>
     /// Provides custom validation rules for the type <see cref="DateTime"/>.

@@ -1,10 +1,10 @@
-﻿using Data.Dtos.Video;
-using Logic.Services.Validation;
-using Logic.Services.Videos;
+﻿using VidifyStream.Data.Dtos.Video;
+using VidifyStream.Logic.Services.Validation;
+using VidifyStream.Logic.Services.Videos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [Route("api/videos")]
     [ApiController]

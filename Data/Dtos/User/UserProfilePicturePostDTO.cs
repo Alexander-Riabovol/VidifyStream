@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Data.Dtos.User
+namespace VidifyStream.Data.Dtos.User
 {
     public record UserProfilePicturePostDTO
     {

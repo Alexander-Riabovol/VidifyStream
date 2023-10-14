@@ -1,8 +1,8 @@
-﻿using Data.Dtos.Comment;
+﻿using VidifyStream.Data.Dtos.Comment;
 using FluentValidation;
-using Logic.Validators.Appendage;
+using VidifyStream.Logic.Validators.Appendage;
 
-namespace Logic.Validators.Comments
+namespace VidifyStream.Logic.Validators.Comments
 {
     public class CommentPutDTOValidator : AbstractValidator<CommentPutDTO>
     {

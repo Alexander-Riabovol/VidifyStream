@@ -1,7 +1,7 @@
-﻿using Data.Dtos;
+﻿using VidifyStream.Data.Dtos;
 using Microsoft.AspNetCore.Http;
 
-namespace Logic.Services.Files
+namespace VidifyStream.Logic.Services.Files
 {
     /// <summary>
     /// Represents a file service interface for handling file operations such as uploading and downloading.

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Data.Models
+namespace VidifyStream.Data.Models
 {
     /// <summary>
     /// Represents a status of a user, which dictates restrictions

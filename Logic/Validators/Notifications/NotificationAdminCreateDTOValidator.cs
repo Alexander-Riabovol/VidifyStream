@@ -1,9 +1,9 @@
-﻿using Data.Context;
-using Data.Dtos.Notification;
+﻿using VidifyStream.Data.Context;
+using VidifyStream.Data.Dtos.Notification;
 using FluentValidation;
-using Logic.Validators.Appendage;
+using VidifyStream.Logic.Validators.Appendage;
 
-namespace Logic.Validators.Notifications
+namespace VidifyStream.Logic.Validators.Notifications
 {
     public class NotificationAdminCreateDTOValidator : AbstractValidator<NotificationAdminCreateDTO>
     {

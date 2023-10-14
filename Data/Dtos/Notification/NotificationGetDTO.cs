@@ -1,4 +1,4 @@
-﻿namespace Data.Dtos.Notification
+﻿namespace VidifyStream.Data.Dtos.Notification
 {
     public record NotificationGetDTO
     {

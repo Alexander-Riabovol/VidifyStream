@@ -1,16 +1,16 @@
-﻿using Logic.Hubs;
-using Data.Context;
-using Data.Dtos;
-using Data.Dtos.Notification;
-using Data.Models;
+﻿using VidifyStream.Logic.Hubs;
+using VidifyStream.Data.Context;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.Notification;
+using VidifyStream.Data.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MapsterMapper;
 using Mapster;
 using Microsoft.AspNetCore.Http;
-using Logic.Extensions;
+using VidifyStream.Logic.Extensions;
 
-namespace Logic.Services.Notifications
+namespace VidifyStream.Logic.Services.Notifications
 {
     public class NotificationService : INotificationService
     {

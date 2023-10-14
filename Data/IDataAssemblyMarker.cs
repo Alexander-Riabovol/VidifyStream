@@ -1,4 +1,4 @@
-﻿namespace Data
+﻿namespace VidifyStream.Data
 {
     /// <summary>
     /// Marker interface for identifying and categorizing data-related classes within the Data namespace.

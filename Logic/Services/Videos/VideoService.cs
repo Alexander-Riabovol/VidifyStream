@@ -1,16 +1,16 @@
-﻿using Data.Context;
-using Data.Dtos;
-using Data.Dtos.Video;
-using Data.Models;
-using Logic.Extensions;
-using Logic.Services.Files;
+﻿using VidifyStream.Data.Context;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.Video;
+using VidifyStream.Data.Models;
+using VidifyStream.Logic.Extensions;
+using VidifyStream.Logic.Services.Files;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Logic.Services.Videos
+namespace VidifyStream.Logic.Services.Videos
 {
     public class VideoService : IVideoService
     {

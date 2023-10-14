@@ -1,9 +1,9 @@
-﻿using Data.Models;
-using Data.Persistence;
+﻿using VidifyStream.Data.Models;
+using VidifyStream.Data.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Data.Context.Interceptors
+namespace VidifyStream.Data.Context.Interceptors
 {
     /// <summary>
     /// Interceptor for implementing soft delete functionality during database save changes.

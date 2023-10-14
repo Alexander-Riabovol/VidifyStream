@@ -1,10 +1,10 @@
-﻿using Data.Dtos.Comment;
-using Logic.Services.Comments;
-using Logic.Services.Validation;
+﻿using VidifyStream.Data.Dtos.Comment;
+using VidifyStream.Logic.Services.Comments;
+using VidifyStream.Logic.Services.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [Route("api/comments")]
     [ApiController]

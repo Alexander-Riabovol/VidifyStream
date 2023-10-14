@@ -1,12 +1,12 @@
-﻿using Data.Dtos.User;
-using Logic.Services.Users;
-using Logic.Services.Validation;
+﻿using VidifyStream.Data.Dtos.User;
+using VidifyStream.Logic.Services.Users;
+using VidifyStream.Logic.Services.Validation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VidifyStream.Logic.CQRS.Auth.Queries.Logout;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [Route("api/users")]
     [ApiController]

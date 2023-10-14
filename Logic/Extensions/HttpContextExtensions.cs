@@ -1,7 +1,7 @@
-﻿using Data.Dtos;
+﻿using VidifyStream.Data.Dtos;
 using Microsoft.AspNetCore.Http;
 
-namespace Logic.Extensions
+namespace VidifyStream.Logic.Extensions
 {
     /// <summary>
     /// Extension methods for HttpContext related operations.

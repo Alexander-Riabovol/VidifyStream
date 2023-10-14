@@ -1,8 +1,8 @@
-﻿using Data.Context.Interceptors;
-using Data.Models;
+﻿using VidifyStream.Data.Context.Interceptors;
+using VidifyStream.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Data.Context
+namespace VidifyStream.Data.Context
 {
     /// <summary>
     /// Represents a database context for managing and interacting with the entities using Entity Framework Core.

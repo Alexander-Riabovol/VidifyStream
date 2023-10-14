@@ -1,16 +1,16 @@
-﻿using Data.Context;
-using Data.Dtos;
-using Data.Dtos.Comment;
-using Data.Dtos.Notification;
-using Data.Models;
-using Logic.Extensions;
-using Logic.Services.Notifications;
+﻿using VidifyStream.Data.Context;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.Comment;
+using VidifyStream.Data.Dtos.Notification;
+using VidifyStream.Data.Models;
+using VidifyStream.Logic.Extensions;
+using VidifyStream.Logic.Services.Notifications;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Logic.Services.Comments
+namespace VidifyStream.Logic.Services.Comments
 {
     public class CommentService : ICommentService
     {

@@ -1,11 +1,11 @@
-﻿using Data.Context;
-using Data.Dtos.Notification;
-using Data.Models;
+﻿using VidifyStream.Data.Context;
+using VidifyStream.Data.Dtos.Notification;
+using VidifyStream.Data.Models;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace Logic.Mapping
+namespace VidifyStream.Logic.Mapping
 {
     /// <summary>
     /// Configuration class for mapping NotificationDTOs to <see cref="Notification"/> models and vice versa.

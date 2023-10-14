@@ -1,8 +1,8 @@
-﻿using Data.Dtos.Video;
+﻿using VidifyStream.Data.Dtos.Video;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
-namespace Logic.Validators.Videos
+namespace VidifyStream.Logic.Validators.Videos
 {
     public class VideoPostDTOValidator : AbstractValidator<VideoPostDTO>
     {

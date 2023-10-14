@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Data.Context
+namespace VidifyStream.Data.Context
 {
     public static class DependencyInjection
     {

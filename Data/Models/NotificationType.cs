@@ -1,4 +1,4 @@
-﻿namespace Data.Models
+﻿namespace VidifyStream.Data.Models
 {
     /// <summary>
     /// Defines the type of a <see cref="Notification"/>.

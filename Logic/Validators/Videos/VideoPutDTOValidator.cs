@@ -1,9 +1,9 @@
-﻿using Data.Dtos.Video;
+﻿using VidifyStream.Data.Dtos.Video;
 using FluentValidation;
-using Logic.Validators.Appendage;
+using VidifyStream.Logic.Validators.Appendage;
 using Microsoft.AspNetCore.Http;
 
-namespace Logic.Validators.Videos
+namespace VidifyStream.Logic.Validators.Videos
 {
     public class VideoPutDTOValidator : AbstractValidator<VideoPutDTO>
     {

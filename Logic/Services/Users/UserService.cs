@@ -1,9 +1,9 @@
-﻿using Data.Context;
-using Data.Dtos;
-using Data.Dtos.User;
-using Data.Models;
-using Logic.Extensions;
-using Logic.Services.Files;
+﻿using VidifyStream.Data.Context;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.User;
+using VidifyStream.Data.Models;
+using VidifyStream.Logic.Extensions;
+using VidifyStream.Logic.Services.Files;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using VidifyStream.Logic.CQRS.Auth.Common;
 
-namespace Logic.Services.Users
+namespace VidifyStream.Logic.Services.Users
 {
     public class UserService : IUserService
     {

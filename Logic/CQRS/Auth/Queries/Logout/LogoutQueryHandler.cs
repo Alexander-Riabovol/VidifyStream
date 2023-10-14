@@ -1,4 +1,4 @@
-﻿using Data.Dtos;
+﻿using VidifyStream.Data.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;

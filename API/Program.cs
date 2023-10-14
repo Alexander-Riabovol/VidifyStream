@@ -1,20 +1,20 @@
-using API.Middleware;
-using Data.Context;
-using Logic.Mapping;
-using Data.Models;
-using Logic;
-using Logic.Hubs;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Logic.Services.Comments;
-using Logic.Services.Files;
-using Logic.Services.Notifications;
-using Logic.Services.Users;
-using Logic.Services.Validation;
-using Logic.Services.Videos;
-using FluentValidation;
-using Data;
+using VidifyStream.API.Middleware;
+using VidifyStream.Data;
+using VidifyStream.Data.Context;
+using VidifyStream.Data.Models;
+using VidifyStream.Logic;
+using VidifyStream.Logic.Hubs;
 using VidifyStream.Logic.CQRS.Auth.Common;
+using VidifyStream.Logic.Services.Comments;
+using VidifyStream.Logic.Services.Files;
+using VidifyStream.Logic.Services.Notifications;
+using VidifyStream.Logic.Services.Users;
+using VidifyStream.Logic.Services.Validation;
+using VidifyStream.Logic.Services.Videos;
+using VidifyStream.Logic.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 

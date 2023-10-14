@@ -1,8 +1,8 @@
-﻿using Logic.Services.Notifications;
+﻿using VidifyStream.Logic.Services.Notifications;
 using Microsoft.AspNetCore.SignalR;
 using VidifyStream.Logic.CQRS.Auth.Common;
 
-namespace Logic.Hubs
+namespace VidifyStream.Logic.Hubs
 {
     // Hub sent events:
     // {"type": 1,"target": "broadcast-notifications","arguments": []} - sent whenever there is a new notification, in OnConnectedAsync() and in GetAll().

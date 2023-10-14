@@ -1,7 +1,7 @@
-﻿using Data.Dtos.User;
+﻿using VidifyStream.Data.Dtos.User;
 using FluentValidation;
 
-namespace Logic.Validators.Users
+namespace VidifyStream.Logic.Validators.Users
 {
     public class UserLoginDTOValidator : AbstractValidator<UserLoginDTO>
     {

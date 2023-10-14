@@ -1,7 +1,7 @@
-﻿using Data.Dtos;
-using Data.Dtos.User;
+﻿using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.User;
 
-namespace Logic.Services.Auth
+namespace VidifyStream.Logic.Services.Auth
 {
     /// <summary>
     /// Service class responsible for user authentication and authorization.

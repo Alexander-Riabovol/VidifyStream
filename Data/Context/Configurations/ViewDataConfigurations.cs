@@ -1,8 +1,8 @@
-﻿using Data.Models;
+﻿using VidifyStream.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Data.Context.Configurations
+namespace VidifyStream.Data.Context.Configurations
 {
     /// <summary>
     /// Configures the <see cref="ViewData"/> database model for code-first

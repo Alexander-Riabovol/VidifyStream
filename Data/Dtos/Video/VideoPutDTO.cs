@@ -1,7 +1,7 @@
-﻿using Data.Models;
+﻿using VidifyStream.Data.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace Data.Dtos.Video
+namespace VidifyStream.Data.Dtos.Video
 {
     public record VideoPutDTO
     {

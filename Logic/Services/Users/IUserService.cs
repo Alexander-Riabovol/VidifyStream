@@ -1,8 +1,8 @@
-﻿using Data.Dtos;
-using Data.Dtos.User;
-using Data.Models;
+﻿using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.User;
+using VidifyStream.Data.Models;
 
-namespace Logic.Services.Users
+namespace VidifyStream.Logic.Services.Users
 {
     /// <summary>
     /// Represents a service for managing users.

@@ -1,7 +1,7 @@
-﻿using Data.Context;
-using Data.Dtos;
-using Data.Models;
-using Logic.Services.Users;
+﻿using VidifyStream.Data.Context;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Models;
+using VidifyStream.Logic.Services.Users;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

@@ -1,8 +1,8 @@
-﻿using Data.Models;
-using Data.Dtos;
-using Data.Dtos.Video;
+﻿using VidifyStream.Data.Models;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.Video;
 
-namespace Logic.Services.Videos
+namespace VidifyStream.Logic.Services.Videos
 {
     /// <summary>
     /// Represents a service for managing videos.

@@ -1,8 +1,8 @@
-﻿using Data.Models;
-using Data.Dtos;
-using Data.Dtos.Comment;
+﻿using VidifyStream.Data.Models;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.Comment;
 
-namespace Logic.Services.Comments
+namespace VidifyStream.Logic.Services.Comments
 {
     /// <summary>
     /// Represents the interface for <see cref="Comment"/>-related services.

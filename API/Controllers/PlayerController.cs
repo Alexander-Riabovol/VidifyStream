@@ -1,8 +1,8 @@
-﻿using Logic.Services.Videos;
+﻿using VidifyStream.Logic.Services.Videos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     public class PlayerController : Controller
     {

@@ -1,8 +1,8 @@
-﻿using Logic.Services.Files;
+﻿using VidifyStream.Logic.Services.Files;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [Route("api/download")]
     [AllowAnonymous]

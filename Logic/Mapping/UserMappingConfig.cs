@@ -1,8 +1,8 @@
-﻿using Data.Dtos.User;
-using Data.Models;
+﻿using VidifyStream.Data.Dtos.User;
+using VidifyStream.Data.Models;
 using Mapster;
 
-namespace Logic.Mapping
+namespace VidifyStream.Logic.Mapping
 {
     /// <summary>
     /// Configuration class for mapping UserDTOs to <see cref="User"/> models and vice versa.

@@ -1,8 +1,8 @@
-﻿using Data.Models;
-using Data.Dtos;
-using Data.Dtos.Notification;
+﻿using VidifyStream.Data.Models;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.Notification;
 
-namespace Logic.Services.Notifications
+namespace VidifyStream.Logic.Services.Notifications
 {
     /// <summary>
     /// Represents a notification service interface for managing notifications.

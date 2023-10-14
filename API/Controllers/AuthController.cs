@@ -1,5 +1,5 @@
-﻿using Data.Dtos.User;
-using Logic.Services.Validation;
+﻿using VidifyStream.Data.Dtos.User;
+using VidifyStream.Logic.Services.Validation;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +8,7 @@ using VidifyStream.Logic.CQRS.Auth.Commands.Register;
 using VidifyStream.Logic.CQRS.Auth.Queries.Login;
 using VidifyStream.Logic.CQRS.Auth.Queries.Logout;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [AllowAnonymous]
     [ApiController]

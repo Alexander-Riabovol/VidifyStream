@@ -1,4 +1,4 @@
-﻿using Data.Dtos;
+﻿using VidifyStream.Data.Dtos;
 using MediatR;
 
 namespace VidifyStream.Logic.CQRS.Auth.Queries.Logout

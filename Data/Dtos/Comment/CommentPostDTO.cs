@@ -1,4 +1,4 @@
-﻿namespace Data.Dtos.Comment
+﻿namespace VidifyStream.Data.Dtos.Comment
 {
     public record CommentPostDTO
     {

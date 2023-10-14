@@ -1,6 +1,6 @@
-﻿using Data.Models;
+﻿using VidifyStream.Data.Models;
 
-namespace Data.Dtos.Notification
+namespace VidifyStream.Data.Dtos.Notification
 {
     public record NotificationAdminGetDTO
     {

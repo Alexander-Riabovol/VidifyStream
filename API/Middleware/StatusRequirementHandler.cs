@@ -1,9 +1,9 @@
-﻿using Data.Context;
+﻿using VidifyStream.Data.Context;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using VidifyStream.Logic.CQRS.Auth.Common;
 
-namespace API.Middleware
+namespace VidifyStream.API.Middleware
 {
     /// <summary>
     /// Represents a handler for the <see cref="StatusRequirement"/> authorization requirement.

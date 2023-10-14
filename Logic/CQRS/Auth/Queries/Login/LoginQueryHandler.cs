@@ -1,5 +1,5 @@
-﻿using Data.Context;
-using Data.Dtos;
+﻿using VidifyStream.Data.Context;
+using VidifyStream.Data.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
