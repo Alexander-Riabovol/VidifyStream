@@ -20,7 +20,7 @@ This is my pet-project. I tried to implement a **video-hosting** solution.
 
 ## Usage
 
-Fork **Postman** collections that contain requests and a documentation to endpoints via `Fork` button in the the dropdown list or by pressing `Ctrl + Alt + F` from the workspace:
+Fork **Postman** collections that contain requests and a documentation to endpoints via `Fork` button in the dropdown list or by pressing `Ctrl + Alt + F` from the workspace:
 
 `https://www.postman.com/gold-astronaut-497435/workspace/vidifystream-workspace/collection/28405641-c4d7122b-1b12-41dc-8efe-397785854420?action=share&creator=28405641`  
 
