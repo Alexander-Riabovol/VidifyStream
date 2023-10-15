@@ -30,13 +30,13 @@ namespace VidifyStream.Logic.CQRS.Auth.Commands.Register
 
         public async Task<ServiceResponse<int>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == request.User.Email);
             if (user != null)
             {
                 return new ServiceResponse<int>(409, "The provided email address is already associated with an existing user account.");
             }
 
-            var registeredUser = _mapper.Map<User>(request);
+            var registeredUser = _mapper.Map<User>(request.User);
 
             var response = await _userService.CreateUser(registeredUser);
 

@@ -24,13 +24,13 @@ namespace VidifyStream.Logic.CQRS.Auth.Queries.Login
 
         public async Task<ServiceResponse> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == request.User.Email);
 
             if (user == null)
             {
                 return new ServiceResponse(404, "No user with provided email has been found in the database.");
             }
-            if (user.Password != request.Password)
+            if (user.Password != request.User.Password)
             {
                 return new ServiceResponse(401, "The password is not correct.");
             }

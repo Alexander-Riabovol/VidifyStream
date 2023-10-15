@@ -1,9 +1,7 @@
-﻿using VidifyStream.Data.Dtos.User;
-using VidifyStream.Logic.Services.Validation;
-using MapsterMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VidifyStream.Data.Dtos.User;
 using VidifyStream.Logic.CQRS.Auth.Commands.Register;
 using VidifyStream.Logic.CQRS.Auth.Queries.Login;
 using VidifyStream.Logic.CQRS.Auth.Queries.Logout;
@@ -14,13 +12,10 @@ namespace VidifyStream.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly ISender _mediator;
 
-        public AuthController(IMapper mapper,
-                              ISender mediator) 
+        public AuthController(ISender mediator) 
         {
-            _mapper = mapper;
             _mediator = mediator;
         }
 
@@ -28,8 +23,7 @@ namespace VidifyStream.API.Controllers
         [Route("api/login")]
         public async Task<IActionResult> Login(UserLoginDTO loginData)
         {
-            var query = _mapper.Map<LoginQuery>(loginData);
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(new LoginQuery(loginData));
 
             return StatusCode(result.StatusCode, result.Message);
         }
@@ -38,8 +32,7 @@ namespace VidifyStream.API.Controllers
         [Route("api/register")]
         public async Task<ActionResult<int>> Register(UserRegisterDTO registerData)
         {
-            var command = _mapper.Map<RegisterCommand>(registerData);
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(new RegisterCommand(registerData));
 
             if (result.IsError)
             {

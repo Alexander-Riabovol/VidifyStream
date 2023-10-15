@@ -6,10 +6,10 @@ namespace VidifyStream.Logic.CQRS.Auth.Queries.Login
     {
         public LoginQueryValidator()
         {
-            RuleFor(x => x.Email).EmailAddress().Length(0, 100);
+            RuleFor(x => x.User.Email).EmailAddress().Length(0, 100);
             // We check password only not to be empty because
             // password validation could change and old passwords won't work all of a sudden.
-            RuleFor(x => x.Password).NotEmpty();
+            RuleFor(x => x.User.Password).NotEmpty();
         }
     }
 }
