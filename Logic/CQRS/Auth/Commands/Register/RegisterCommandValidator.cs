@@ -1,12 +1,11 @@
-﻿using VidifyStream.Data.Dtos.User;
-using FluentValidation;
+﻿using FluentValidation;
 using VidifyStream.Logic.Validators.Appendage;
 
-namespace VidifyStream.Logic.Validators.Users
+namespace VidifyStream.Logic.CQRS.Auth.Commands.Register
 {
-    public class UserRegisterDTOValidator : AbstractValidator<UserRegisterDTO>
+    public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     {
-        public UserRegisterDTOValidator()
+        public RegisterCommandValidator()
         {
             RuleFor(x => x.Name).Name();
             RuleFor(x => x.BirthDate).BirthDate();

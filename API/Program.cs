@@ -15,6 +15,8 @@ using VidifyStream.Logic.Services.Users;
 using VidifyStream.Logic.Services.Validation;
 using VidifyStream.Logic.Services.Videos;
 using VidifyStream.Logic.Mapping;
+using MediatR;
+using VidifyStream.Logic.CQRS.Behaviors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,9 @@ builder.Services.AddSingleton<AppData>();
 //Add MediatR
 builder.Services.AddMediatR(config => 
     config.RegisterServicesFromAssembly(typeof(ILogicAssemblyMarker).Assembly));
+builder.Services.AddScoped(
+    typeof(IPipelineBehavior<,>),
+    typeof(ValidationBehavior<,>));
 
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IFileService, LocalFileService>();

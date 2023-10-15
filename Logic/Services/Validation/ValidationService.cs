@@ -21,10 +21,8 @@ namespace VidifyStream.Logic.Services.Validation
         private readonly IValidator<NotificationAdminCreateDTO> _notificationAdminCreateDTOValidator;
         // User
         private readonly IValidator<UserAdminDeleteDTO> _userAdminDeleteDTOValidator;
-        private readonly IValidator<UserLoginDTO> _userLoginDTOValidator;
         private readonly IValidator<UserProfilePicturePostDTO> _userProfilePicturePostDTOValidator;
         private readonly IValidator<UserPutDTO> _userPutDTOValidator;
-        private readonly IValidator<UserRegisterDTO> _userRegisterDTOValidator;
         // Video
         private readonly IValidator<VideoPostDTO> _videoPostDTOValidator;
         private readonly IValidator<VideoPutDTO> _videoPutDTOValidator;
@@ -37,10 +35,8 @@ namespace VidifyStream.Logic.Services.Validation
                                  IValidator<ReplyPostDTO> replyPostDTOValidator,
                                  IValidator<NotificationAdminCreateDTO> notificationAdminCreateDTOValidator,
                                  IValidator<UserAdminDeleteDTO> userAdminDeleteDTOValidator,
-                                 IValidator<UserLoginDTO> userLoginDTOValidator,
                                  IValidator<UserProfilePicturePostDTO> userProfilePicturePostDTOValidator,
                                  IValidator<UserPutDTO> userPutDTOValidator,
-                                 IValidator<UserRegisterDTO> userRegisterDTOValidator,
                                  IValidator<VideoPostDTO> videoPostDTOValidator,
                                  IValidator<VideoPutDTO> videoPutDTOValidator,
                                  IValidator<IFormFile> formFileValidator)
@@ -50,10 +46,8 @@ namespace VidifyStream.Logic.Services.Validation
             _replyPostDTOValidator = replyPostDTOValidator;
             _notificationAdminCreateDTOValidator = notificationAdminCreateDTOValidator;
             _userAdminDeleteDTOValidator = userAdminDeleteDTOValidator;
-            _userLoginDTOValidator = userLoginDTOValidator;
             _userProfilePicturePostDTOValidator = userProfilePicturePostDTOValidator;
             _userPutDTOValidator = userPutDTOValidator;
-            _userRegisterDTOValidator = userRegisterDTOValidator;
             _videoPostDTOValidator = videoPostDTOValidator;
             _videoPutDTOValidator = videoPutDTOValidator;
             _formFileValidator = formFileValidator;
@@ -67,10 +61,8 @@ namespace VidifyStream.Logic.Services.Validation
             dynamic validator;
             if (obj is CommentPutDTO) { validator = _commentPutDTOValidator; }
             else if (obj is UserAdminDeleteDTO) { validator = _userAdminDeleteDTOValidator; }
-            else if (obj is UserLoginDTO) { validator = _userLoginDTOValidator; }
             else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; }
             else if (obj is UserPutDTO) { validator = _userPutDTOValidator; }
-            else if (obj is UserRegisterDTO) { validator = _userRegisterDTOValidator; }
             else if (obj is VideoPostDTO) { validator = _videoPostDTOValidator; }
             else if (obj is VideoPutDTO) { validator = _videoPutDTOValidator; }
             else if (obj is IFormFile) { validator = _formFileValidator; }

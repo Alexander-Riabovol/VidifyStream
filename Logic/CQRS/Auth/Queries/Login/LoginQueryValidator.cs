@@ -1,11 +1,10 @@
-﻿using VidifyStream.Data.Dtos.User;
-using FluentValidation;
+﻿using FluentValidation;
 
-namespace VidifyStream.Logic.Validators.Users
+namespace VidifyStream.Logic.CQRS.Auth.Queries.Login
 {
-    public class UserLoginDTOValidator : AbstractValidator<UserLoginDTO>
+    public class LoginQueryValidator : AbstractValidator<LoginQuery>
     {
-        public UserLoginDTOValidator()
+        public LoginQueryValidator()
         {
             RuleFor(x => x.Email).EmailAddress().Length(0, 100);
             // We check password only not to be empty because
