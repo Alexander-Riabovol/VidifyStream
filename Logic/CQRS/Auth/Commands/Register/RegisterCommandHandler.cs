@@ -30,7 +30,11 @@ namespace VidifyStream.Logic.CQRS.Auth.Commands.Register
 
         public async Task<ServiceResponse<int>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == request.User.Email);
+            var user = await _dataContext
+                .Users
+                .FirstOrDefaultAsync(u => u.Email == request.User.Email,
+                                     cancellationToken);
+
             if (user != null)
             {
                 return new ServiceResponse<int>(409, "The provided email address is already associated with an existing user account.");
@@ -42,7 +46,7 @@ namespace VidifyStream.Logic.CQRS.Auth.Commands.Register
 
             // Send Login query with MediatR
             var loginQuery = _mapper.Map<LoginQuery>(request);
-            await _mediator.Send(loginQuery);
+            await _mediator.Send(loginQuery, cancellationToken);
 
             // Send confrimation email here
             return ServiceResponse<int>.OK(response.Content);

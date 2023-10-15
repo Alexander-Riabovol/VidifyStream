@@ -1,16 +1,17 @@
-﻿using VidifyStream.Logic.Services.Videos;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VidifyStream.Logic.CQRS.Video.Queries.Get;
 
 namespace VidifyStream.API.Controllers
 {
     public class PlayerController : Controller
     {
-        private readonly IVideoService _videoService;
+        private readonly ISender _mediator;
 
-        public PlayerController(IVideoService videoService) 
+        public PlayerController(ISender mediator) 
         {
-            _videoService = videoService;
+            _mediator = mediator;
         }
 
         [Route("/player/{videoId}")]
@@ -19,7 +20,7 @@ namespace VidifyStream.API.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> PlayVideoById(int videoId)
         {
-            var serviceResponse = await _videoService.GetVideo(videoId);
+            var serviceResponse = await _mediator.Send(new GetVideoQuery(videoId));
             this.ViewBag.FileRoute = serviceResponse.Content?.SourceUrl;
             this.ViewBag.Title = serviceResponse.Content?.Title;
             return View("~/Pages/Player.cshtml");

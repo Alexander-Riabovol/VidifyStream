@@ -24,7 +24,10 @@ namespace VidifyStream.Logic.CQRS.Auth.Queries.Login
 
         public async Task<ServiceResponse> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == request.User.Email);
+            var user = await _dataContext
+                .Users
+                .FirstOrDefaultAsync(u => u.Email == request.User.Email,
+                                     cancellationToken);
 
             if (user == null)
             {

@@ -1,4 +1,5 @@
 using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using VidifyStream.API.Middleware;
@@ -6,17 +7,15 @@ using VidifyStream.Data;
 using VidifyStream.Data.Context;
 using VidifyStream.Data.Models;
 using VidifyStream.Logic;
-using VidifyStream.Logic.Hubs;
 using VidifyStream.Logic.CQRS.Auth.Common;
+using VidifyStream.Logic.CQRS.Behaviors;
+using VidifyStream.Logic.Hubs;
+using VidifyStream.Logic.Mapping;
 using VidifyStream.Logic.Services.Comments;
 using VidifyStream.Logic.Services.Files;
 using VidifyStream.Logic.Services.Notifications;
 using VidifyStream.Logic.Services.Users;
 using VidifyStream.Logic.Services.Validation;
-using VidifyStream.Logic.Services.Videos;
-using VidifyStream.Logic.Mapping;
-using MediatR;
-using VidifyStream.Logic.CQRS.Behaviors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +36,6 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IFileService, LocalFileService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IVideoService, VideoService>();
 
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 

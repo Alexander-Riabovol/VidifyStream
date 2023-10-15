@@ -1,12 +1,11 @@
-﻿using VidifyStream.Data.Dtos;
-using VidifyStream.Data.Dtos.Comment;
-using VidifyStream.Data.Dtos.Notification;
-using VidifyStream.Data.Dtos.User;
-using VidifyStream.Data.Dtos.Video;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using VidifyStream.Data.Dtos;
+using VidifyStream.Data.Dtos.Comment;
+using VidifyStream.Data.Dtos.Notification;
+using VidifyStream.Data.Dtos.User;
 
 namespace VidifyStream.Logic.Services.Validation
 {
@@ -23,9 +22,6 @@ namespace VidifyStream.Logic.Services.Validation
         private readonly IValidator<UserAdminDeleteDTO> _userAdminDeleteDTOValidator;
         private readonly IValidator<UserProfilePicturePostDTO> _userProfilePicturePostDTOValidator;
         private readonly IValidator<UserPutDTO> _userPutDTOValidator;
-        // Video
-        private readonly IValidator<VideoPostDTO> _videoPostDTOValidator;
-        private readonly IValidator<VideoPutDTO> _videoPutDTOValidator;
         // Other
         private readonly IValidator<IFormFile> _formFileValidator;
 
@@ -37,8 +33,6 @@ namespace VidifyStream.Logic.Services.Validation
                                  IValidator<UserAdminDeleteDTO> userAdminDeleteDTOValidator,
                                  IValidator<UserProfilePicturePostDTO> userProfilePicturePostDTOValidator,
                                  IValidator<UserPutDTO> userPutDTOValidator,
-                                 IValidator<VideoPostDTO> videoPostDTOValidator,
-                                 IValidator<VideoPutDTO> videoPutDTOValidator,
                                  IValidator<IFormFile> formFileValidator)
         {
             _commentPostDTOValidator = commentPostDTOValidator;
@@ -48,8 +42,6 @@ namespace VidifyStream.Logic.Services.Validation
             _userAdminDeleteDTOValidator = userAdminDeleteDTOValidator;
             _userProfilePicturePostDTOValidator = userProfilePicturePostDTOValidator;
             _userPutDTOValidator = userPutDTOValidator;
-            _videoPostDTOValidator = videoPostDTOValidator;
-            _videoPutDTOValidator = videoPutDTOValidator;
             _formFileValidator = formFileValidator;
         }
         // We need a synchronous version to not allocate unneeded memory for Task objects
@@ -63,8 +55,6 @@ namespace VidifyStream.Logic.Services.Validation
             else if (obj is UserAdminDeleteDTO) { validator = _userAdminDeleteDTOValidator; }
             else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; }
             else if (obj is UserPutDTO) { validator = _userPutDTOValidator; }
-            else if (obj is VideoPostDTO) { validator = _videoPostDTOValidator; }
-            else if (obj is VideoPutDTO) { validator = _videoPutDTOValidator; }
             else if (obj is IFormFile) { validator = _formFileValidator; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 
