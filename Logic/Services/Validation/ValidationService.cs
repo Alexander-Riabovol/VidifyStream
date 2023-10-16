@@ -18,10 +18,6 @@ namespace VidifyStream.Logic.Services.Validation
         private readonly IValidator<ReplyPostDTO> _replyPostDTOValidator;
         // Notification
         private readonly IValidator<NotificationAdminCreateDTO> _notificationAdminCreateDTOValidator;
-        // User
-        private readonly IValidator<UserAdminDeleteDTO> _userAdminDeleteDTOValidator;
-        private readonly IValidator<UserProfilePicturePostDTO> _userProfilePicturePostDTOValidator;
-        private readonly IValidator<UserPutDTO> _userPutDTOValidator;
         // Other
         private readonly IValidator<IFormFile> _formFileValidator;
 
@@ -30,18 +26,12 @@ namespace VidifyStream.Logic.Services.Validation
                                  IValidator<CommentPutDTO> commentPutDTOValidator,
                                  IValidator<ReplyPostDTO> replyPostDTOValidator,
                                  IValidator<NotificationAdminCreateDTO> notificationAdminCreateDTOValidator,
-                                 IValidator<UserAdminDeleteDTO> userAdminDeleteDTOValidator,
-                                 IValidator<UserProfilePicturePostDTO> userProfilePicturePostDTOValidator,
-                                 IValidator<UserPutDTO> userPutDTOValidator,
                                  IValidator<IFormFile> formFileValidator)
         {
             _commentPostDTOValidator = commentPostDTOValidator;
             _commentPutDTOValidator = commentPutDTOValidator;
             _replyPostDTOValidator = replyPostDTOValidator;
             _notificationAdminCreateDTOValidator = notificationAdminCreateDTOValidator;
-            _userAdminDeleteDTOValidator = userAdminDeleteDTOValidator;
-            _userProfilePicturePostDTOValidator = userProfilePicturePostDTOValidator;
-            _userPutDTOValidator = userPutDTOValidator;
             _formFileValidator = formFileValidator;
         }
         // We need a synchronous version to not allocate unneeded memory for Task objects
@@ -52,9 +42,6 @@ namespace VidifyStream.Logic.Services.Validation
 
             dynamic validator;
             if (obj is CommentPutDTO) { validator = _commentPutDTOValidator; }
-            else if (obj is UserAdminDeleteDTO) { validator = _userAdminDeleteDTOValidator; }
-            else if (obj is UserProfilePicturePostDTO) { validator = _userProfilePicturePostDTOValidator; }
-            else if (obj is UserPutDTO) { validator = _userPutDTOValidator; }
             else if (obj is IFormFile) { validator = _formFileValidator; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 

@@ -2,7 +2,7 @@
 
 namespace VidifyStream.Data.Dtos.User
 {
-    public record UserProfilePicturePostDTO
+    public record UserAvatarPostDTO
     {
         public IFormFile File { get; set; } = null!;
     }
