@@ -3,6 +3,10 @@ using VidifyStream.Logic.Services.Comments;
 using VidifyStream.Logic.Services.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using VidifyStream.Logic.CQRS.Comments.Queries.Get;
+using VidifyStream.Logic.CQRS.Comments.Queries.Get.Video;
+using VidifyStream.Logic.CQRS.Comments.Queries.Get.Replies;
 
 namespace VidifyStream.API.Controllers
 {
@@ -10,11 +14,14 @@ namespace VidifyStream.API.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
+        private readonly ISender _mediator;
+
         private readonly ICommentService _commentService;
         private readonly IValidationService _validationService;
 
-        public CommentsController(ICommentService commentService, IValidationService validationService) 
+        public CommentsController(ISender mediator, ICommentService commentService, IValidationService validationService) 
         {
+            _mediator = mediator;
             _commentService = commentService;
             _validationService = validationService;
         }
@@ -23,7 +30,7 @@ namespace VidifyStream.API.Controllers
         [Route("{commentId}")]
         public async Task<ActionResult<CommentGetDTO>> Get(int commentId)
         {
-            var response = await _commentService.GetComment(commentId);
+            var response = await _mediator.Send(new GetCommentQuery(commentId));
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -35,7 +42,7 @@ namespace VidifyStream.API.Controllers
         [Route("video/{videoId}")]
         public async Task<ActionResult<List<CommentGetDTO>>> GetCommentsByVideoId(int videoId)
         {
-            var response = await _commentService.GetCommentsByVideoId(videoId);
+            var response = await _mediator.Send(new GetCommentsByVideoQuery(videoId));
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -47,7 +54,7 @@ namespace VidifyStream.API.Controllers
         [Route("replies/{commentId}")]
         public async Task<ActionResult<List<ReplyGetDTO>>> GetReplies(int commentId)
         {
-            var response = await _commentService.GetReplies(commentId);
+            var response = await _mediator.Send(new GetRepliesQuery(commentId));
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);

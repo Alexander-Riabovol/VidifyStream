@@ -13,18 +13,6 @@ namespace VidifyStream.Logic.Services.Comments
     public interface ICommentService
     {
         /// <summary>
-        /// Retrieves a <see cref="Comment"/> by its ID.
-        /// </summary>
-        Task<ServiceResponse<CommentGetDTO>> GetComment(int commentId);
-        /// <summary>
-        /// Retrieves all <see cref="Comment"/>s associated with a specific <see cref="Video"/>.
-        /// </summary>
-        Task<ServiceResponse<IEnumerable<CommentGetDTO>>> GetCommentsByVideoId(int videoId);
-        /// <summary>
-        /// Retrieves all replies to a specific <see cref="Comment"/>.
-        /// </summary>
-        Task<ServiceResponse<IEnumerable<ReplyGetDTO>>> GetReplies(int commentId);
-        /// <summary>
         /// Adds a new <see cref="Comment"/> into the database.
         /// </summary>
         Task<ServiceResponse<int>> PostComment(CommentPostDTO commentPostDTO);
