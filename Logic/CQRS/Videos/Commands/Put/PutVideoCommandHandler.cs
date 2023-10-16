@@ -6,7 +6,7 @@ using VidifyStream.Data.Dtos;
 using VidifyStream.Logic.Extensions;
 using VidifyStream.Logic.Services.Files;
 
-namespace VidifyStream.Logic.CQRS.Video.Commands.Put
+namespace VidifyStream.Logic.CQRS.Videos.Commands.Put
 {
     public class PutVideoCommandHandler :
         IRequestHandler<PutVideoCommand, ServiceResponse>
@@ -29,11 +29,11 @@ namespace VidifyStream.Logic.CQRS.Video.Commands.Put
 
         public async Task<ServiceResponse> Handle(PutVideoCommand request, CancellationToken cancellationToken)
         {
-            var video = await _dataContext.Videos.FindAsync(request.Video.VideoId);
+            var video = await _dataContext.Videos.FindAsync(request.VideoDto.VideoId);
 
             if (video == null)
             {
-                return new ServiceResponse(404, $"Video with ID {request.Video.VideoId} does not exist.");
+                return new ServiceResponse(404, $"Video with ID {request.VideoDto.VideoId} does not exist.");
             }
 
             var idResult = _accessor.HttpContext!.RetriveUserId();
@@ -44,11 +44,11 @@ namespace VidifyStream.Logic.CQRS.Video.Commands.Put
                 return new ServiceResponse(403, "Forbidden");
             }
 
-            video = _mapper.Map(request.Video, video);
+            video = _mapper.Map(request.VideoDto, video);
 
-            if (request.Video.Thumbnail != null)
+            if (request.VideoDto.Thumbnail != null)
             {
-                var thumbnailFileUploadResponse = await _fileService.Upload(request.Video.Thumbnail);
+                var thumbnailFileUploadResponse = await _fileService.Upload(request.VideoDto.Thumbnail);
                 if (thumbnailFileUploadResponse.IsError)
                 {
                     return new ServiceResponse<int>(thumbnailFileUploadResponse.StatusCode,

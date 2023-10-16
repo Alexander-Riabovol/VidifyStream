@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VidifyStream.Logic.CQRS.Video.Queries.Get;
+using VidifyStream.Logic.CQRS.Videos.Queries.Get;
 
 namespace VidifyStream.API.Controllers
 {

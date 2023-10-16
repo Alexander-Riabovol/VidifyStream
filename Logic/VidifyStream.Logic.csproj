@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CQRS\Users\Commands\NewFolder\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

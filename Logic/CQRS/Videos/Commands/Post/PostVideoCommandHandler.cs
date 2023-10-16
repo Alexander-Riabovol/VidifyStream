@@ -6,7 +6,7 @@ using VidifyStream.Data.Dtos;
 using VidifyStream.Logic.Extensions;
 using VidifyStream.Logic.Services.Files;
 
-namespace VidifyStream.Logic.CQRS.Video.Commands.Post
+namespace VidifyStream.Logic.CQRS.Videos.Commands.Post
 {
     public class PostVideoCommandHandler :
         IRequestHandler<PostVideoCommand, ServiceResponse<int>>
@@ -31,16 +31,16 @@ namespace VidifyStream.Logic.CQRS.Video.Commands.Post
         {
             var idResult = _accessor.HttpContext!.RetriveUserId();
             if (idResult.IsError) return new ServiceResponse<int>(idResult.StatusCode, idResult.Message!);
-            var video = _mapper.Map<Data.Models.Video>(request.Video);
+            var video = _mapper.Map<Data.Models.Video>(request.VideoDto);
 
-            var videoFileUploadResponse = await _fileService.Upload(request.Video.VideoFile);
+            var videoFileUploadResponse = await _fileService.Upload(request.VideoDto.VideoFile);
             if (videoFileUploadResponse.IsError)
             {
                 return new ServiceResponse<int>(videoFileUploadResponse.StatusCode,
                 videoFileUploadResponse.Message!);
             }
 
-            var thumbnailFileUploadResponse = await _fileService.Upload(request.Video.Thumbnail);
+            var thumbnailFileUploadResponse = await _fileService.Upload(request.VideoDto.Thumbnail);
             if (thumbnailFileUploadResponse.IsError)
             {
                 return new ServiceResponse<int>(thumbnailFileUploadResponse.StatusCode,

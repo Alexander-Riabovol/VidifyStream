@@ -6,7 +6,7 @@ using VidifyStream.Data.Context;
 using VidifyStream.Data.Dtos;
 using VidifyStream.Logic.Extensions;
 
-namespace VidifyStream.Logic.CQRS.Video.Commands.Delete
+namespace VidifyStream.Logic.CQRS.Videos.Commands.Delete
 {
     public class DeleteVideoCommandHandler
         : IRequestHandler<DeleteVideoCommand, ServiceResponse>

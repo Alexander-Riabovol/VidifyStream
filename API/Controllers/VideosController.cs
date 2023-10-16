@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VidifyStream.Data.Dtos.Video;
-using VidifyStream.Logic.CQRS.Video.Commands.Delete;
-using VidifyStream.Logic.CQRS.Video.Commands.Post;
-using VidifyStream.Logic.CQRS.Video.Commands.Put;
-using VidifyStream.Logic.CQRS.Video.Queries.Get;
+using VidifyStream.Logic.CQRS.Videos.Commands.Delete;
+using VidifyStream.Logic.CQRS.Videos.Commands.Post;
+using VidifyStream.Logic.CQRS.Videos.Commands.Put;
+using VidifyStream.Logic.CQRS.Videos.Queries.Get;
 
 namespace VidifyStream.API.Controllers
 {

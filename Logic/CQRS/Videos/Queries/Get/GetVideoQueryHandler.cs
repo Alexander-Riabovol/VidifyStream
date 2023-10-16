@@ -5,7 +5,7 @@ using VidifyStream.Data.Context;
 using VidifyStream.Data.Dtos;
 using VidifyStream.Data.Dtos.Video;
 
-namespace VidifyStream.Logic.CQRS.Video.Queries.Get
+namespace VidifyStream.Logic.CQRS.Videos.Queries.Get
 {
     public class GetVideoQueryHandler :
         IRequestHandler<GetVideoQuery, ServiceResponse<VideoGetDTO>>
