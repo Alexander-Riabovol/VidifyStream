@@ -1,12 +1,15 @@
-﻿using VidifyStream.Data.Dtos.Comment;
-using VidifyStream.Logic.Services.Comments;
-using VidifyStream.Logic.Services.Validation;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
+using VidifyStream.Data.Dtos.Comment;
+using VidifyStream.Logic.CQRS.Comments.Commands.Delete;
+using VidifyStream.Logic.CQRS.Comments.Commands.Post;
+using VidifyStream.Logic.CQRS.Comments.Commands.Post.Reply;
+using VidifyStream.Logic.CQRS.Comments.Commands.Put;
+using VidifyStream.Logic.CQRS.Comments.Commands.Put.Like;
 using VidifyStream.Logic.CQRS.Comments.Queries.Get;
-using VidifyStream.Logic.CQRS.Comments.Queries.Get.Video;
 using VidifyStream.Logic.CQRS.Comments.Queries.Get.Replies;
+using VidifyStream.Logic.CQRS.Comments.Queries.Get.Video;
 
 namespace VidifyStream.API.Controllers
 {
@@ -16,14 +19,9 @@ namespace VidifyStream.API.Controllers
     {
         private readonly ISender _mediator;
 
-        private readonly ICommentService _commentService;
-        private readonly IValidationService _validationService;
-
-        public CommentsController(ISender mediator, ICommentService commentService, IValidationService validationService) 
+        public CommentsController(ISender mediator)
         {
             _mediator = mediator;
-            _commentService = commentService;
-            _validationService = validationService;
         }
 
         [HttpGet]
@@ -67,14 +65,7 @@ namespace VidifyStream.API.Controllers
         [Authorize(Policy = "user+")]
         public async Task<IActionResult> Post(CommentPostDTO commentPostDto)
         {
-            var validationResult = await _validationService.ValidateAsync(commentPostDto);
-            if (validationResult.IsError)
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
-
-            var response = await _commentService.PostComment(commentPostDto);
+            var response = await _mediator.Send(new PostCommentCommand(commentPostDto));
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -87,14 +78,7 @@ namespace VidifyStream.API.Controllers
         [Authorize(Policy = "user+")]
         public async Task<IActionResult> PostReply(ReplyPostDTO replyPostDTO)
         {
-            var validationResult = await _validationService.ValidateAsync(replyPostDTO);
-            if (validationResult.IsError)
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
-
-            var response = await _commentService.PostReply(replyPostDTO);
+            var response = await _mediator.Send(new PostReplyCommand(replyPostDTO));
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -106,14 +90,7 @@ namespace VidifyStream.API.Controllers
         [Authorize(Policy = "user+")]
         public async Task<IActionResult> Put(CommentPutDTO commentPutDTO)
         {
-            var validationResult = _validationService.Validate(commentPutDTO);
-            if (validationResult.IsError)
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
-
-            var response = await _commentService.Put(commentPutDTO);
+            var response = await _mediator.Send(new PutCommentCommand(commentPutDTO));
             return StatusCode(response.StatusCode, response.Message);
         }
 
@@ -122,7 +99,7 @@ namespace VidifyStream.API.Controllers
         [Authorize(Policy = "user+")]
         public async Task<IActionResult> ToggleLike(int commentId)
         {
-            var response = await _commentService.ToggleLike(commentId);
+            var response = await _mediator.Send(new ToggleLikeCommand(commentId));
             return StatusCode(response.StatusCode, response.Message);
         }
 
@@ -131,7 +108,7 @@ namespace VidifyStream.API.Controllers
         [Authorize(Policy = "user+")]
         public async Task<IActionResult> Delete(int commentId)
         {
-            var response = await _commentService.Delete(commentId);
+            var response = await _mediator.Send(new DeleteCommentCommand(commentId, false));
             return StatusCode(response.StatusCode, response.Message);
         }
 
@@ -140,7 +117,7 @@ namespace VidifyStream.API.Controllers
         [Authorize(Policy = "admin-only")]
         public async Task<IActionResult> DeleteAdmin(int commentId)
         {
-            var response = await _commentService.DeleteAdmin(commentId);
+            var response = await _mediator.Send(new DeleteCommentCommand(commentId, true));
             return StatusCode(response.StatusCode, response.Message);
         }
     }

@@ -3,34 +3,22 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using VidifyStream.Data.Dtos;
-using VidifyStream.Data.Dtos.Comment;
 using VidifyStream.Data.Dtos.Notification;
-using VidifyStream.Data.Dtos.User;
 
 namespace VidifyStream.Logic.Services.Validation
 {
     public class ValidationService : IValidationService
     {
         // These are Validators for following DTO models:
-        // Comment
-        private readonly IValidator<CommentPostDTO> _commentPostDTOValidator;
-        private readonly IValidator<CommentPutDTO> _commentPutDTOValidator;
-        private readonly IValidator<ReplyPostDTO> _replyPostDTOValidator;
         // Notification
         private readonly IValidator<NotificationAdminCreateDTO> _notificationAdminCreateDTOValidator;
         // Other
         private readonly IValidator<IFormFile> _formFileValidator;
 
 
-        public ValidationService(IValidator<CommentPostDTO> commentPostDTOValidator,
-                                 IValidator<CommentPutDTO> commentPutDTOValidator,
-                                 IValidator<ReplyPostDTO> replyPostDTOValidator,
-                                 IValidator<NotificationAdminCreateDTO> notificationAdminCreateDTOValidator,
+        public ValidationService(IValidator<NotificationAdminCreateDTO> notificationAdminCreateDTOValidator,
                                  IValidator<IFormFile> formFileValidator)
         {
-            _commentPostDTOValidator = commentPostDTOValidator;
-            _commentPutDTOValidator = commentPutDTOValidator;
-            _replyPostDTOValidator = replyPostDTOValidator;
             _notificationAdminCreateDTOValidator = notificationAdminCreateDTOValidator;
             _formFileValidator = formFileValidator;
         }
@@ -41,8 +29,7 @@ namespace VidifyStream.Logic.Services.Validation
                 return new ServiceResponse<ModelStateDictionary>(400, "The server cannot process the request because the provided object is null.");
 
             dynamic validator;
-            if (obj is CommentPutDTO) { validator = _commentPutDTOValidator; }
-            else if (obj is IFormFile) { validator = _formFileValidator; }
+            if (obj is IFormFile) { validator = _formFileValidator; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate validator found for the {obj.GetType()} type.");
 
             ValidationResult validationResult = validator.Validate(obj);
@@ -56,9 +43,7 @@ namespace VidifyStream.Logic.Services.Validation
                 return new ServiceResponse<ModelStateDictionary>(400, "The server cannot process the request because the provided object is null.");
 
             dynamic validator;
-            if (obj is CommentPostDTO) { validator = _commentPostDTOValidator; }
-            else if (obj is ReplyPostDTO) { validator = _replyPostDTOValidator; }
-            else if (obj is NotificationAdminCreateDTO) { validator = _notificationAdminCreateDTOValidator; }
+            if (obj is NotificationAdminCreateDTO) { validator = _notificationAdminCreateDTOValidator; }
             else return new ServiceResponse<ModelStateDictionary>(500, $"Validation error: no appropriate asynchronous validator found for the {obj.GetType()} type.");
 
             ValidationResult validationResult = await validator.ValidateAsync(obj);

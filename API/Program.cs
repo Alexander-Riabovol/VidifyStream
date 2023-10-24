@@ -11,7 +11,6 @@ using VidifyStream.Logic.CQRS.Auth.Common;
 using VidifyStream.Logic.CQRS.Behaviors;
 using VidifyStream.Logic.Hubs;
 using VidifyStream.Logic.Mapping;
-using VidifyStream.Logic.Services.Comments;
 using VidifyStream.Logic.Services.Files;
 using VidifyStream.Logic.Services.Notifications;
 using VidifyStream.Logic.Services.Users;
@@ -32,7 +31,6 @@ builder.Services.AddScoped(
     typeof(IPipelineBehavior<,>),
     typeof(ValidationBehavior<,>));
 
-builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IFileService, LocalFileService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserService, UserService>();
