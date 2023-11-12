@@ -1,6 +1,9 @@
 ﻿using VidifyStream.Logic.Services.Notifications;
 using Microsoft.AspNetCore.SignalR;
 using VidifyStream.Logic.CQRS.Auth.Common;
+using MediatR;
+using VidifyStream.Logic.CQRS.Notifications.Commands.Delete;
+using VidifyStream.Logic.CQRS.Notifications.Commands.Read;
 
 namespace VidifyStream.Logic.Hubs
 {
@@ -19,12 +22,16 @@ namespace VidifyStream.Logic.Hubs
     public class NotificationsHub : Hub
     {
         private readonly AppData _data;
+        private readonly ISender _mediator;
         private readonly INotificationService _notificationService;
         private static int pingCount { get; set; }
 
-        public NotificationsHub(AppData data, INotificationService notificationService) : base()
+        public NotificationsHub(AppData data, 
+                                ISender mediator,
+                                INotificationService notificationService) : base()
         {
             _data = data;
+            _mediator = mediator;
             _notificationService = notificationService;
         }
 
@@ -85,8 +92,8 @@ namespace VidifyStream.Logic.Hubs
         public async Task Read(int notificationId)
         {
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            var response = await _notificationService.ToggleTrueIsRead(notificationId);
-            if(!response.IsError)
+            var response = await _mediator.Send(new ReadNotificationCommand(notificationId));
+            if (!response.IsError)
             {
                 // If ToggleTrueIsRead method is succesful, inform other users that the notification has been read
                 await Clients.Group($"push-{userId}").SendAsync("read-notification", notificationId);
@@ -100,7 +107,7 @@ namespace VidifyStream.Logic.Hubs
         public async Task Delete(int notificationId)
         {
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            var response = await _notificationService.Delete(notificationId);
+            var response = await _mediator.Send(new DeleteNotificationCommand(notificationId));
             if (!response.IsError)
             {
                 // If Delete method is succesful, inform other users that the notification has been deleted

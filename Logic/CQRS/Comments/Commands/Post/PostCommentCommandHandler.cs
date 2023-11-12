@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Http;
 using VidifyStream.Data.Context;
 using VidifyStream.Data.Dtos;
 using VidifyStream.Data.Models;
+using VidifyStream.Logic.CQRS.Notifications.Commands.Push;
 using VidifyStream.Logic.Extensions;
-using VidifyStream.Logic.Services.Notifications;
 
 namespace VidifyStream.Logic.CQRS.Comments.Commands.Post
 {
@@ -15,17 +15,17 @@ namespace VidifyStream.Logic.CQRS.Comments.Commands.Post
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
-        private readonly INotificationService _notificationService;
+        private readonly ISender _mediator;
 
         public PostCommentCommandHandler(DataContext dataContext,
                                          IHttpContextAccessor accessor,
                                          IMapper mapper,
-                                         INotificationService notificationService)
+                                         ISender mediator)
         {
             _dataContext = dataContext;
             _accessor = accessor;
             _mapper = mapper;
-            _notificationService = notificationService;
+            _mediator = mediator;
         }
 
         public async Task<ServiceResponse<int>> Handle(PostCommentCommand request, CancellationToken cancellationToken)
@@ -43,7 +43,8 @@ namespace VidifyStream.Logic.CQRS.Comments.Commands.Post
             // If a user left a comment under his own video, do not send him a notification.
             if (video.UserId != comment.UserId)
             {
-                await _notificationService.CreateAndSend(new Notification()
+                var response = 
+                await _mediator.Send(new PushNotificationCommand(new Notification()
                 {
                     VideoId = request.CommentDto.VideoId,
                     CommentId = comment.CommentId,
@@ -51,7 +52,10 @@ namespace VidifyStream.Logic.CQRS.Comments.Commands.Post
                     Type = NotificationType.LeftComment,
                     Message = $"New comment under your '{video.Title}' video: '{comment.Text}'.",
                     Date = DateTime.Now
-                });
+                }));
+
+                if (response.IsError) return new ServiceResponse<int>(response.StatusCode,
+                                                                      response.Message!);
             }
 
             return ServiceResponse<int>.OK(comment.CommentId);

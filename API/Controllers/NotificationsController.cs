@@ -3,6 +3,8 @@ using VidifyStream.Logic.Services.Notifications;
 using VidifyStream.Logic.Services.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using VidifyStream.Logic.CQRS.Notifications.Commands.Push.Admin;
 
 namespace VidifyStream.API.Controllers
 {
@@ -11,14 +13,15 @@ namespace VidifyStream.API.Controllers
     [ApiController]
     public class NotificationsController : ControllerBase
     {
-        private readonly INotificationService _notificationService;
-        private readonly IValidationService _validationService;
+        private readonly ISender _mediator;
 
-        public NotificationsController(INotificationService notificationService,
-                                       IValidationService validationService)
+        private readonly INotificationService _notificationService;
+
+        public NotificationsController(ISender mediator,
+                                       INotificationService notificationService)
         {
+            _mediator = mediator;
             _notificationService = notificationService;
-            _validationService = validationService;
         }
 
         [HttpGet]
@@ -48,14 +51,7 @@ namespace VidifyStream.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(NotificationAdminCreateDTO notificationDto)
         {
-            var validationResult = await _validationService.ValidateAsync(notificationDto);
-            if(validationResult.IsError) 
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
-
-            var response = await _notificationService.CreateAndSendAdmin(notificationDto);
+            var response = await _mediator.Send(new PushNotificationAdminCommand(notificationDto));
             return StatusCode(response.StatusCode, response.Message);
         }
     }

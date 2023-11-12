@@ -24,23 +24,5 @@ namespace VidifyStream.Logic.Services.Notifications
         /// </summary>
         /// <param name="userId">The ID of the user.</param>
         Task<ServiceResponse<IEnumerable<NotificationAdminGetDTO>>> GetAllAdmin(int userId);
-        /// <summary>
-        /// Creates a new <see cref="Notification"/> and sends it. Supposed to be used only by the server.
-        /// </summary>
-        Task<ServiceResponse> CreateAndSend(Notification notification);
-        /// <summary>
-        /// Creates a new <see cref="Notification"/> and sends it.
-        /// </summary>
-        Task<ServiceResponse> CreateAndSendAdmin(NotificationAdminCreateDTO notificationAdminCreateDto);
-        /// <summary>
-        /// Toggles the IsRead property of a <see cref="Notification"/> to true.
-        /// </summary>
-        /// <param name="notificationId">The ID of the notification.</param>
-        Task<ServiceResponse> ToggleTrueIsRead(int notificationId);
-        /// <summary>
-        /// Deletes a <see cref="Notification"/> by ID.
-        /// </summary>
-        /// <param name="notificationId">The ID of the notification.</param>
-        Task<ServiceResponse> Delete(int notificationId);
     }
 }

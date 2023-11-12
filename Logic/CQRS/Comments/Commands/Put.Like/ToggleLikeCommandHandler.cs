@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using VidifyStream.Data.Context;
 using VidifyStream.Data.Dtos;
 using VidifyStream.Data.Models;
+using VidifyStream.Logic.CQRS.Notifications.Commands.Push;
 using VidifyStream.Logic.Extensions;
 using VidifyStream.Logic.Services.Notifications;
 
@@ -13,15 +14,15 @@ namespace VidifyStream.Logic.CQRS.Comments.Commands.Put.Like
     {
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _accessor;
-        private readonly INotificationService _notificationService;
+        private readonly ISender _mediator;
 
         public ToggleLikeCommandHandler(DataContext dataContext,
                                         IHttpContextAccessor accessor,
-                                        INotificationService notificationService)
+                                        ISender mediator)
         {
             _dataContext = dataContext;
             _accessor = accessor;
-            _notificationService = notificationService;
+            _mediator = mediator;
         }
 
         public async Task<ServiceResponse> Handle(ToggleLikeCommand request, CancellationToken cancellationToken)
@@ -54,7 +55,8 @@ namespace VidifyStream.Logic.CQRS.Comments.Commands.Put.Like
                 if (comment.IsAuthorLiked && comment.UserId != idResult.Content)
                 {
                     var author = await _dataContext.Users.FindAsync(idResult.Content);
-                    await _notificationService.CreateAndSend(new Notification()
+                    var response =
+                    await _mediator.Send(new PushNotificationCommand(new Notification()
                     {
                         VideoId = topComment.VideoId,
                         CommentId = comment.CommentId,
@@ -62,7 +64,10 @@ namespace VidifyStream.Logic.CQRS.Comments.Commands.Put.Like
                         Type = NotificationType.AuthorLikedComment,
                         Message = $"{author?.Name} liked your comment: '{comment.Text}'.",
                         Date = DateTime.Now
-                    });
+                    }));
+
+                    if (response.IsError) return new ServiceResponse<int>(response.StatusCode,
+                                                                          response.Message!);
                 }
             }
             else

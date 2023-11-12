@@ -14,11 +14,5 @@ namespace VidifyStream.Logic.Services.Validation
         /// <param name="obj">The object to validate.</param>
         /// <returns>A <see cref="ServiceResponse"/> containing the validation result as a <see cref="ModelStateDictionary"/>.</returns>
         ServiceResponse<ModelStateDictionary> Validate<T>(T obj);
-        /// <summary>
-        /// Validates the specified object asynchronously.
-        /// </summary>
-        /// <param name="obj">The object to validate.</param>
-        /// <returns>A <see cref="ServiceResponse"/> containing the validation result as a <see cref="ModelStateDictionary"/>.</returns>
-        Task<ServiceResponse<ModelStateDictionary>> ValidateAsync<T>(T obj);
     }
 }
