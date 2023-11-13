@@ -1,4 +1,4 @@
-﻿namespace Data.Dtos.User
+﻿namespace VidifyStream.Data.Dtos.User
 {
     public record UserPutDTO
     {

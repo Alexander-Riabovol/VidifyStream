@@ -1,6 +1,6 @@
-﻿using Data.Persistence;
+﻿using VidifyStream.Data.Persistence;
 
-namespace Data.Models
+namespace VidifyStream.Data.Models
 {
     /// <summary>
     /// A comment beneath a <see cref="Data.Models.Video"/>!

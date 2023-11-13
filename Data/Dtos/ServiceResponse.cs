@@ -1,4 +1,4 @@
-﻿namespace Data.Dtos
+﻿namespace VidifyStream.Data.Dtos
 {
     public record ServiceResponse
     {

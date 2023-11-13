@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Data.Models
+namespace VidifyStream.Data.Models
 {
     /// <summary>
     /// Is used to categorize videos based on a specific theme.

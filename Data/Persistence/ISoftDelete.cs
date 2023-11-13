@@ -1,4 +1,4 @@
-﻿namespace Data.Persistence
+﻿namespace VidifyStream.Data.Persistence
 {
     /// <summary>
     /// The <see cref="ISoftDelete"/> interface defines a contract

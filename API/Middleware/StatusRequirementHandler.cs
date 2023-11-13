@@ -1,9 +1,9 @@
-﻿using Data.Context;
-using Logic.Services.Auth;
+﻿using VidifyStream.Data.Context;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
+using VidifyStream.Logic.CQRS.Auth.Common;
 
-namespace API.Middleware
+namespace VidifyStream.API.Middleware
 {
     /// <summary>
     /// Represents a handler for the <see cref="StatusRequirement"/> authorization requirement.
@@ -28,7 +28,7 @@ namespace API.Middleware
             // If Unauthenticated return 401
             if (context.User.Identity == null ||
                 !context.User.Identity.IsAuthenticated || 
-                context.User.Identity.AuthenticationType != IAuthService.AuthScheme) 
+                context.User.Identity.AuthenticationType != AuthScheme.Default) 
             {
                 response?.OnStarting(() =>
                 {

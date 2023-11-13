@@ -1,6 +1,6 @@
-﻿using Data.Models;
+﻿using VidifyStream.Data.Models;
 
-namespace Data.Dtos.User
+namespace VidifyStream.Data.Dtos.User
 {
     public record UserAdminGetDTO
     {

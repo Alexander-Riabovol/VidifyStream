@@ -1,4 +1,4 @@
-﻿namespace Logic
+﻿namespace VidifyStream.Logic
 {
     /// <summary>
     /// Marker interface for identifying and categorizing logic-related classes within the Logic namespace.

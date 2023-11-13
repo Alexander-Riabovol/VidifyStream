@@ -1,32 +1,30 @@
-﻿using Data.Dtos.Notification;
-using Logic.Services.Notifications;
-using Logic.Services.Validation;
-using Mapster;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VidifyStream.Data.Dtos.Notification;
+using VidifyStream.Logic.CQRS.Notifications.Commands.Push.Admin;
+using VidifyStream.Logic.CQRS.Notifications.Queries.Get.Admin;
+using VidifyStream.Logic.CQRS.Notifications.Queries.GetAll.Admin;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [Route("api/notifications")]
     [Authorize(Policy = "admin-only")]
     [ApiController]
     public class NotificationsController : ControllerBase
     {
-        private readonly INotificationService _notificationService;
-        private readonly IValidationService _validationService;
+        private readonly ISender _mediator;
 
-        public NotificationsController(INotificationService notificationService,
-                                       IValidationService validationService)
+        public NotificationsController(ISender mediator)
         {
-            _notificationService = notificationService;
-            _validationService = validationService;
+            _mediator = mediator;
         }
 
         [HttpGet]
         [Route("{notificationId}")]
         public async Task<ActionResult<NotificationAdminGetDTO>> Get(int notificationId)
         {
-            var response = await _notificationService.GetAdmin(notificationId);
+            var response = await _mediator.Send(new GetNotificationAdminQuery(notificationId));
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -38,8 +36,8 @@ namespace API.Controllers
         [Route("user/{userId}")]
         public async Task<ActionResult<List<NotificationAdminGetDTO>>> GetAllByUserId(int userId)
         {
-            var response = await _notificationService.GetAllAdmin(userId);
-            if(response.IsError)
+            var response = await _mediator.Send(new GetAllNotificationsAdminQuery(userId));
+            if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
             }
@@ -49,14 +47,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(NotificationAdminCreateDTO notificationDto)
         {
-            var validationResult = await _validationService.ValidateAsync(notificationDto);
-            if(validationResult.IsError) 
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
-
-            var response = await _notificationService.CreateAndSendAdmin(notificationDto);
+            var response = await _mediator.Send(new PushNotificationAdminCommand(notificationDto));
             return StatusCode(response.StatusCode, response.Message);
         }
     }

@@ -1,6 +1,6 @@
-﻿using Data.Models;
+﻿using VidifyStream.Data.Models;
 
-namespace Data.Dtos.Video
+namespace VidifyStream.Data.Dtos.Video
 {
     public record VideoGetDTO
     {

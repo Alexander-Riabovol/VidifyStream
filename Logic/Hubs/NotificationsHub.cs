@@ -1,8 +1,11 @@
-﻿using Logic.Services.Auth;
-using Logic.Services.Notifications;
+﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using VidifyStream.Logic.CQRS.Auth.Common;
+using VidifyStream.Logic.CQRS.Notifications.Commands.Delete;
+using VidifyStream.Logic.CQRS.Notifications.Commands.Read;
+using VidifyStream.Logic.CQRS.Notifications.Queries.GetAll.My;
 
-namespace Logic.Hubs
+namespace VidifyStream.Logic.Hubs
 {
     // Hub sent events:
     // {"type": 1,"target": "broadcast-notifications","arguments": []} - sent whenever there is a new notification, in OnConnectedAsync() and in GetAll().
@@ -10,6 +13,7 @@ namespace Logic.Hubs
     // {"type":1,"target":"read-notification","arguments":[notificationId]} - sent to the group as a sign that a notifications has been read.
     // {"type":1,"target":"delete-notification","arguments":[notificationId]} - sent to the group as a sign that a notifications has been deleted.
     // {"type":1,"target":"group-ping","arguments":[userId, numberOfActiveConnectionsInTheGroup, pingCount]} - pretty self explanatory.
+    //
     // Client commands:
     // {"protocol":"json","version":1} - start communication
     // {"arguments":[],"target":"ping","type":1} - ping function for testing
@@ -19,13 +23,13 @@ namespace Logic.Hubs
     public class NotificationsHub : Hub
     {
         private readonly AppData _data;
-        private readonly INotificationService _notificationService;
+        private readonly ISender _mediator;
         private static int pingCount { get; set; }
 
-        public NotificationsHub(AppData data, INotificationService notificationService) : base()
+        public NotificationsHub(AppData data, ISender mediator) : base()
         {
             _data = data;
-            _notificationService = notificationService;
+            _mediator = mediator;
         }
 
         public async override Task OnConnectedAsync()
@@ -34,7 +38,7 @@ namespace Logic.Hubs
 
             // If not authenticated, close the connection
             if (identity == null || !identity.IsAuthenticated 
-                || identity.AuthenticationType != IAuthService.AuthScheme)
+                || identity.AuthenticationType != AuthScheme.Default)
             {
                 Context.Abort();
                 return;
@@ -47,7 +51,7 @@ namespace Logic.Hubs
             if (!_data.ActiveNotificationUsers.ContainsKey(userId))
             {
                 // Get All notifications (unread by default)
-                var response = await _notificationService.GetAllMy();
+                var response = await _mediator.Send(new GetAllMyNotificationsQuery());
                 var incomingNotifications = response.Content;
                 // If there is any, send notifications to the user
                 if(!response.IsError && incomingNotifications != null)
@@ -66,7 +70,7 @@ namespace Logic.Hubs
             // in any case, so an identity check will prevent InvalidOperationException
             var identity = Context.User?.Identity;
             if (identity == null || !identity.IsAuthenticated
-                || identity.AuthenticationType != IAuthService.AuthScheme)
+                || identity.AuthenticationType != AuthScheme.Default)
             {
                 return base.OnDisconnectedAsync(exception);
             }
@@ -85,8 +89,8 @@ namespace Logic.Hubs
         public async Task Read(int notificationId)
         {
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            var response = await _notificationService.ToggleTrueIsRead(notificationId);
-            if(!response.IsError)
+            var response = await _mediator.Send(new ReadNotificationCommand(notificationId));
+            if (!response.IsError)
             {
                 // If ToggleTrueIsRead method is succesful, inform other users that the notification has been read
                 await Clients.Group($"push-{userId}").SendAsync("read-notification", notificationId);
@@ -100,7 +104,7 @@ namespace Logic.Hubs
         public async Task Delete(int notificationId)
         {
             string userId = Context.User!.Claims.First(c => c.Type == "id")!.Value;
-            var response = await _notificationService.Delete(notificationId);
+            var response = await _mediator.Send(new DeleteNotificationCommand(notificationId));
             if (!response.IsError)
             {
                 // If Delete method is succesful, inform other users that the notification has been deleted
@@ -114,7 +118,7 @@ namespace Logic.Hubs
 
         public async Task GetAll()
         {
-            var response = await _notificationService.GetAllMy(false);
+            var response = await _mediator.Send(new GetAllMyNotificationsQuery(false));
             // In any case we give a response only to the caller
             if (!response.IsError)
             {

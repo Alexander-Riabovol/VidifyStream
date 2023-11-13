@@ -1,7 +1,7 @@
-﻿using Data.Models;
+﻿using VidifyStream.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace API.Middleware
+namespace VidifyStream.API.Middleware
 {
     /// <summary>
     /// Represents a requirement for the authorization based on User.Status property.

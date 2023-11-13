@@ -1,4 +1,4 @@
-﻿namespace Data.Models
+﻿namespace VidifyStream.Data.Models
 {
     /// <summary>
     /// A piece of information about an important event.

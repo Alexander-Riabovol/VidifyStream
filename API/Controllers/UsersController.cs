@@ -1,27 +1,26 @@
-﻿using Data.Dtos.User;
-using Logic.Services.Auth;
-using Logic.Services.Users;
-using Logic.Services.Validation;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VidifyStream.Data.Dtos.User;
+using VidifyStream.Logic.CQRS.Users.Commands.Delete.Admin;
+using VidifyStream.Logic.CQRS.Users.Commands.Delete.Me;
+using VidifyStream.Logic.CQRS.Users.Commands.Post.Avatar;
+using VidifyStream.Logic.CQRS.Users.Commands.Put;
+using VidifyStream.Logic.CQRS.Users.Queries.Get;
+using VidifyStream.Logic.CQRS.Users.Queries.Get.Admin;
+using VidifyStream.Logic.CQRS.Users.Queries.Get.Me;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [Route("api/users")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IAuthService _authService;
-        private readonly IUserService _userService;
-        private readonly IValidationService _validationService;
+        private readonly ISender _mediator;
 
-        public UsersController(IAuthService authService,
-                               IUserService userService,
-                               IValidationService validationService) 
+        public UsersController(ISender mediator) 
         {
-            _authService = authService;
-            _userService = userService;
-            _validationService = validationService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -29,7 +28,7 @@ namespace API.Controllers
         [Authorize("user+")]
         public async Task<ActionResult<UserGetMeDTO>> GetMyProfile()
         {
-            var response = await _userService.GetMe();
+            var response = await _mediator.Send(new GetUserMeQuery());
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -42,7 +41,7 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<UserGetDTO>> Get(int userId)
         {
-            var response = await _userService.Get(userId);
+            var response = await _mediator.Send(new GetUserQuery(userId));
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -55,7 +54,7 @@ namespace API.Controllers
         [Authorize("admin-only")]
         public async Task<ActionResult<UserAdminGetDTO>> GetAdmin(int userId)
         {
-            var response = await _userService.GetAdmin(userId);
+            var response = await _mediator.Send(new GetUserAdminQuery(userId));
             if (response.IsError)
             {
                 return StatusCode(response.StatusCode, response.Message);
@@ -67,36 +66,22 @@ namespace API.Controllers
         [Authorize("user+")]
         public async Task<IActionResult> Put(UserPutDTO userPutDTO)
         {
-            var validationResult = _validationService.Validate(userPutDTO);
-            if (validationResult.IsError)
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
-
-            var result = await _userService.Put(userPutDTO);
-            return StatusCode(result.StatusCode, result.Message);
+            var response = await _mediator.Send(new PutUserCommand(userPutDTO));
+            return StatusCode(response.StatusCode, response.Message);
         }
 
         [HttpPost]
         [Route("pfp")]
         [Authorize("user+")]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<string>> UploadProfilePicture([FromForm]UserProfilePicturePostDTO pfpDTO)
+        public async Task<ActionResult<string>> UploadProfilePicture([FromForm]UserAvatarPostDTO pfpDTO)
         {
-            var validationResult = _validationService.Validate(pfpDTO);
-            if (validationResult.IsError)
+            var response = await _mediator.Send(new PostUserAvatarCommand(pfpDTO));
+            if(response.IsError) 
             {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
+                return StatusCode(response.StatusCode, response.Message);
             }
-
-            var result = await _userService.UploadProfilePicture(pfpDTO);
-            if(result.IsError) 
-            {
-                return StatusCode(result.StatusCode, result.Message);
-            }
-            return Ok(result.Content);
+            return Ok(response.Content);
         }
 
         [HttpDelete]
@@ -104,27 +89,17 @@ namespace API.Controllers
         [Authorize("admin-only")]
         public async Task<IActionResult> DeleteAdmin(UserAdminDeleteDTO userAdminDeleteDTO)
         {
-            var validationResult = _validationService.Validate(userAdminDeleteDTO);
-            if (validationResult.IsError)
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
-
-            var result = await _userService.DeleteAdmin(userAdminDeleteDTO);
-            return StatusCode(result.StatusCode, result.Message);
+            var response = await _mediator.Send(new DeleteUserAdminCommand(userAdminDeleteDTO));
+            return StatusCode(response.StatusCode, response.Message);
         }
+
         [HttpDelete]
         [Route("profile")]
         [Authorize("user+")]
         public async Task<IActionResult> DeleteMyProfile()
         {
-            var result = await _userService.DeleteMe();
-            if(!result.IsError) 
-            {
-                await _authService.LogOut();
-            }
-            return StatusCode(result.StatusCode, result.Message);
+            var response = await _mediator.Send(new DeleteUserMeCommand());
+            return StatusCode(response.StatusCode, response.Message);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Data.Persistence;
+﻿using VidifyStream.Data.Persistence;
 
-namespace Data.Models
+namespace VidifyStream.Data.Models
 {
     /// <summary>
     /// User data. Be careful to avoid leaking personal info.

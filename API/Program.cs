@@ -1,20 +1,19 @@
-using API.Middleware;
-using Data.Context;
-using Logic.Mapping;
-using Data.Models;
-using Logic;
-using Logic.Hubs;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Logic.Services.Auth;
-using Logic.Services.Comments;
-using Logic.Services.Files;
-using Logic.Services.Notifications;
-using Logic.Services.Users;
-using Logic.Services.Validation;
-using Logic.Services.Videos;
-using FluentValidation;
-using Data;
+using VidifyStream.API.Middleware;
+using VidifyStream.Data;
+using VidifyStream.Data.Context;
+using VidifyStream.Data.Models;
+using VidifyStream.Logic;
+using VidifyStream.Logic.CQRS.Auth.Common;
+using VidifyStream.Logic.CQRS.Behaviors;
+using VidifyStream.Logic.CQRS.Users.Commands.Debug.AddAdmin;
+using VidifyStream.Logic.Hubs;
+using VidifyStream.Logic.Mapping;
+using VidifyStream.Logic.Services.Files;
+using VidifyStream.Logic.Services.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,12 +23,14 @@ builder.Services.AddHttpContextAccessor();
 // Add services to the container.
 builder.Services.AddSingleton<AppData>();
 
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICommentService, CommentService>();
+//Add MediatR
+builder.Services.AddMediatR(config => 
+    config.RegisterServicesFromAssembly(typeof(ILogicAssemblyMarker).Assembly));
+builder.Services.AddScoped(
+    typeof(IPipelineBehavior<,>),
+    typeof(ValidationBehavior<,>));
+
 builder.Services.AddScoped<IFileService, LocalFileService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IVideoService, VideoService>();
 
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 
@@ -46,21 +47,21 @@ builder.Services.AddDbContext<DataContext>(options =>
 });
 
 // Add Authentication
-builder.Services.AddAuthentication(IAuthService.AuthScheme)
-                .AddCookie(IAuthService.AuthScheme);
+builder.Services.AddAuthentication(AuthScheme.Default)
+                .AddCookie(AuthScheme.Default);
 // Add Authorization
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("admin-only", policy => 
     {
         policy.RequireAuthenticatedUser()
-              .AddAuthenticationSchemes(IAuthService.AuthScheme)
+              .AddAuthenticationSchemes(AuthScheme.Default)
               .AddRequirements(new StatusRequirement(Status.Admin));
     });
     options.AddPolicy("user+", policy =>
     {
         policy.RequireAuthenticatedUser()
-              .AddAuthenticationSchemes(IAuthService.AuthScheme)
+              .AddAuthenticationSchemes(AuthScheme.Default)
               .AddRequirements(new StatusRequirement(Status.User, Status.Janitor, Status.Admin));
     });
 });
@@ -114,9 +115,9 @@ app.MapHealthChecks("/health");
 app.ApplyPendingMigrations();
 
 // Add debug endpoints
-app.MapPost("/debug/addadmin", async (IUserService userService) =>
+app.MapPost("/debug/addadmin", async (ISender mediator) =>
 {
-    return await userService.AddAdminDebug();
+    return await mediator.Send(new DebugAddAdminCommand());
 });
 
 app.Run();

@@ -1,8 +1,8 @@
-﻿using Data.Dtos.Video;
-using Data.Models;
+﻿using VidifyStream.Data.Dtos.Video;
+using VidifyStream.Data.Models;
 using Mapster;
 
-namespace Logic.Mapping
+namespace VidifyStream.Logic.Mapping
 {
     /// <summary>
     /// Configuration class for mapping VideoDTOs to <see cref="Video"/> models and vice versa.

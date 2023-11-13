@@ -1,6 +1,6 @@
-﻿using Data.Persistence;
+﻿using VidifyStream.Data.Persistence;
 
-namespace Data.Models
+namespace VidifyStream.Data.Models
 {
     /// <summary>
     /// Represents a set of information about a piece of a film.

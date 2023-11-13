@@ -1,36 +1,30 @@
-﻿using Data.Dtos.User;
-using Logic.Services.Auth;
-using Logic.Services.Validation;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VidifyStream.Data.Dtos.User;
+using VidifyStream.Logic.CQRS.Auth.Commands.Register;
+using VidifyStream.Logic.CQRS.Auth.Queries.Login;
+using VidifyStream.Logic.CQRS.Auth.Queries.Logout;
 
-namespace API.Controllers
+namespace VidifyStream.API.Controllers
 {
     [AllowAnonymous]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
-        private readonly IValidationService _validationService;
+        private readonly ISender _mediator;
 
-        public AuthController(IAuthService authService, IValidationService validationService) 
+        public AuthController(ISender mediator) 
         {
-            _authService = authService;
-            _validationService = validationService;
+            _mediator = mediator;
         }
 
         [HttpPost]
         [Route("api/login")]
         public async Task<IActionResult> Login(UserLoginDTO loginData)
         {
-            var validationResult = _validationService.Validate(loginData);
-            if (validationResult.IsError)
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
+            var result = await _mediator.Send(new LoginQuery(loginData));
 
-            var result = await _authService.LogIn(loginData);
             return StatusCode(result.StatusCode, result.Message);
         }
 
@@ -38,15 +32,9 @@ namespace API.Controllers
         [Route("api/register")]
         public async Task<ActionResult<int>> Register(UserRegisterDTO registerData)
         {
-            var validationResult = _validationService.Validate(registerData);
-            if (validationResult.IsError)
-            {
-                if (validationResult.Content == null) return StatusCode(validationResult.StatusCode, validationResult.Message);
-                else return ValidationProblem(validationResult.Content);
-            }
+            var result = await _mediator.Send(new RegisterCommand(registerData));
 
-            var result = await _authService.Register(registerData);
-            if(result.IsError)
+            if (result.IsError)
             {
                 return StatusCode(result.StatusCode, result.Message);
             }
@@ -57,7 +45,7 @@ namespace API.Controllers
         [Route("api/logout")]
         public async Task<IActionResult> Logout()
         {
-            var result = await _authService.LogOut();
+            var result = await _mediator.Send(new LogoutQuery());
             return StatusCode(result.StatusCode, result.Message);
         }
     }

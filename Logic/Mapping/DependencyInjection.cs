@@ -1,10 +1,10 @@
-﻿using Data.Context;
+﻿using VidifyStream.Data.Context;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Logic.Mapping
+namespace VidifyStream.Logic.Mapping
 {
     public static class DependencyInjection
     {

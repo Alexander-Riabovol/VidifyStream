@@ -1,4 +1,4 @@
-﻿namespace Data.Models
+﻿namespace VidifyStream.Data.Models
 {
     /// <summary>
     /// This model is designed to collect information about
