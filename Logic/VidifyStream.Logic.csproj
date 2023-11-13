@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\Notifications\Queries\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

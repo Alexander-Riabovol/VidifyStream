@@ -9,11 +9,10 @@ using VidifyStream.Data.Models;
 using VidifyStream.Logic;
 using VidifyStream.Logic.CQRS.Auth.Common;
 using VidifyStream.Logic.CQRS.Behaviors;
+using VidifyStream.Logic.CQRS.Users.Commands.Debug.AddAdmin;
 using VidifyStream.Logic.Hubs;
 using VidifyStream.Logic.Mapping;
 using VidifyStream.Logic.Services.Files;
-using VidifyStream.Logic.Services.Notifications;
-using VidifyStream.Logic.Services.Users;
 using VidifyStream.Logic.Services.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,8 +31,6 @@ builder.Services.AddScoped(
     typeof(ValidationBehavior<,>));
 
 builder.Services.AddScoped<IFileService, LocalFileService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IAuthorizationHandler, StatusRequirementHandler>();
 
@@ -118,9 +115,9 @@ app.MapHealthChecks("/health");
 app.ApplyPendingMigrations();
 
 // Add debug endpoints
-app.MapPost("/debug/addadmin", async (IUserService userService) =>
+app.MapPost("/debug/addadmin", async (ISender mediator) =>
 {
-    return await userService.AddAdminDebug();
+    return await mediator.Send(new DebugAddAdminCommand());
 });
 
 app.Run();

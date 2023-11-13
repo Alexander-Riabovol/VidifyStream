@@ -5,7 +5,6 @@ using VidifyStream.Data.Dtos;
 using VidifyStream.Data.Models;
 using VidifyStream.Logic.CQRS.Notifications.Commands.Push;
 using VidifyStream.Logic.Extensions;
-using VidifyStream.Logic.Services.Notifications;
 
 namespace VidifyStream.Logic.CQRS.Comments.Commands.Put.Like
 {

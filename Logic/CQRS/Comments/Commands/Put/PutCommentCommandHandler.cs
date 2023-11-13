@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using VidifyStream.Data.Context;
 using VidifyStream.Data.Dtos;
 using VidifyStream.Logic.Extensions;
-using VidifyStream.Logic.Services.Notifications;
 
 namespace VidifyStream.Logic.CQRS.Comments.Commands.Put
 {

@@ -1,15 +1,9 @@
 ﻿using MapsterMapper;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using VidifyStream.Data.Context;
 using VidifyStream.Data.Dtos;
 using VidifyStream.Data.Dtos.User;
-using VidifyStream.Data.Models;
-using VidifyStream.Logic.Extensions;
-using VidifyStream.Logic.Services.Files;
-using VidifyStream.Logic.Services.Users;
 
 namespace VidifyStream.Logic.CQRS.Users.Queries.Get
 {

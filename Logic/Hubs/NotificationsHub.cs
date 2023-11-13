@@ -1,9 +1,9 @@
-﻿using VidifyStream.Logic.Services.Notifications;
+﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using VidifyStream.Logic.CQRS.Auth.Common;
-using MediatR;
 using VidifyStream.Logic.CQRS.Notifications.Commands.Delete;
 using VidifyStream.Logic.CQRS.Notifications.Commands.Read;
+using VidifyStream.Logic.CQRS.Notifications.Queries.GetAll.My;
 
 namespace VidifyStream.Logic.Hubs
 {
@@ -13,6 +13,7 @@ namespace VidifyStream.Logic.Hubs
     // {"type":1,"target":"read-notification","arguments":[notificationId]} - sent to the group as a sign that a notifications has been read.
     // {"type":1,"target":"delete-notification","arguments":[notificationId]} - sent to the group as a sign that a notifications has been deleted.
     // {"type":1,"target":"group-ping","arguments":[userId, numberOfActiveConnectionsInTheGroup, pingCount]} - pretty self explanatory.
+    //
     // Client commands:
     // {"protocol":"json","version":1} - start communication
     // {"arguments":[],"target":"ping","type":1} - ping function for testing
@@ -23,16 +24,12 @@ namespace VidifyStream.Logic.Hubs
     {
         private readonly AppData _data;
         private readonly ISender _mediator;
-        private readonly INotificationService _notificationService;
         private static int pingCount { get; set; }
 
-        public NotificationsHub(AppData data, 
-                                ISender mediator,
-                                INotificationService notificationService) : base()
+        public NotificationsHub(AppData data, ISender mediator) : base()
         {
             _data = data;
             _mediator = mediator;
-            _notificationService = notificationService;
         }
 
         public async override Task OnConnectedAsync()
@@ -54,7 +51,7 @@ namespace VidifyStream.Logic.Hubs
             if (!_data.ActiveNotificationUsers.ContainsKey(userId))
             {
                 // Get All notifications (unread by default)
-                var response = await _notificationService.GetAllMy();
+                var response = await _mediator.Send(new GetAllMyNotificationsQuery());
                 var incomingNotifications = response.Content;
                 // If there is any, send notifications to the user
                 if(!response.IsError && incomingNotifications != null)
@@ -121,7 +118,7 @@ namespace VidifyStream.Logic.Hubs
 
         public async Task GetAll()
         {
-            var response = await _notificationService.GetAllMy(false);
+            var response = await _mediator.Send(new GetAllMyNotificationsQuery(false));
             // In any case we give a response only to the caller
             if (!response.IsError)
             {

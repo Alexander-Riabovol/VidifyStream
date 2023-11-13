@@ -7,7 +7,6 @@ using VidifyStream.Data.Context;
 using VidifyStream.Data.Dtos;
 using VidifyStream.Data.Models;
 using VidifyStream.Logic.Extensions;
-using VidifyStream.Logic.Services.Users;
 
 namespace VidifyStream.Logic.CQRS.Users.Commands.Delete.Admin
 {
@@ -16,12 +15,12 @@ namespace VidifyStream.Logic.CQRS.Users.Commands.Delete.Admin
     {
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _accessor;
-        private readonly ILogger<UserService> _logger;
+        private readonly ILogger<DeleteUserAdminCommandHandler> _logger;
         private readonly IMapper _mapper;
 
         public DeleteUserAdminCommandHandler(DataContext dataContext,
                            IHttpContextAccessor accessor,
-                           ILogger<UserService> logger,
+                           ILogger<DeleteUserAdminCommandHandler> logger,
                            IMapper mapper)
         {
             _dataContext = dataContext;
@@ -38,7 +37,8 @@ namespace VidifyStream.Logic.CQRS.Users.Commands.Delete.Admin
 
             if (user == null)
             {
-                return new ServiceResponse(404, $"User with ID {request.UserDto.UserId} was not found in the database.");
+                return new ServiceResponse(
+                    404, $"User with ID {request.UserDto.UserId} was not found in the database.");
             }
             if (user.DeletedAt != null)
             {
